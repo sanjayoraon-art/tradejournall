@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "594552046027",
+    "firebase_url": "https://studio-5175580777-59d46-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "studio-5175580777-59d46",
+    "storage_bucket": "studio-5175580777-59d46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594552046027:android:8f8bace3acf9365339b64e",
+        "android_client_info": {
+          "package_name": "com.tradejournal.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "594552046027-bkk9ah3mr453uivnetqpigpt72so8gag.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradejournal.pro",
+            "certificate_hash": "b5354b7dea36386d74c20fb3878e7faed8fb7886"
+          }
+        },
+        {
+          "client_id": "594552046027-qf50n7rjtp2e5cvgfham46sadlb4l2l6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8_HqFOWaH52Ivg-zzArSTeDhhb89KvgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594552046027-qf50n7rjtp2e5cvgfham46sadlb4l2l6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
