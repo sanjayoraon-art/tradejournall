@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell } from 'lucide-react';
-import { AdMob } from '@capacitor-community/admob';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -15,9 +14,7 @@ import { db, auth, appId } from './utils/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, collection, onSnapshot, getDocs, query, orderBy, limit, increment, getDoc, addDoc, serverTimestamp, deleteDoc, updateDoc } from 'firebase/firestore';
 import { CandlestickChart, SimpleBarChart, PerformanceHeatmap, MonthlyPerformanceWidget } from './components/Charts';
-import { AdOverlay, AD_UNITS } from './components/Ads';
 import { isAdmin } from './utils/admin';
-import { Capacitor } from '@capacitor/core';
 
 interface Trade {
     id: string;
@@ -60,21 +57,10 @@ const App = () => {
     const [authLoading, setAuthLoading] = useState(true);
     const [products, setProducts] = useState<any[]>([]);
     const [unreadNotifications, setUnreadNotifications] = useState(0);
-    const [adConfig, setAdConfig] = useState({ bannerDashboard: true, interstitialProfile: true, bannerAllTrades: true });
-    const [showInterstitialAd, setShowInterstitialAd] = useState(false);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(true);
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
     const chatEndRef = React.useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (Capacitor.isNativePlatform()) {
-            AdMob.initialize({
-                initializeForTesting: false,
-            }).catch(err => console.error("AdMob Init Error:", err));
-        }
-    }, []);
-
     // Analytics Tracking
     useEffect(() => {
         if (!db) return;
@@ -86,24 +72,6 @@ const App = () => {
         };
         trackPageView();
     }, [currentScreen]);
-
-    // Fetch Ad Config
-    useEffect(() => {
-        if (!db) return;
-        const fetchAdConfig = async () => {
-            try {
-                // Listening to config changes in real-time would be better, but simple fetch for now
-                const docRef = doc(db!, 'artifacts', appId, 'config', 'ads');
-                const unsub = onSnapshot(docRef, (doc) => {
-                    if (doc.exists()) {
-                        setAdConfig(doc.data() as any);
-                    }
-                });
-                return () => unsub();
-            } catch (e) { console.error(e); }
-        };
-        fetchAdConfig();
-    }, []);
 
     // Firebase Auth and Sync
     useEffect(() => {
@@ -548,6 +516,25 @@ const App = () => {
         border: 'border-gray-300'
     };
 
+    if (!auth || !db) {
+        return (
+            <div className={`min-h-screen ${theme.bg} ${theme.text} flex flex-col items-center justify-center p-6 text-center`}>
+                <div className="bg-red-500/10 border border-red-500/30 p-8 rounded-3xl max-w-md">
+                    <h2 className="text-2xl font-black text-red-500 mb-4">Configuration Missing</h2>
+                    <p className="text-gray-400 mb-6">
+                        Firebase configuration not found. Please ensure <strong>VITE_FIREBASE_CONFIG</strong> is set in your environment variables.
+                    </p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold transition-all"
+                    >
+                        Retry Connection
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     if (authLoading) {
         return (
             <div className={`min-h-screen ${theme.bg} ${theme.text} flex items-center justify-center`}>
@@ -731,7 +718,7 @@ const App = () => {
                         <div className="space-y-3">
                             {[...trades].reverse().filter(t => !showFavoritesOnly || t.isFavorite).map((trade, index) => (
                                 <React.Fragment key={trade.id}>
-                                    <div onClick={() => { setPendingTrade(trade); setShowInterstitialAd(true); }} className={`${theme.card} p-4 rounded-2xl border ${theme.border} flex items-center justify-between shadow-sm cursor-pointer active:bg-gray-700/50`}>
+                                    <div onClick={() => setSelectedTrade(trade)} className={`${theme.card} p-4 rounded-2xl border ${theme.border} flex items-center justify-between shadow-sm cursor-pointer active:bg-gray-700/50`}>
                                         <div className="flex items-center gap-4">
                                             <button onClick={(e) => { e.stopPropagation(); toggleFavorite(trade.id); }} className="p-1"><Star size={24} className={trade.isFavorite ? 'fill-yellow-500 text-yellow-500' : 'text-gray-700'} /></button>
                                             <div><h3 className="font-bold text-base tracking-wide">{trade.symbol}</h3><p className={`text-xs ${theme.subtext}`}>{trade.date}</p></div>
@@ -894,21 +881,8 @@ const App = () => {
                     </div>
                 </div>
             )}
-
-            {showInterstitialAd && (
-                <AdOverlay
-                    title="Trade Analysis Premium"
-                    unitId={AD_UNITS.INTERSTITIAL}
-                    type="interstitial"
-                    onClose={() => {
-                        setShowInterstitialAd(false);
-                        setSelectedTrade(pendingTrade);
-                        setPendingTrade(null);
-                    }}
-                />
-            )}
-
-        </div >
+            {/* End of modals */}
+        </div>
     );
 };
 

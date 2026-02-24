@@ -4,7 +4,6 @@ import { auth } from '../utils/firebase';
 import { signOut } from 'firebase/auth';
 import { SupportChatModal } from '../components/SupportChatModal';
 import { ADMIN_EMAILS, isAdmin } from '../utils/admin';
-import { AdOverlay, AD_UNITS } from '../components/Ads';
 
 interface ProfileActionProps {
     icon: any;
@@ -79,7 +78,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
     const [isAdminVisible, setIsAdminVisible] = useState(false);
     const [tapCount, setTapCount] = useState(0);
     const [modalInfo, setModalInfo] = useState<{ title: string; content: string } | null>(null);
-    const [isWatchingAd, setIsWatchingAd] = useState(false);
     const [showSupportChat, setShowSupportChat] = useState(false);
 
     // Simplified admin check using centralized utility
@@ -99,10 +97,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
             });
             setTapCount(0);
         }
-    };
-
-    const handleWatchAd = () => {
-        setIsWatchingAd(true);
     };
 
     const handleShare = async () => {
@@ -206,22 +200,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                     </div>
                 </div>
 
-                {/* Monetization Section */}
-                {!isOwner && (
-                    <div className="space-y-3">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 ml-2">Support & Rewards</h3>
-                        <div className={`${isDarkMode ? 'bg-[#1e2230]' : 'bg-white'} rounded-[24px] border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} overflow-hidden shadow-xl`}>
-                            <ProfileAction
-                                icon={PlayCircle}
-                                label="Watch Ad"
-                                sub="Support Developer"
-                                iconColor="text-yellow-500"
-                                isDarkMode={isDarkMode}
-                                onClick={handleWatchAd}
-                            />
-                        </div>
-                    </div>
-                )}
+                {/* Profile elements end here */}
 
                 {/* App Settings Section */}
                 <div className="space-y-3">
@@ -326,22 +305,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                     <p className="text-[10px] text-gray-600 font-black uppercase tracking-[0.3em]">Trade Journal Pro v2.5.0</p>
                 </div>
             </div>
-
-            {/* Ad Player Overlay */}
-            {isWatchingAd && (
-                <AdOverlay
-                    title="Supporting Developer"
-                    unitId={AD_UNITS.REWARDED}
-                    type="rewarded"
-                    onClose={() => {
-                        setIsWatchingAd(false);
-                        setModalInfo({
-                            title: "Reward Earned!",
-                            content: "Thank you for supporting the developer. You've earned a 'Supporter' badge (conceptually)!"
-                        });
-                    }}
-                />
-            )}
 
             {/* Info Modal */}
             <InfoModal

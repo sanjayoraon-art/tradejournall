@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { AdvancedStatCard, TopTradesWidget } from '../components/Stats';
 import { MonthlyPerformanceWidget, SimpleBarChart, PerformanceHeatmap } from '../components/Charts';
 import { Pencil, TrendingUp, TrendingDown, Activity, Target } from 'lucide-react';
-import { AD_UNITS, NativeAdPlaceholder } from '../components/Ads';
 import { PerformanceStats } from '../types';
 import { calculateMaxDrawdown, calculateProfitFactor, calculateExpectancy, calculateAverageRR, getTopAndBottomTrades } from '../utils/analytics';
 
@@ -111,8 +110,6 @@ export const PerformanceMetricsScreen: React.FC<PerformanceMetricsScreenProps> =
                     colorClass="text-purple-500"
                 />
             </div>
-
-            <NativeAdPlaceholder isDarkMode={isDarkMode} />
 
             {/* Performance Heatmap */}
             <div className={`p-4 rounded-2xl border ${theme.card} ${theme.border}`}>

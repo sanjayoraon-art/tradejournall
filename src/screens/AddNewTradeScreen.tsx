@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Star, RefreshCw, Upload, TrendingUp, TrendingDown, Brain } from 'lucide-react';
 import { InputField } from '../components/InputField';
-import { AD_UNITS } from '../components/Ads';
 import { analyzeTradeScreenshot } from '../utils/api';
 import { fileToBase64 } from '../utils/helpers';
 import { addDoc, collection, Firestore } from 'firebase/firestore';

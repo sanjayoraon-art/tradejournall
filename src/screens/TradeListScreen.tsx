@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Star, BarChart, Trash2 } from 'lucide-react';
 import { Trade } from '../types';
-import { AD_UNITS } from '../components/Ads';
 import { getCurrencySymbol, formatNumber } from '../utils/helpers';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { TradeDetailsModal } from '../components/TradeDetailsModal';

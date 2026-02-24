@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Calculator, RotateCcw } from 'lucide-react';
 import { InputField } from '../components/InputField';
-import { AD_UNITS } from '../components/Ads';
 import { formatNumber } from '../utils/helpers';
 import { Info as InfoIcon } from 'lucide-react';
 

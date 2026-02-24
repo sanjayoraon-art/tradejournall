@@ -3,7 +3,6 @@ import { Plus, TrendingUp, TrendingDown, Clock, Scale, Calculator, ChevronRight 
 import { PerformanceStats, Trade } from '../types';
 import { formatNumber, getCurrencySymbol } from '../utils/helpers';
 import { CandlestickChart } from '../components/Charts';
-import { AD_UNITS, NativeAdPlaceholder } from '../components/Ads';
 import { StatBlock } from '../components/Stats';
 
 interface DashboardScreenProps {
@@ -58,8 +57,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ performanceSta
                 </div>
                 <ChevronRight className="text-gray-600" />
             </div>
-
-            <NativeAdPlaceholder isDarkMode={isDarkMode} />
 
             <h3 className={`text-lg font-semibold ${theme.text} mb-3`}>Recent Trades</h3>
             <div className={`${theme.card} rounded-xl shadow-lg border ${theme.border} divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
