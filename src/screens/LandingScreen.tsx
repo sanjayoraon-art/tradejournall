@@ -104,99 +104,207 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                 </div>
             </header>
 
-            {/* SEO Articles Section */}
+            {/* Comprehensive Page Details Section */}
             <main className="w-full py-20 bg-gray-900 border-t border-gray-800">
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl lg:text-5xl font-black mb-4">Master Crypto, Forex & Day Trading Stocks</h2>
-                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">Explore our core features designed to give day traders the ultimate edge in volatile markets. From real-time analytics to AI-driven coaching, our platform provides a complete trading software arsenal.</p>
+                        <h2 className="text-3xl lg:text-5xl font-black mb-4">Complete Application Breakdown</h2>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">Discover every single screen and feature available inside our premier trading software. From execution logging to AI analysis, here is exactly what you get.</p>
                     </div>
 
-                    <div className="space-y-24">
-                        {/* Article 1: Dashboard */}
-                        <article className="grid lg:grid-cols-2 gap-12 items-center">
-                            <div className="order-2 lg:order-1 space-y-6">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 font-bold text-sm border border-blue-500/20">
-                                    <BarChart3 size={16} /> Dashboard
+                    <div className="space-y-16">
+                        {/* 1. Dashboard */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
+                            <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 font-bold mb-4 border border-blue-500/20">
+                                    <BarChart3 size={18} /> 01. Dashboard
                                 </div>
-                                <h3 className="text-3xl font-black">Your Central Trading Hub for Real-Time P&L</h3>
-                                <p className="text-gray-400 leading-relaxed text-lg">
-                                    Our comprehensive trading dashboard acts as your financial command center. View your total net profit and loss instantly, accompanied by an interactive equity curve that visualizes your growth trajectory. With a modern, dark-mode-first design, you can easily monitor your gross margins, consistency rates, and overall portfolio health at a single glance. Professional traders know that situational awareness is key, and our dashboard ensures you never miss a beat in the markets.
-                                </p>
+                                <h3 className="text-3xl font-black mb-4">Real-Time Command Center</h3>
                             </div>
-                            <div className="order-1 lg:order-2 rounded-2xl overflow-hidden border border-gray-800 shadow-2xl relative group">
-                                <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800" alt="Trading Dashboard Interface" className="w-full h-[300px] object-cover" />
+                            <div className="lg:w-2/3">
+                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Total Net P&L:</strong> Live calculation of your total portfolio profit and loss.</li>
+                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Equity Curve Chart:</strong> Visual candlestick representation of your account balance growth over time.</li>
+                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Quick KPIs:</strong> Glance at Gross Profit, Gross Loss, Net Profit, and overall Win Rate instantly.</li>
+                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Quick Actions:</strong> Single-click 'Add New Trade' button for rapid data entry during live markets.</li>
+                                </ul>
                             </div>
-                        </article>
+                        </div>
 
-                        {/* Article 2: Trades */}
-                        <article className="grid lg:grid-cols-2 gap-12 items-center">
-                            <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl relative group">
-                                <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800" alt="List of Recent Crypto and Forex Trades" className="w-full h-[300px] object-cover" />
-                            </div>
-                            <div className="space-y-6">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-400 font-bold text-sm border border-green-500/20">
-                                    <TrendingUp size={16} /> Trade Log
+                        {/* 2. Trades */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
+                            <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-400 font-bold mb-4 border border-green-500/20">
+                                    <TrendingUp size={18} /> 02. Trade Log
                                 </div>
-                                <h3 className="text-3xl font-black">Detailed Trade Logging & History Tracker</h3>
-                                <p className="text-gray-400 leading-relaxed text-lg">
-                                    Maintain a meticulous record of every execution with our detailed Trade List page. Whether day trading Bitcoin or Forex, log your exact entry and exit prices, symbols, and trade direction effortlessly. A disciplined day trader is a profitable trader, and keeping a precise history allows you to review your past decisions. Filter through your favorite setups and learn from both your winning streaks and your losses with our intuitive, minimalist log interface.
-                                </p>
+                                <h3 className="text-3xl font-black mb-4">Detailed Execution Tracker</h3>
                             </div>
-                        </article>
+                            <div className="lg:w-2/3">
+                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Comprehensive Inputs:</strong> Log Symbol, Direction (Long/Short), Entry, Exit, Stop Loss, Quantity, and Fees.</li>
+                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Image Attachments:</strong> Upload screenshots of your charts for visual review of specific setups.</li>
+                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Trade Notes/Tags:</strong> Add psychological notes and strategy tags (e.g., Breakout, Mean Reversion) to categorize executions.</li>
+                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Historical List:</strong> Chronological list of all closed operations with individual profit/loss highlighting.</li>
+                                </ul>
+                            </div>
+                        </div>
 
-                        {/* Article 3: AI Coach */}
-                        <article className="grid lg:grid-cols-2 gap-12 items-center">
-                            <div className="order-2 lg:order-1 space-y-6">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 font-bold text-sm border border-purple-500/20">
-                                    <Brain size={16} /> AI Coach
+                        {/* 3. AI Coach */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
+                            <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-400 font-bold mb-4 border border-purple-500/20">
+                                    <Brain size={18} /> 03. AI Coach
                                 </div>
-                                <h3 className="text-3xl font-black">Personalized AI Trading Mentorship & Analysis</h3>
-                                <p className="text-gray-400 leading-relaxed text-lg">
-                                    Unlock the power of artificial intelligence to elevate your trading psychology and strategy. Our built-in AI Coach acts as your personal 24/7 trading mentor. By analyzing your recent trade history, the AI provides context-aware feedback, suggests improvements, and keeps your mental state in check during volatile market swings. Whether you are dealing with FOMO or need a strategy pivot, get professional, customized advice instantly.
-                                </p>
+                                <h3 className="text-3xl font-black mb-4">24/7 Trading Psychiatrist</h3>
                             </div>
-                            <div className="order-1 lg:order-2 rounded-2xl overflow-hidden border border-gray-800 shadow-2xl relative group">
-                                <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800" alt="Artificial Intelligence Trading Coach Concept" className="w-full h-[300px] object-cover" />
+                            <div className="lg:w-2/3">
+                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Context-Aware Advice:</strong> The AI reads your actual recent trades to give targeted, highly personalized feedback.</li>
+                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Psychology Support:</strong> Helps manage Tilt, FOMO, and Revenge Trading through interactive dialogue.</li>
+                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Strategy Adjustments:</strong> Ask the AI to identify patterns in your losses or suggest risk parameter changes.</li>
+                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>History Clearing:</strong> Reset the AI conversation context anytime for a fresh perspective.</li>
+                                </ul>
                             </div>
-                        </article>
+                        </div>
 
-                        {/* Article 4: Stats */}
-                        <article className="grid lg:grid-cols-2 gap-12 items-center">
-                            <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl relative group">
-                                <div className="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" alt="Advanced Trading Performance Statistics and Charts" className="w-full h-[300px] object-cover" />
-                            </div>
-                            <div className="space-y-6">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 font-bold text-sm border border-yellow-500/20">
-                                    <BarChart3 size={16} /> Analytics
+                        {/* 4. Stats */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
+                            <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-400 font-bold mb-4 border border-yellow-500/20">
+                                    <BarChart3 size={18} /> 04. Analytics
                                 </div>
-                                <h3 className="text-3xl font-black">Advanced Trading Performance Analytics Calculator</h3>
-                                <p className="text-gray-400 leading-relaxed text-lg">
-                                    Dive deep into the numbers that matter. Our risk reward calculator and stats page offers an institutional-grade breakdown of your performance, including Sharpe Ratio, Maximum Drawdown, Risk-Reward averages, and Trade Expectancy. Visualize your consistency with monthly heatmaps and strategy comparisons. Professional risk management is what separates gamblers from long-term profitable day traders, and our advanced analytics software provides the exact numbers you need to optimize your edge.
-                                </p>
+                                <h3 className="text-3xl font-black mb-4">Institutional Grade Metrics</h3>
                             </div>
-                        </article>
+                            <div className="lg:w-2/3">
+                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Profit Factor & Expectancy:</strong> Mathematical formulas predicting long-term profitability based on your historical data.</li>
+                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Sharpe Ratio & Drawdown:</strong> Understand your risk-adjusted returns and largest peak-to-trough portfolio drop.</li>
+                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Averages:</strong> Calculate Average Win, Average Loss, and Average Risk-Reward ratio automatically.</li>
+                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Calendar Heatmap:</strong> A visual grid showing your profitable vs unprofitable days throughout the year.</li>
+                                </ul>
+                            </div>
+                        </div>
 
-                        {/* Article 5: Profile */}
-                        <article className="grid lg:grid-cols-2 gap-12 items-center">
-                            <div className="order-2 lg:order-1 space-y-6">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-500/10 text-gray-400 font-bold text-sm border border-gray-500/20">
-                                    <ShieldCheck size={16} /> Settings
+                        {/* 5. Risk Calculator */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
+                            <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 text-pink-400 font-bold mb-4 border border-pink-500/20">
+                                    <TrendingUp size={18} /> 05. Calculator
                                 </div>
-                                <h3 className="text-3xl font-black">Secure Profile Management & App Preferences</h3>
-                                <p className="text-gray-400 leading-relaxed text-lg">
-                                    Maintain total control over your trading environment. The Profile page allows you to securely manage your account details, customize your starting balance, and toggle between aesthetic themes like Dark Mode. Built with Firebase integration, your data represents your life's trading work—which is why privacy and seamless synchronization across devices are our top priorities. Setup the app your way and focus on the charts.
-                                </p>
+                                <h3 className="text-3xl font-black mb-4">Risk Reward Planner</h3>
                             </div>
-                            <div className="order-1 lg:order-2 rounded-2xl overflow-hidden border border-gray-800 shadow-2xl relative group">
-                                <div className="absolute inset-0 bg-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800" alt="Secure Trading Account Settings and Profile" className="w-full h-[300px] object-cover" />
+                            <div className="lg:w-2/3">
+                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Position Sizing:</strong> Type in your account limit and risk % to get the exact share/lot size you should trade.</li>
+                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Target Projections:</strong> Calculates exact Take Profit prices based on desired risk-reward ratios (e.g., 1:2, 1:3).</li>
+                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Stop Loss Validation:</strong> Visually confirm your stop distance before entering a live trade.</li>
+                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Pre-Trade Discipline:</strong> Forces you to do the math and respect your risk limits before executing the broker order.</li>
+                                </ul>
                             </div>
-                        </article>
+                        </div>
+
+                        {/* 6. Profile */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
+                            <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-500/10 text-gray-400 font-bold mb-4 border border-gray-500/20">
+                                    <ShieldCheck size={18} /> 06. Profile & Settings
+                                </div>
+                                <h3 className="text-3xl font-black mb-4">Account Customization</h3>
+                            </div>
+                            <div className="lg:w-2/3">
+                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Account Management:</strong> Secure Firebase-backed authentication, email updates, and password resets.</li>
+                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Starting Balance:</strong> Set your initial capital to properly track percentage growth.</li>
+                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Currency Options:</strong> Support for global traders (USD, EUR, GBP, INR, JPY, AUD).</li>
+                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Theme Selection:</strong> Toggle between system default, pure Dark Mode, or Light Mode interface.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Feature Comparison Table */}
+                    <div className="mt-24">
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl lg:text-4xl font-black mb-4">Comprehensive Features Table</h2>
+                            <p className="text-gray-400">Everything you need to know about what's included in Trade Journal.</p>
+                        </div>
+
+                        <div className="overflow-x-auto rounded-2xl border border-gray-700 shadow-xl">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-800 text-gray-200">
+                                        <th className="p-5 font-bold border-b border-gray-700">Feature Category</th>
+                                        <th className="p-5 font-bold border-b border-gray-700">Specific Function</th>
+                                        <th className="p-5 font-bold border-b border-gray-700 text-center">Availability</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-gray-900/50 text-gray-400 divide-y divide-gray-800">
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 bg-gray-900/80 font-semibold align-top" rowSpan={4}>Trade Logging</td>
+                                        <td className="p-4 text-gray-300">Unlimited Trade Entries</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Screenshot / Image Attachments</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Strategy Tags & Trade Notes</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Commission & Exchange Fees Tracking</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 bg-gray-900/80 font-semibold align-top border-t border-gray-700" rowSpan={4}>Advanced Analytics</td>
+                                        <td className="p-4 text-gray-300 border-t border-gray-700">Auto-Calculated Win Rate & P&L</td>
+                                        <td className="p-4 text-center text-green-500 font-black border-t border-gray-700">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Max Drawdown & Sharpe Ratio</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Profit Factor & Trade Expectancy</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Interactive Equity Curve Candlestick Chart</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 bg-gray-900/80 font-semibold align-top border-t border-gray-700" rowSpan={3}>Artificial Intelligence</td>
+                                        <td className="p-4 text-gray-300 border-t border-gray-700">Live Context-Aware Chat Bot</td>
+                                        <td className="p-4 text-center text-green-500 font-black border-t border-gray-700">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Trade Data Ingestion For AI Analysis</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Market Psychology & Mentorship</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 bg-gray-900/80 font-semibold align-top border-t border-gray-700" rowSpan={3}>Platform & Security</td>
+                                        <td className="p-4 text-gray-300 border-t border-gray-700">Cloud Sync (Firebase Integration)</td>
+                                        <td className="p-4 text-center text-green-500 font-black border-t border-gray-700">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Global Currencies Supported (USD, INR, GBP, EUR, etc)</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-4 text-gray-300">Fully Responsive Desktop & Mobile PWA Ready</td>
+                                        <td className="p-4 text-center text-green-500 font-black">✔</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </main>
