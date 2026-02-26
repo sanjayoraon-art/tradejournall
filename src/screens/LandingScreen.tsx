@@ -114,110 +114,146 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
 
                     <div className="space-y-16">
                         {/* 1. Dashboard */}
-                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
-                            <div className="lg:w-1/3 mb-6 lg:mb-0">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 font-bold mb-4 border border-blue-500/20">
-                                    <BarChart3 size={18} /> 01. Dashboard
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 font-bold mb-4 border border-blue-500/20">
+                                        <BarChart3 size={18} /> 01. Dashboard
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">Real-Time Command Center</h3>
                                 </div>
-                                <h3 className="text-3xl font-black mb-4">Real-Time Command Center</h3>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Total Net P&L:</strong> Live calculation of your total portfolio profit and loss.</li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Equity Curve Chart:</strong> Visual candlestick representation of your account balance growth over time.</li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Quick KPIs:</strong> Glance at Gross Profit, Gross Loss, Net Profit, and overall Win Rate instantly.</li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Quick Actions:</strong> Single-click 'Add New Trade' button for rapid data entry during live markets.</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="lg:w-2/3">
-                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
-                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Total Net P&L:</strong> Live calculation of your total portfolio profit and loss.</li>
-                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Equity Curve Chart:</strong> Visual candlestick representation of your account balance growth over time.</li>
-                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Quick KPIs:</strong> Glance at Gross Profit, Gross Loss, Net Profit, and overall Win Rate instantly.</li>
-                                    <li className="flex items-start gap-2"><span className="text-blue-500">✔</span> <strong>Quick Actions:</strong> Single-click 'Add New Trade' button for rapid data entry during live markets.</li>
-                                </ul>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="Trading Dashboard Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
                         {/* 2. Trades */}
-                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
-                            <div className="lg:w-1/3 mb-6 lg:mb-0">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-400 font-bold mb-4 border border-green-500/20">
-                                    <TrendingUp size={18} /> 02. Trade Log
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-400 font-bold mb-4 border border-green-500/20">
+                                        <TrendingUp size={18} /> 02. Trade Log
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">Detailed Execution Tracker</h3>
                                 </div>
-                                <h3 className="text-3xl font-black mb-4">Detailed Execution Tracker</h3>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Comprehensive Inputs:</strong> Log Symbol, Direction (Long/Short), Entry, Exit, Stop Loss, Quantity, and Fees.</li>
+                                        <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Image Attachments:</strong> Upload screenshots of your charts for visual review of specific setups.</li>
+                                        <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Trade Notes/Tags:</strong> Add psychological notes and strategy tags (e.g., Breakout, Mean Reversion) to categorize executions.</li>
+                                        <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Historical List:</strong> Chronological list of all closed operations with individual profit/loss highlighting.</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="lg:w-2/3">
-                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
-                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Comprehensive Inputs:</strong> Log Symbol, Direction (Long/Short), Entry, Exit, Stop Loss, Quantity, and Fees.</li>
-                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Image Attachments:</strong> Upload screenshots of your charts for visual review of specific setups.</li>
-                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Trade Notes/Tags:</strong> Add psychological notes and strategy tags (e.g., Breakout, Mean Reversion) to categorize executions.</li>
-                                    <li className="flex items-start gap-2"><span className="text-green-500">✔</span> <strong>Historical List:</strong> Chronological list of all closed operations with individual profit/loss highlighting.</li>
-                                </ul>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200" alt="Trade Log and History Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
                         {/* 3. AI Coach */}
-                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
-                            <div className="lg:w-1/3 mb-6 lg:mb-0">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-400 font-bold mb-4 border border-purple-500/20">
-                                    <Brain size={18} /> 03. AI Coach
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-400 font-bold mb-4 border border-purple-500/20">
+                                        <Brain size={18} /> 03. AI Coach
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">24/7 Trading Psychiatrist</h3>
                                 </div>
-                                <h3 className="text-3xl font-black mb-4">24/7 Trading Psychiatrist</h3>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Context-Aware Advice:</strong> The AI reads your actual recent trades to give targeted, highly personalized feedback.</li>
+                                        <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Psychology Support:</strong> Helps manage Tilt, FOMO, and Revenge Trading through interactive dialogue.</li>
+                                        <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Strategy Adjustments:</strong> Ask the AI to identify patterns in your losses or suggest risk parameter changes.</li>
+                                        <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>History Clearing:</strong> Reset the AI conversation context anytime for a fresh perspective.</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="lg:w-2/3">
-                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
-                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Context-Aware Advice:</strong> The AI reads your actual recent trades to give targeted, highly personalized feedback.</li>
-                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Psychology Support:</strong> Helps manage Tilt, FOMO, and Revenge Trading through interactive dialogue.</li>
-                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>Strategy Adjustments:</strong> Ask the AI to identify patterns in your losses or suggest risk parameter changes.</li>
-                                    <li className="flex items-start gap-2"><span className="text-purple-500">✔</span> <strong>History Clearing:</strong> Reset the AI conversation context anytime for a fresh perspective.</li>
-                                </ul>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200" alt="AI Coach Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
                         {/* 4. Stats */}
-                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
-                            <div className="lg:w-1/3 mb-6 lg:mb-0">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-400 font-bold mb-4 border border-yellow-500/20">
-                                    <BarChart3 size={18} /> 04. Analytics
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-400 font-bold mb-4 border border-yellow-500/20">
+                                        <BarChart3 size={18} /> 04. Analytics
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">Institutional Grade Metrics</h3>
                                 </div>
-                                <h3 className="text-3xl font-black mb-4">Institutional Grade Metrics</h3>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Profit Factor & Expectancy:</strong> Mathematical formulas predicting long-term profitability based on your historical data.</li>
+                                        <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Sharpe Ratio & Drawdown:</strong> Understand your risk-adjusted returns and largest peak-to-trough portfolio drop.</li>
+                                        <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Averages:</strong> Calculate Average Win, Average Loss, and Average Risk-Reward ratio automatically.</li>
+                                        <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Calendar Heatmap:</strong> A visual grid showing your profitable vs unprofitable days throughout the year.</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="lg:w-2/3">
-                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
-                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Profit Factor & Expectancy:</strong> Mathematical formulas predicting long-term profitability based on your historical data.</li>
-                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Sharpe Ratio & Drawdown:</strong> Understand your risk-adjusted returns and largest peak-to-trough portfolio drop.</li>
-                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Averages:</strong> Calculate Average Win, Average Loss, and Average Risk-Reward ratio automatically.</li>
-                                    <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Calendar Heatmap:</strong> A visual grid showing your profitable vs unprofitable days throughout the year.</li>
-                                </ul>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" alt="Trading Analytics and Stats Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
                         {/* 5. Risk Calculator */}
-                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
-                            <div className="lg:w-1/3 mb-6 lg:mb-0">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 text-pink-400 font-bold mb-4 border border-pink-500/20">
-                                    <TrendingUp size={18} /> 05. Calculator
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 text-pink-400 font-bold mb-4 border border-pink-500/20">
+                                        <TrendingUp size={18} /> 05. Calculator
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">Risk Reward Planner</h3>
                                 </div>
-                                <h3 className="text-3xl font-black mb-4">Risk Reward Planner</h3>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Position Sizing:</strong> Type in your account limit and risk % to get the exact share/lot size you should trade.</li>
+                                        <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Target Projections:</strong> Calculates exact Take Profit prices based on desired risk-reward ratios (e.g., 1:2, 1:3).</li>
+                                        <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Stop Loss Validation:</strong> Visually confirm your stop distance before entering a live trade.</li>
+                                        <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Pre-Trade Discipline:</strong> Forces you to do the math and respect your risk limits before executing the broker order.</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="lg:w-2/3">
-                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
-                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Position Sizing:</strong> Type in your account limit and risk % to get the exact share/lot size you should trade.</li>
-                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Target Projections:</strong> Calculates exact Take Profit prices based on desired risk-reward ratios (e.g., 1:2, 1:3).</li>
-                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Stop Loss Validation:</strong> Visually confirm your stop distance before entering a live trade.</li>
-                                    <li className="flex items-start gap-2"><span className="text-pink-500">✔</span> <strong>Pre-Trade Discipline:</strong> Forces you to do the math and respect your risk limits before executing the broker order.</li>
-                                </ul>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1616422285623-1d22dc05c486?auto=format&fit=crop&q=80&w=1200" alt="Risk Reward Calculator Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
                         {/* 6. Profile */}
-                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl lg:flex gap-12 items-center">
-                            <div className="lg:w-1/3 mb-6 lg:mb-0">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-500/10 text-gray-400 font-bold mb-4 border border-gray-500/20">
-                                    <ShieldCheck size={18} /> 06. Profile & Settings
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-500/10 text-gray-400 font-bold mb-4 border border-gray-500/20">
+                                        <ShieldCheck size={18} /> 06. Profile & Settings
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">Account Customization</h3>
                                 </div>
-                                <h3 className="text-3xl font-black mb-4">Account Customization</h3>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Account Management:</strong> Secure Firebase-backed authentication, email updates, and password resets.</li>
+                                        <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Starting Balance:</strong> Set your initial capital to properly track percentage growth.</li>
+                                        <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Currency Options:</strong> Support for global traders (USD, EUR, GBP, INR, JPY, AUD).</li>
+                                        <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Theme Selection:</strong> Toggle between system default, pure Dark Mode, or Light Mode interface.</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="lg:w-2/3">
-                                <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
-                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Account Management:</strong> Secure Firebase-backed authentication, email updates, and password resets.</li>
-                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Starting Balance:</strong> Set your initial capital to properly track percentage growth.</li>
-                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Currency Options:</strong> Support for global traders (USD, EUR, GBP, INR, JPY, AUD).</li>
-                                    <li className="flex items-start gap-2"><span className="text-gray-400">✔</span> <strong>Theme Selection:</strong> Toggle between system default, pure Dark Mode, or Light Mode interface.</li>
-                                </ul>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=1200" alt="App Settings and Profile Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
                     </div>
