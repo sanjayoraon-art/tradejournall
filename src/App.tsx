@@ -585,9 +585,9 @@ const App = () => {
                 </div>
             </header>
 
-            {/* Top Navigation */}
-            <nav className={`${theme.card} border-b ${theme.border}`}>
-                <div className="max-w-md mx-auto flex items-center justify-around py-2 px-2">
+            {/* Bottom Navigation */}
+            <nav className={`${theme.card} border-t ${theme.border} fixed bottom-0 left-0 w-full z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)]`}>
+                <div className="max-w-md mx-auto flex items-center justify-around py-2 px-2 pb-safe">
                     <NavButton icon={<Home size={20} />} label="Home" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
                     <NavButton icon={<TrendingUp size={20} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
                     <NavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
@@ -597,7 +597,7 @@ const App = () => {
             </nav>
 
             {/* Main Content */}
-            <main className="flex-1 max-w-md mx-auto w-full p-4 pb-8">
+            <main className="flex-1 max-w-md mx-auto w-full p-4 pb-24">
                 {currentScreen === 'dashboard' && (
                     <div className="space-y-4">
                         {/* 1. Total Net P&L (Value Only) */}
