@@ -108,8 +108,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             <main className="w-full py-20 bg-gray-900 border-t border-gray-800">
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl lg:text-5xl font-black mb-4">Master Every Aspect of Trading</h2>
-                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">Explore our five core features designed to give traders the ultimate edge in volatile markets. From real-time analytics to AI-driven coaching, our platform provides a complete trading arsenal.</p>
+                        <h2 className="text-3xl lg:text-5xl font-black mb-4">Master Crypto, Forex & Day Trading Stocks</h2>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">Explore our core features designed to give day traders the ultimate edge in volatile markets. From real-time analytics to AI-driven coaching, our platform provides a complete trading software arsenal.</p>
                     </div>
 
                     <div className="space-y-24">
@@ -140,9 +140,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-400 font-bold text-sm border border-green-500/20">
                                     <TrendingUp size={16} /> Trade Log
                                 </div>
-                                <h3 className="text-3xl font-black">Detailed Trade Logging & History Tracking</h3>
+                                <h3 className="text-3xl font-black">Detailed Trade Logging & History Tracker</h3>
                                 <p className="text-gray-400 leading-relaxed text-lg">
-                                    Maintain a meticulous record of every execution with our detailed Trade List page. From Bitcoin to Forex, log your exact entry and exit prices, symbols, and trade direction effortlessly. A disciplined trader is a profitable trader, and keeping a precise history allows you to review your past decisions. Filter through your favorite setups and learn from both your winning streaks and your losses with our intuitive, minimalist log interface.
+                                    Maintain a meticulous record of every execution with our detailed Trade List page. Whether day trading Bitcoin or Forex, log your exact entry and exit prices, symbols, and trade direction effortlessly. A disciplined day trader is a profitable trader, and keeping a precise history allows you to review your past decisions. Filter through your favorite setups and learn from both your winning streaks and your losses with our intuitive, minimalist log interface.
                                 </p>
                             </div>
                         </article>
@@ -174,9 +174,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 font-bold text-sm border border-yellow-500/20">
                                     <BarChart3 size={16} /> Analytics
                                 </div>
-                                <h3 className="text-3xl font-black">Advanced Performance Metrics & Risk Ratios</h3>
+                                <h3 className="text-3xl font-black">Advanced Trading Performance Analytics Calculator</h3>
                                 <p className="text-gray-400 leading-relaxed text-lg">
-                                    Dive deep into the numbers that matter. The Stats page offers an institutional-grade breakdown of your performance, including Sharpe Ratio, Maximum Drawdown, Risk-Reward averages, and Trade Expectancy. Visualize your consistency with monthly heatmaps and strategy comparisons. Professional risk management is what separates gamblers from long-term profitable traders, and our advanced analytics provide the exact numbers you need to optimize your edge.
+                                    Dive deep into the numbers that matter. Our risk reward calculator and stats page offers an institutional-grade breakdown of your performance, including Sharpe Ratio, Maximum Drawdown, Risk-Reward averages, and Trade Expectancy. Visualize your consistency with monthly heatmaps and strategy comparisons. Professional risk management is what separates gamblers from long-term profitable day traders, and our advanced analytics software provides the exact numbers you need to optimize your edge.
                                 </p>
                             </div>
                         </article>
