@@ -27,9 +27,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             {/* Navbar Minimal */}
             <nav className={`w-full p-6 flex justify-between items-center z-50 relative`}>
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
-                        <TrendingUp size={24} className="text-white" />
-                    </div>
+                    <img src="/logo.png" alt="Trade Journal Logo" className="w-10 h-10 object-contain rounded-xl bg-white/10" />
                     <span className="text-xl font-black tracking-tight">Trade Journal</span>
                 </div>
                 <button
@@ -207,7 +205,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             <footer className="w-full py-12 text-sm border-t border-gray-800/50 bg-gray-900/50">
                 <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-2">
-                        <TrendingUp size={18} className="text-green-500" />
+                        <img src="/logo.png" alt="Trade Journal Logo" className="w-6 h-6 object-contain rounded-md bg-white/10" />
                         <span className="font-bold text-gray-300">Trade Journal</span>
                     </div>
 

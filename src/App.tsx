@@ -558,9 +558,7 @@ const App = () => {
             {/* Desktop Sidebar */}
             <aside className={`hidden md:flex flex-col w-64 border-r ${theme.border} ${theme.card} h-screen sticky top-0 z-50`}>
                 <div className="p-6 border-b border-gray-700/50 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
-                        <TrendingUp size={24} className="text-white" />
-                    </div>
+                    <img src="/logo.png" alt="Trade Journal Logo" className="w-10 h-10 object-contain rounded-xl bg-white/10" />
                     <span className="text-xl font-black tracking-tight">Trade Journal</span>
                 </div>
                 <nav className="flex-1 p-4 space-y-2 mt-4">
@@ -577,7 +575,8 @@ const App = () => {
                 {/* Mobile Header */}
                 <header className={`md:hidden ${theme.card} border-b ${theme.border} p-4 flex items-center justify-between z-10`}>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-black tracking-tight">Trade Journal</h1>
+                        <img src="/logo.png" alt="Trade Journal Logo" className="w-8 h-8 object-contain rounded-lg bg-white/10" />
+                        <h1 className="text-xl font-black tracking-tight">Trade Journal</h1>
                     </div>
                     <div className="flex items-center gap-2">
                         {currentScreen === 'ai-coach' && (
