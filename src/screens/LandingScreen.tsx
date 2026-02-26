@@ -66,7 +66,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             Elevate your trading journey with advanced analytics, AI-powered insights, and comprehensive performance tracking. Built for serious traders.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-4">
+                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-16 mt-8">
                             <button
                                 onClick={onSignIn}
                                 className="group px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center gap-2 text-lg active:scale-95"
