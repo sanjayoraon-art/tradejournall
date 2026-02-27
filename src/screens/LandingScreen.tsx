@@ -11,7 +11,7 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenInfo, theme, isDarkMode }) => {
     // Add page-specific SEO tags when the landing page mounts
     useEffect(() => {
-        document.title = "Trade Journal - Master Your Trading Strategy";
+        document.title = "Best AI Trade Tracker & Trading Journal - Master Your Trading Strategy";
 
         // Optional: Add more specific meta tags dynamically if needed
         // The generic ones in index.html already cover most cases well
@@ -39,7 +39,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             </nav>
 
             {/* Hero Section */}
-            <header className="flex flex-col items-center justify-center px-4 relative max-w-6xl mx-auto w-full min-h-screen py-20 mt-10">
+            <header className="flex flex-col items-center justify-start px-4 relative max-w-6xl mx-auto w-full pt-10 pb-20">
 
                 {/* Decorative background glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
@@ -47,10 +47,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                 <div className="grid lg:grid-cols-2 gap-12 items-center w-full py-12 lg:py-0">
 
                     {/* Text Content */}
-                    <div className="flex flex-col items-start space-y-8 z-10">
+                    <div className="flex flex-col items-start space-y-4 z-10">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-green-500/30 bg-green-500/10 text-green-500 font-semibold text-sm">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            The Ultimate Trading Companion
+                            The Ultimate AI Trading Journal
                         </div>
 
                         <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight">
@@ -61,10 +61,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         </h1>
 
                         <p className="text-xl text-gray-400 leading-relaxed max-w-xl">
-                            Elevate your trading journey with advanced analytics, AI-powered insights, and comprehensive performance tracking. Built for serious traders.
+                            Elevate your day trading and portfolio management with the best AI trade tracker. Built for serious crypto, forex, and stock traders to dominate the markets.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-16 mt-8">
+                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-2">
                             <button
                                 onClick={onSignIn}
                                 className="group px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center gap-2 text-lg active:scale-95"
@@ -108,8 +108,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             <main className="w-full py-20 bg-gray-900 border-t border-gray-800">
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl lg:text-5xl font-black mb-4">Complete Application Breakdown</h2>
-                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">Discover every single screen and feature available inside our premier trading software. From execution logging to AI analysis, here is exactly what you get.</p>
+                        <h2 className="text-3xl lg:text-5xl font-black mb-4">Inside the Best Trade Tracker</h2>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">Discover every single screen and feature available inside our premier AI trading journal software. From P&L logging to AI analysis, here is exactly what you get.</p>
                     </div>
 
                     <div className="space-y-16">
@@ -144,7 +144,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-400 font-bold mb-4 border border-green-500/20">
                                         <TrendingUp size={18} /> 02. Trade Log
                                     </div>
-                                    <h3 className="text-3xl font-black mb-4">Detailed Execution Tracker</h3>
+                                    <h3 className="text-3xl font-black mb-4">Complete P&L Tracker</h3>
                                 </div>
                                 <div className="lg:w-2/3">
                                     <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
@@ -197,7 +197,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                 <div className="lg:w-2/3">
                                     <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
                                         <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Profit Factor & Expectancy:</strong> Mathematical formulas predicting long-term profitability based on your historical data.</li>
-                                        <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Sharpe Ratio & Drawdown:</strong> Understand your risk-adjusted returns and largest peak-to-trough portfolio drop.</li>
+                                        <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Sharpe Ratio & Drawdown Calculator:</strong> Understand your risk-adjusted returns and largest peak-to-trough portfolio drop.</li>
                                         <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Averages:</strong> Calculate Average Win, Average Loss, and Average Risk-Reward ratio automatically.</li>
                                         <li className="flex items-start gap-2"><span className="text-yellow-500">✔</span> <strong>Calendar Heatmap:</strong> A visual grid showing your profitable vs unprofitable days throughout the year.</li>
                                     </ul>
@@ -216,7 +216,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 text-pink-400 font-bold mb-4 border border-pink-500/20">
                                         <TrendingUp size={18} /> 05. Calculator
                                     </div>
-                                    <h3 className="text-3xl font-black mb-4">Risk Reward Planner</h3>
+                                    <h3 className="text-3xl font-black mb-4">Risk Reward Calculator</h3>
                                 </div>
                                 <div className="lg:w-2/3">
                                     <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
