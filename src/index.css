@@ -27,3 +27,63 @@ main {
 nav {
     flex-shrink: 0;
 }
+
+/* Hide Google Translate Top Banner and adjust body */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+body,
+html {
+    top: 0px !important;
+}
+
+/* Style the Google translate widget to blend with dark mode */
+#google_translate_element select {
+    background-color: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+    cursor: pointer;
+}
+
+#google_translate_element select:hover {
+    border-color: #4b5563;
+}
+
+.goog-logo-link {
+    display: none !important;
+}
+
+.goog-te-gadget {
+    color: transparent !important;
+    font-size: 0px !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+    margin: 0 !important;
+}
+
+.fixed-translate-widget {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 99999;
+    background-color: #1f2937;
+    border-radius: 8px;
+    padding: 2px 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    border: 1px solid #374151;
+}
+
+/* Adjust mobile layout if needed */
+@media (max-width: 640px) {
+    .fixed-translate-widget {
+        bottom: 80px;
+        /* Above the mobile nav bar */
+        left: 10px;
+    }
+}
