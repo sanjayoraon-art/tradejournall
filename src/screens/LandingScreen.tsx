@@ -43,12 +43,12 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             </nav>
 
             {/* Hero Section */}
-            <header className="flex flex-col items-center justify-start px-4 relative max-w-6xl mx-auto w-full pt-10 pb-20">
+            <header className="flex flex-col items-center justify-start px-4 relative max-w-6xl mx-auto w-full pt-2 lg:pt-10 pb-20">
 
                 {/* Decorative background glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
-                <div className="grid lg:grid-cols-2 gap-12 items-center w-full py-12 lg:py-0">
+                <div className="grid lg:grid-cols-2 gap-12 items-center w-full pt-4 pb-12 lg:py-0">
 
                     {/* Text Content */}
                     <div className="flex flex-col items-start space-y-4 z-10">
