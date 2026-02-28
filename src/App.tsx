@@ -458,8 +458,9 @@ const App = () => {
         });
         let curveEquity = 0;
         const perTradeCandles = sortedForCurve.map((t, i) => {
+            const pnlVal = t.pnlAmount ?? t.pnl ?? 0;
             const open = curveEquity;
-            const close = curveEquity + t.pnl;
+            const close = curveEquity + pnlVal;
             const high = Math.max(open, close);
             const low = Math.min(open, close);
             curveEquity = close;
@@ -470,7 +471,7 @@ const App = () => {
                 high,
                 low,
                 close,
-                pnl: t.pnl,
+                pnl: pnlVal,
                 date: t.date,
                 index: i + 1
             };
