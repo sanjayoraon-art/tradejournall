@@ -195,7 +195,7 @@ const App = () => {
                 }
             };
 
-            const result = await exponentialBackoffFetch(API_URL, {
+            const result = await exponentialBackoffFetch(API_URL(), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -507,13 +507,17 @@ const App = () => {
         card: 'bg-gray-800',
         text: 'text-white',
         subtext: 'text-gray-400',
-        border: 'border-gray-700'
+        border: 'border-gray-700',
+        input: 'bg-gray-900 text-white border-gray-700 placeholder-gray-600',
+        label: 'text-gray-400'
     } : {
         bg: 'bg-gray-100',
         card: 'bg-white',
         text: 'text-gray-900',
         subtext: 'text-gray-600',
-        border: 'border-gray-300'
+        border: 'border-gray-300',
+        input: 'bg-white text-gray-900 border-gray-300 placeholder-gray-400',
+        label: 'text-gray-600'
     };
 
     if (!auth || !db) {

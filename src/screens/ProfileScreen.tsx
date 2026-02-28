@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { User, Camera, Edit, PlayCircle, Moon, Sun, Share2, Download, ShieldCheck, FileCheck, Info, HelpCircle, ChevronRight, ArrowLeft, LogOut } from 'lucide-react';
+import { User, Camera, Edit, PlayCircle, Moon, Sun, Share2, Download, ShieldCheck, FileCheck, Info, HelpCircle, ChevronRight, ArrowLeft, LogOut, Brain, Key } from 'lucide-react';
 import { auth } from '../utils/firebase';
 import { signOut } from 'firebase/auth';
 import { SupportChatModal } from '../components/SupportChatModal';
 import { ADMIN_EMAILS, isAdmin } from '../utils/admin';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 interface ProfileActionProps {
     icon: any;
@@ -79,6 +80,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
     const [tapCount, setTapCount] = useState(0);
     const [modalInfo, setModalInfo] = useState<{ title: string; content: string } | null>(null);
     const [showSupportChat, setShowSupportChat] = useState(false);
+    const [showApiModal, setShowApiModal] = useState(false);
+    const [geminiApiKey, setGeminiApiKey] = useState(() => localStorage.getItem('geminiApiKey') || '');
 
     // Simplified admin check using centralized utility
     const currentUserEmail = auth?.currentUser?.email;
@@ -140,14 +143,22 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
         reader.readAsDataURL(file);
     };
 
+    const handleSaveApiKey = () => {
+        localStorage.setItem('geminiApiKey', geminiApiKey);
+        setShowApiModal(false);
+    };
+
     return (
         <div className="min-h-screen pb-24">
             {/* Header */}
-            <header className="px-4 pt-6 pb-4 flex items-center gap-4">
-                <button onClick={() => setCurrentScreen('dashboard')} className={`p-2 rounded-xl ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}>
-                    <ArrowLeft size={24} className={isDarkMode ? 'text-white' : 'text-gray-900'} />
-                </button>
-                <h1 className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Profile</h1>
+            <header className="px-4 pt-6 pb-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => setCurrentScreen('dashboard')} className={`p-2 rounded-xl ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}>
+                        <ArrowLeft size={24} className={isDarkMode ? 'text-white' : 'text-gray-900'} />
+                    </button>
+                    <h1 className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Profile</h1>
+                </div>
+                <LanguageSelector isDarkMode={isDarkMode} />
             </header>
 
             <div className="px-4 space-y-6">
@@ -222,6 +233,21 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                         </div>
                         <ProfileAction icon={Share2} label="Share App" sub="Invite Friends" isDarkMode={isDarkMode} iconColor="text-blue-400" onClick={handleShare} />
                         <ProfileAction icon={Download} label="Download All Data" sub="Export as JSON" isDarkMode={isDarkMode} iconColor="text-gray-400" onClick={handleDownloadData} />
+                    </div>
+                </div>
+
+                {/* AI Settings Section */}
+                <div className="space-y-3">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 ml-2">AI Settings</h3>
+                    <div className={`${isDarkMode ? 'bg-[#1e2230]' : 'bg-white'} rounded-[24px] border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} overflow-hidden shadow-xl divide-y ${isDarkMode ? 'divide-gray-800' : 'divide-gray-50'}`}>
+                        <ProfileAction
+                            icon={Brain}
+                            label="AI Coach Configuration"
+                            sub="Manage API Keys"
+                            isDarkMode={isDarkMode}
+                            iconColor="text-green-500"
+                            onClick={() => setShowApiModal(true)}
+                        />
                     </div>
                 </div>
 
@@ -322,6 +348,52 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                 isDarkMode={isDarkMode}
                 theme={theme}
             />
+
+            {/* AI API Modal */}
+            {showApiModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-[100] animate-in fade-in duration-300">
+                    <div className={`${isDarkMode ? 'bg-[#1e2230] border-gray-700' : 'bg-white border-gray-100'} border p-8 rounded-[32px] w-full max-w-md shadow-2xl transform animate-in zoom-in-95 duration-300`}>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-green-500/20 rounded-xl text-green-500">
+                                <Key size={24} />
+                            </div>
+                            <div>
+                                <h2 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>API Configuration</h2>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Gemini 2.5 AI Coach</p>
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Gemini API Key</label>
+                            <input
+                                type="password"
+                                value={geminiApiKey}
+                                onChange={(e) => setGeminiApiKey(e.target.value)}
+                                placeholder="Enter your Gemini API Key..."
+                                className={`w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-green-500 transition-all ${isDarkMode ? 'bg-gray-900 border-gray-700 text-white placeholder-gray-600' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'}`}
+                            />
+                            <p className={`text-[10px] mt-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} italic`}>
+                                Your key is securely stored locally on this device. You can get a free key from Google AI Studio.
+                            </p>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowApiModal(false)}
+                                className={`flex-1 py-4 font-bold rounded-2xl transition-all active:scale-95 ${isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveApiKey}
+                                className="flex-1 py-4 bg-green-500 hover:bg-green-400 text-white font-black rounded-2xl transition-all active:scale-95"
+                            >
+                                Save Key
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { TrendingUp, BarChart3, ShieldCheck, Brain, ArrowRight } from 'lucide-react';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 interface LandingScreenProps {
     onSignIn: () => void;
@@ -31,6 +32,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                     <span className="text-xl font-black tracking-tight">Trade Journal</span>
                 </div>
                 <div className="flex items-center gap-4">
+                    <LanguageSelector isDarkMode={isDarkMode} />
                     <button
                         onClick={onSignIn}
                         className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-full transition-all border border-gray-700 hover:border-gray-500 shadow-[0_0_15px_rgba(0,0,0,0.2)]"

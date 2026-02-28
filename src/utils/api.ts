@@ -1,8 +1,11 @@
 
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+const getApiKey = () => {
+    return localStorage.getItem('geminiApiKey') || import.meta.env.VITE_GEMINI_API_KEY || "";
+};
+
 const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+const getApiUrl = () => `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${getApiKey()}`;
 const MAX_RETRIES = 5;
 
 interface ApiOptions extends RequestInit {
@@ -57,10 +60,10 @@ export const analyzeTradeScreenshot = async (base64Image: string): Promise<any> 
             temperature: 0.1
         }
     };
-    const result = await exponentialBackoffFetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const result = await exponentialBackoffFetch(getApiUrl(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!jsonText) throw new Error("AI analysis failed.");
     return JSON.parse(jsonText);
 };
 
-export { exponentialBackoffFetch, API_URL };
+export { exponentialBackoffFetch, getApiUrl as API_URL };
