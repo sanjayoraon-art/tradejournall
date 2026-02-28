@@ -359,7 +359,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                             </div>
                             <div>
                                 <h2 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>API Configuration</h2>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Gemini 2.5 AI Coach</p>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Gemini 1.5 AI Coach</p>
                             </div>
                         </div>
 
