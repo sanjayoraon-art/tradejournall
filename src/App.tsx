@@ -355,7 +355,13 @@ const App = () => {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const startOfYear = new Date(now.getFullYear(), 0, 1);
 
-        const filteredTrades = trades.filter(t => {
+        // Normalize trades to ensure 'pnl' property always exists (Firestore uses 'pnlAmount')
+        const normalizedTrades = trades.map(t => ({
+            ...t,
+            pnl: Number((t as any).pnlAmount ?? t.pnl ?? 0)
+        }));
+
+        const filteredTrades = normalizedTrades.filter(t => {
             const tradeDate = new Date(t.date);
             // Fix timezone offset for date comparison if needed, but treating strings as local date usually works for simple equality
             // Since t.date is YYYY-MM-DD string, we can compare parts directly
@@ -458,7 +464,7 @@ const App = () => {
         });
         let curveEquity = 0;
         const perTradeCandles = sortedForCurve.map((t, i) => {
-            const pnlVal = t.pnlAmount ?? t.pnl ?? 0;
+            const pnlVal = t.pnl;
             const open = curveEquity;
             const close = curveEquity + pnlVal;
             const high = Math.max(open, close);
