@@ -26,7 +26,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
     return (
         <div className={`w-full bg-[#111827] text-white flex flex-col font-sans overflow-x-hidden min-h-screen`}>
             {/* Navbar Minimal */}
-            <nav className={`w-full p-4 sm:p-6 flex justify-between items-center z-50 relative`}>
+            <nav className={`w-full px-4 pt-2 pb-4 sm:p-6 flex justify-between items-center z-50 relative`}>
                 <div className="flex items-center gap-3">
                     <img src="/logo.png" alt="Trade Journal Logo" className="w-10 h-10 object-contain rounded-xl bg-white/10" />
                     <span className="text-xl font-black tracking-tight">Trade Journal</span>
