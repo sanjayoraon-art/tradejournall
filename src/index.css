@@ -36,6 +36,7 @@ nav {
 body,
 html {
     top: 0px !important;
+    margin-top: 0px !important;
 }
 
 /* Style the Google translate widget to blend with dark mode */
