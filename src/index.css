@@ -68,22 +68,6 @@ html {
 }
 
 .fixed-translate-widget {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 99999;
-    background-color: #1f2937;
-    border-radius: 8px;
-    padding: 2px 4px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-    border: 1px solid #374151;
-}
-
-/* Adjust mobile layout if needed */
-@media (max-width: 640px) {
-    .fixed-translate-widget {
-        bottom: 80px;
-        /* Above the mobile nav bar */
-        left: 10px;
-    }
+    display: none !important;
+    /* Completely hide it, but keep it in DOM for custom selector */
 }
