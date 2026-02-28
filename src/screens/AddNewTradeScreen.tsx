@@ -151,23 +151,24 @@ export const AddNewTradeScreen: React.FC<AddNewTradeScreenProps> = ({ db, appId,
 
             {/* AI Analysis Loading Overlay */}
             {isAnalyzing && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="text-center p-8 rounded-3xl bg-gray-800 border border-gray-700 shadow-2xl scale-110">
-                        <div className="relative w-20 h-20 mx-auto mb-6">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="text-center p-8 rounded-3xl bg-gray-900 border border-gray-700 shadow-2xl scale-110">
+                        <div className="relative w-24 h-24 mx-auto mb-6">
                             <div className="absolute inset-0 border-4 border-green-500/20 rounded-full"></div>
-                            <div className="absolute inset-0 border-4 border-t-green-500 rounded-full animate-spin"></div>
-                            <Brain className="absolute inset-0 m-auto text-green-500 animate-pulse" size={32} />
+                            <div className="absolute inset-0 border-4 border-t-green-500 border-l-green-500 rounded-full animate-spin"></div>
+                            <Brain className="absolute inset-0 m-auto text-green-500 animate-pulse" size={40} />
                         </div>
-                        <h3 className="text-xl font-black text-white mb-2">Extracting Trade Data</h3>
-                        <p className="text-gray-400 text-sm">AI is reading your screenshot...</p>
-                        <div className="mt-4 flex gap-1 justify-center">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></span>
+                        <h3 className="text-2xl font-black text-white mb-2">Extracting Data...</h3>
+                        <p className="text-gray-400 text-sm font-medium">Our AI is analyzing your trade screenshot</p>
+                        <div className="mt-6 flex gap-2 justify-center">
+                            <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                            <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                            <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce"></span>
                         </div>
                     </div>
                 </div>
             )}
+
 
         </div>
     );
