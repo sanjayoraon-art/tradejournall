@@ -15,7 +15,7 @@ interface BacktestingScreenProps {
 export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isDarkMode, primaryCurrencySymbol, addTrade }) => {
     // UI State
     const [symbol, setSymbol] = useState('BTCUSDT');
-    const [interval, setInterval] = useState('5m');
+    const [interval, setTimeInterval] = useState('5m');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -56,7 +56,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
             setHistoricalData(data);
             setCurrentIndex(initialVisibleCandles);
             setCurrentPrice(data[initialVisibleCandles].close);
-            initChart(data.slice(0, initialVisibleCandles));
+            initChart(data.slice(0, initialVisibleCandles + 1));
         } catch (err: any) {
             setError(err.message || 'Failed to fetch data. Check symbol and connection.');
         } finally {
@@ -119,7 +119,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
             const baseDelay = 1000;
             const delay = baseDelay / speed;
 
-            intervalRef.current = setInterval(() => {
+            const id = setInterval(() => {
                 setCurrentIndex(prev => {
                     if (prev >= historicalData.length - 1) {
                         setIsPlaying(false);
@@ -127,17 +127,18 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
                     }
                     return prev + 1;
                 });
-            }, delay) as any;
+            }, delay);
+            intervalRef.current = id as unknown as NodeJS.Timeout;
         }
 
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [isPlaying, speed, historicalData, currentIndex]);
+    }, [isPlaying, speed, historicalData.length]);
 
     // Update Chart on Index Change
     useEffect(() => {
-        if (historicalData.length > 0 && candleSeriesRef.current && currentIndex >= initialVisibleCandles) {
+        if (historicalData.length > 0 && candleSeriesRef.current && currentIndex >= initialVisibleCandles && chartInstanceRef.current) {
             const newCandle = historicalData[currentIndex];
             candleSeriesRef.current.update({
                 time: (newCandle.openTime / 1000) as Time,
@@ -146,9 +147,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
                 low: newCandle.low,
                 close: newCandle.close,
             });
-            setCurrentPrice(newCandle.close);
+            // Only scroll to realtime if we are actively playing or stepping, to keep the new candle in view
+            if (isPlaying || currentIndex > initialVisibleCandles) {
+                chartInstanceRef.current.timeScale().scrollToRealTime();
+            }
         }
-    }, [currentIndex, historicalData]);
+    }, [currentIndex, historicalData, isPlaying]);
 
     const handleNextCandle = () => {
         if (historicalData.length > 0 && currentIndex < historicalData.length - 1) {
@@ -159,15 +163,18 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
     const togglePlay = () => setIsPlaying(!isPlaying);
 
     // Trading Logic
+    // Trading Logic
     const handleBuy = () => {
         if (!activeTrade) {
-            setActiveTrade({ type: 'Long', entryPrice: currentPrice, entryTime: historicalData[currentIndex].openTime });
+            const entry = historicalData.length > 0 ? historicalData[currentIndex].close : currentPrice;
+            setActiveTrade({ type: 'Long', entryPrice: entry, entryTime: historicalData[currentIndex].openTime });
         }
     };
 
     const handleSell = () => {
         if (!activeTrade) {
-            setActiveTrade({ type: 'Short', entryPrice: currentPrice, entryTime: historicalData[currentIndex].openTime });
+            const entry = historicalData.length > 0 ? historicalData[currentIndex].close : currentPrice;
+            setActiveTrade({ type: 'Short', entryPrice: entry, entryTime: historicalData[currentIndex].openTime });
         }
     };
 
@@ -175,17 +182,21 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
         if (!activeTrade) return;
 
         let pnl = 0;
+        const exitPriceToUse = historicalData.length > 0 && currentIndex < historicalData.length
+            ? historicalData[currentIndex].close
+            : currentPrice;
+
         if (activeTrade.type === 'Long') {
-            pnl = ((currentPrice - activeTrade.entryPrice) / activeTrade.entryPrice) * 1000; // Simulating $1000 position size
+            pnl = ((exitPriceToUse - activeTrade.entryPrice) / activeTrade.entryPrice) * 1000; // Simulating $1000 position size
         } else {
-            pnl = ((activeTrade.entryPrice - currentPrice) / activeTrade.entryPrice) * 1000;
+            pnl = ((activeTrade.entryPrice - exitPriceToUse) / activeTrade.entryPrice) * 1000;
         }
 
         const newTrade = {
             symbol: symbol.toUpperCase(),
             date: new Date(activeTrade.entryTime).toISOString().split('T')[0],
             entryPrice: activeTrade.entryPrice,
-            exitPrice: currentPrice,
+            exitPrice: exitPriceToUse,
             pnl: parseFloat(pnl.toFixed(2)),
             type: activeTrade.type,
             strategy: 'Backtest',
@@ -198,12 +209,17 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
     };
 
     // Calculate Unr. PnL
+    // Calculate Unr. PnL
     let currentUnrealizedPnl = 0;
+    const priceToUse = historicalData.length > 0 && currentIndex < historicalData.length
+        ? historicalData[currentIndex].close
+        : currentPrice;
+
     if (activeTrade) {
         if (activeTrade.type === 'Long') {
-            currentUnrealizedPnl = ((currentPrice - activeTrade.entryPrice) / activeTrade.entryPrice) * 1000;
+            currentUnrealizedPnl = ((priceToUse - activeTrade.entryPrice) / activeTrade.entryPrice) * 1000;
         } else {
-            currentUnrealizedPnl = ((activeTrade.entryPrice - currentPrice) / activeTrade.entryPrice) * 1000;
+            currentUnrealizedPnl = ((activeTrade.entryPrice - priceToUse) / activeTrade.entryPrice) * 1000;
         }
     }
 
@@ -234,7 +250,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
                     <label className={`block text-xs font-bold mb-1 ${theme.subText}`}>Interval</label>
                     <select
                         value={interval}
-                        onChange={(e) => setInterval(e.target.value)}
+                        onChange={(e) => setTimeInterval(e.target.value)}
                         className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
                     >
                         <option value="1m">1m</option>
