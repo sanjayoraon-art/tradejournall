@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, FastForward, RefreshCw, TrendingUp, TrendingDown, Clock, Search, SkipForward } from 'lucide-react';
+import { Play, Pause, RefreshCw, TrendingUp, TrendingDown, Search, SkipForward, Maximize, Minimize } from 'lucide-react';
 import { createChart, IChartApi, ISeriesApi, CandlestickData, Time } from 'lightweight-charts';
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
 import { Trade } from '../types';
@@ -29,10 +29,34 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
     const [activeTrade, setActiveTrade] = useState<{ type: 'Long' | 'Short', entryPrice: number, entryTime: number } | null>(null);
     const [currentPrice, setCurrentPrice] = useState(0);
 
-    // Chart References
+    // Options State
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showSMA20, setShowSMA20] = useState(false);
+    const [showSMA50, setShowSMA50] = useState(false);
+    const [showVolume, setShowVolume] = useState(false);
+
+    // Chart Refs
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartInstanceRef = useRef<IChartApi | null>(null);
     const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+
+    // Dynamic Series Refs
+    const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+    const sma20SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
+    const sma50SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
+
+    const calcSMA = (data: BinanceKline[], period: number) => {
+        const smaData = [];
+        for (let i = 0; i < data.length; i++) {
+            if (i < period - 1) continue;
+            let sum = 0;
+            for (let j = 0; j < period; j++) {
+                sum += data[i - j].close;
+            }
+            smaData.push({ time: (data[i].openTime / 1000) as Time, value: sum / period });
+        }
+        return smaData;
+    };
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const initialVisibleCandles = 100;
@@ -109,9 +133,54 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
         series.setData(formattedData);
         chart.timeScale().fitContent();
 
+        // Add Indicators
+        const volumeSeries = chart.addHistogramSeries({
+            color: '#26a69a',
+            priceFormat: { type: 'volume' },
+            priceScaleId: '',
+        });
+        chart.priceScale('').applyOptions({
+            scaleMargins: { top: 0.8, bottom: 0 }
+        });
+        volumeSeriesRef.current = volumeSeries;
+
+        const sma20Series = chart.addLineSeries({ color: 'rgba(41, 98, 255, 1)', lineWidth: 2, crosshairMarkerVisible: false });
+        sma20SeriesRef.current = sma20Series;
+
+        const sma50Series = chart.addLineSeries({ color: 'rgba(255, 152, 0, 1)', lineWidth: 2, crosshairMarkerVisible: false });
+        sma50SeriesRef.current = sma50Series;
+
+        const volData = initialData.map(d => ({
+            time: (d.openTime / 1000) as Time,
+            value: d.volume,
+            color: d.close >= d.open ? 'rgba(38, 166, 154, 0.4)' : 'rgba(239, 83, 80, 0.4)'
+        }));
+        volumeSeries.setData(volData);
+
+        sma20Series.setData(calcSMA(initialData, 20));
+        sma50Series.setData(calcSMA(initialData, 50));
+
+        // Initial Visibility
+        volumeSeries.applyOptions({ visible: showVolume });
+        sma20Series.applyOptions({ visible: showSMA20 });
+        sma50Series.applyOptions({ visible: showSMA50 });
+
         chartInstanceRef.current = chart;
         candleSeriesRef.current = series;
     };
+
+    // Toggle Visibility Effects
+    useEffect(() => {
+        if (sma20SeriesRef.current) sma20SeriesRef.current.applyOptions({ visible: showSMA20 });
+    }, [showSMA20]);
+
+    useEffect(() => {
+        if (sma50SeriesRef.current) sma50SeriesRef.current.applyOptions({ visible: showSMA50 });
+    }, [showSMA50]);
+
+    useEffect(() => {
+        if (volumeSeriesRef.current) volumeSeriesRef.current.applyOptions({ visible: showVolume });
+    }, [showVolume]);
 
     // Replay Logic
     useEffect(() => {
@@ -140,13 +209,35 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
     useEffect(() => {
         if (historicalData.length > 0 && candleSeriesRef.current && currentIndex >= initialVisibleCandles && chartInstanceRef.current) {
             const newCandle = historicalData[currentIndex];
+            const time = (newCandle.openTime / 1000) as Time;
+
             candleSeriesRef.current.update({
-                time: (newCandle.openTime / 1000) as Time,
+                time,
                 open: newCandle.open,
                 high: newCandle.high,
                 low: newCandle.low,
                 close: newCandle.close,
             });
+
+            if (volumeSeriesRef.current) {
+                volumeSeriesRef.current.update({
+                    time,
+                    value: newCandle.volume,
+                    color: newCandle.close >= newCandle.open ? 'rgba(38, 166, 154, 0.4)' : 'rgba(239, 83, 80, 0.4)'
+                });
+            }
+
+            if (sma20SeriesRef.current && currentIndex >= 19) {
+                let sum = 0;
+                for (let i = 0; i < 20; i++) sum += historicalData[currentIndex - i].close;
+                sma20SeriesRef.current.update({ time, value: sum / 20 });
+            }
+
+            if (sma50SeriesRef.current && currentIndex >= 49) {
+                let sum = 0;
+                for (let i = 0; i < 50; i++) sum += historicalData[currentIndex - i].close;
+                sma50SeriesRef.current.update({ time, value: sum / 50 });
+            }
             // Only scroll to realtime if we are actively playing or stepping, to keep the new candle in view
             if (isPlaying || currentIndex > initialVisibleCandles) {
                 chartInstanceRef.current.timeScale().scrollToRealTime();
@@ -224,14 +315,25 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
     }
 
     return (
-        <div className="space-y-4">
+        <div className={`space-y-4 ${isFullscreen ? `fixed inset-0 z-50 p-4 md:p-8 overflow-y-auto ${theme.bg} ${theme.text}` : ''}`}>
             <div className="flex flex-col md:flex-row items-center justify-between mb-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                     <History size={24} className="text-blue-500" /> Chart Replay
                 </h2>
-                <p className="text-sm text-gray-500 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
-                    Free data via Binance Public API
-                </p>
+                <div className="flex gap-2 items-center mt-2 md:mt-0">
+                    <button onClick={() => setShowSMA20(!showSMA20)} className={`px-2 py-1 text-xs rounded-md font-bold transition-colors ${showSMA20 ? 'bg-blue-600 text-white' : 'bg-gray-500/20 text-gray-500'}`}>
+                        SMA 20
+                    </button>
+                    <button onClick={() => setShowSMA50(!showSMA50)} className={`px-2 py-1 text-xs rounded-md font-bold transition-colors ${showSMA50 ? 'bg-orange-500 text-white' : 'bg-gray-500/20 text-gray-500'}`}>
+                        SMA 50
+                    </button>
+                    <button onClick={() => setShowVolume(!showVolume)} className={`px-2 py-1 text-xs rounded-md font-bold transition-colors ${showVolume ? 'bg-green-600 text-white' : 'bg-gray-500/20 text-gray-500'}`}>
+                        Volume
+                    </button>
+                    <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-md bg-gray-500/20 text-gray-500 hover:text-blue-500 transition-colors ml-2 hidden sm:block">
+                        {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                    </button>
+                </div>
             </div>
 
             {/* Controls Header */}
@@ -278,7 +380,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
             )}
 
             {/* Main Chart Area */}
-            <div className={`${theme.card} p-1 rounded-xl border ${theme.border} h-[400px] w-full relative overflow-hidden`}>
+            <div className={`${theme.card} p-1 rounded-xl border ${theme.border} ${isFullscreen ? 'h-[60vh] md:h-[70vh]' : 'h-[400px]'} w-full relative overflow-hidden`}>
                 {historicalData.length === 0 && !isLoading && !error && (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-500 z-10 bg-black/5">
                         Enter a symbol and hit Load to start backtesting
