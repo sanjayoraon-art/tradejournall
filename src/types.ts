@@ -15,6 +15,7 @@ export interface Trade {
     psychology: string;
     note: string;
     isFavorite?: boolean;
+    isBacktest?: boolean;
     timestamp?: number;
 }
 

@@ -9,6 +9,7 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
 import { NotificationsScreen } from './screens/NotificationsScreen';
 import { InformationScreen } from './screens/InformationScreen';
+import { BacktestingScreen } from './screens/BacktestingScreen';
 import { exponentialBackoffFetch, API_URL, analyzeTradeScreenshot } from './utils/api';
 import { db, auth, appId } from './utils/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -30,6 +31,7 @@ interface Trade {
     note?: string;
     isFavorite?: boolean;
     screenshot?: string;
+    isBacktest?: boolean;
 }
 
 const App = () => {
@@ -575,6 +577,7 @@ const App = () => {
                 <nav className="flex-1 p-4 space-y-2 mt-4">
                     <DeskNavButton icon={<Home size={20} />} label="Dashboard" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
                     <DeskNavButton icon={<TrendingUp size={20} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
+                    <DeskNavButton icon={<BarChart3 size={20} />} label="Backtesting" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
                     <DeskNavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
                     <DeskNavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
@@ -645,7 +648,8 @@ const App = () => {
                     <div className="max-w-md mx-auto flex items-center justify-around py-2 px-2 pb-safe">
                         <NavButton icon={<Home size={20} />} label="Home" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
                         <NavButton icon={<TrendingUp size={20} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
-                        <NavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
+                        <NavButton icon={<TrendingUp size={20} />} label="Backtest" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
+                        <NavButton icon={<MessageSquare size={20} />} label="Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                         <NavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
                         <NavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
                     </div>
@@ -790,6 +794,15 @@ const App = () => {
                                 )}
                             </div>
                         </div>
+                    )}
+
+                    {currentScreen === 'backtesting' && (
+                        <BacktestingScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            addTrade={addTrade}
+                        />
                     )}
 
                     {currentScreen === 'ai-coach' && (
