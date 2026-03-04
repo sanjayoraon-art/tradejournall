@@ -529,7 +529,9 @@ const App = () => {
         label: 'text-gray-600'
     };
 
-    if (!auth || !db) {
+    const isDevDev = window.location.hostname === 'localhost';
+
+    if (!isDevDev && (!auth || !db)) {
         return (
             <div className={`min-h-screen ${theme.bg} ${theme.text} flex flex-col items-center justify-center p-6 text-center`}>
                 <div className="bg-red-500/10 border border-red-500/30 p-8 rounded-3xl max-w-md">
@@ -563,7 +565,7 @@ const App = () => {
         if (showLanding) {
             return <LandingScreen onSignIn={() => setShowLanding(false)} onOpenInfo={(page) => setInfoPage(page)} theme={theme} isDarkMode={isDarkMode} />;
         }
-        return <LoginScreen theme={theme} />;
+        if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
     return (
