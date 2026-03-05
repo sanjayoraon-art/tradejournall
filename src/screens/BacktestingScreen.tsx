@@ -3,7 +3,12 @@ import {
     Play, Pause, RefreshCw, TrendingUp, TrendingDown, Search,
     SkipForward, Maximize, Minimize, MousePointer, Trash2, ChevronDown
 } from 'lucide-react';
-import { init, dispose, Chart, KLineData } from 'klinecharts';
+// klinecharts is loaded via CDN (window.klinecharts) to avoid Rollup bundling issues
+// We use type-only imports for TypeScript, but access the runtime API via the global
+import type { Chart, KLineData } from 'klinecharts';
+const _kc = () => (window as any).klinecharts as typeof import('klinecharts');
+const kcInit: typeof import('klinecharts')['init'] = (...args) => _kc().init(...args);
+const kcDispose: typeof import('klinecharts')['dispose'] = (...args) => _kc().dispose(...args);
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
 
 
@@ -150,11 +155,11 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         if (!chartContainerRef.current) return;
 
         if (chartInstanceRef.current) {
-            dispose(chartContainerRef.current);
+            kcDispose(chartContainerRef.current);
             chartInstanceRef.current = null;
         }
 
-        const chart = init(chartContainerRef.current);
+        const chart = kcInit(chartContainerRef.current);
         if (!chart) return;
 
         applyChartTheme(chart);
