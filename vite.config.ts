@@ -8,6 +8,9 @@ export default defineConfig({
         include: ['klinecharts'],
     },
     build: {
+        commonjsOptions: {
+            include: [/klinecharts/, /node_modules/],
+        },
         minify: 'esbuild',
         rollupOptions: {
             output: {

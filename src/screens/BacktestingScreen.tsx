@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { init, dispose, Chart, KLineData } from 'klinecharts';
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
-import { formatNumber } from '../utils/helpers';
+
 
 interface BacktestingScreenProps {
     theme: any;
