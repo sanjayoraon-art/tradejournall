@@ -1,17 +1,67 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-    Play, Pause, RefreshCw, TrendingUp, TrendingDown, Search,
-    SkipForward, Maximize, Minimize, MousePointer, Trash2, ChevronDown
+    Play, Pause, SkipForward, RefreshCw, Search,
+    TrendingUp, TrendingDown, Maximize2, Minimize2,
+    MousePointer, Trash2, ChevronDown, X, BarChart2, Zap
 } from 'lucide-react';
-// klinecharts is loaded via CDN (window.klinecharts) to avoid Rollup bundling issues
-// We use type-only imports for TypeScript, but access the runtime API via the global
 import type { Chart, KLineData } from 'klinecharts';
+import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
+
+// ─── CDN global wrappers ─────────────────────────────────────────────────────
 const _kc = () => (window as any).klinecharts as typeof import('klinecharts');
 const kcInit: typeof import('klinecharts')['init'] = (...args) => _kc().init(...args);
 const kcDispose: typeof import('klinecharts')['dispose'] = (...args) => _kc().dispose(...args);
-import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
 
+// ─── Constants ───────────────────────────────────────────────────────────────
+const INITIAL_VISIBLE = 150;
 
+const MAIN_INDICATORS = new Set(['MA', 'EMA', 'SMA', 'BBI', 'BOLL', 'SAR']);
+
+const INDICATOR_GROUPS = [
+    {
+        label: 'On Chart', color: 'blue',
+        items: ['MA', 'EMA', 'SMA', 'BOLL', 'SAR', 'BBI'],
+    },
+    {
+        label: 'Volume', color: 'emerald',
+        items: ['VOL', 'OBV', 'VR'],
+    },
+    {
+        label: 'Momentum', color: 'purple',
+        items: ['MACD', 'RSI', 'KDJ', 'CCI', 'WR', 'ROC', 'MTM', 'AO'],
+    },
+    {
+        label: 'Trend', color: 'amber',
+        items: ['DMI', 'BIAS', 'BRAR', 'CR', 'PSY', 'DMA', 'TRIX', 'EMV', 'PVT'],
+    },
+];
+
+const DRAWING_TOOLS = [
+    { name: 'segment', label: 'Trend Line', icon: '↗' },
+    { name: 'rayLine', label: 'Ray', icon: '→' },
+    { name: 'straightLine', label: 'Extended Line', icon: '↔' },
+    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: '—' },
+    { name: 'verticalStraightLine', label: 'Vertical Line', icon: '|' },
+    { name: 'priceLine', label: 'Price Level', icon: '$' },
+    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: '⫼' },
+    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'φ' },
+    { name: 'rect', label: 'Rectangle', icon: '▭' },
+    { name: 'circle', label: 'Circle', icon: '○' },
+    { name: 'triangle', label: 'Triangle', icon: '△' },
+    { name: 'text', label: 'Note', icon: 'T' },
+    { name: 'arrow', label: 'Arrow', icon: '➜' },
+];
+
+const CANDLE_TYPES = [
+    { value: 'candle_solid', label: 'Candle', icon: '🕯' },
+    { value: 'candle_stroke', label: 'Hollow', icon: '□' },
+    { value: 'ohlc', label: 'OHLC', icon: '|' },
+    { value: 'area', label: 'Area', icon: '~' },
+];
+
+const INTERVALS = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '1d', '1w'];
+
+// ─── Component ───────────────────────────────────────────────────────────────
 interface BacktestingScreenProps {
     theme: any;
     isDarkMode: boolean;
@@ -19,789 +69,576 @@ interface BacktestingScreenProps {
     addTrade: (trade: any) => void;
 }
 
-// ─── Indicator definitions ────────────────────────────────────────────────────
-// "main" pane indicators go on top of candles; "sub" get their own pane below.
-const MAIN_PANE_INDICATORS = ['MA', 'EMA', 'SMA', 'BBI', 'BOLL', 'SAR'];
-const ALL_INDICATORS: { name: string; label: string }[] = [
-    { name: 'MA', label: 'MA' },
-    { name: 'EMA', label: 'EMA' },
-    { name: 'SMA', label: 'SMA' },
-    { name: 'BBI', label: 'BBI' },
-    { name: 'BOLL', label: 'BOLL' },
-    { name: 'SAR', label: 'SAR' },
-    { name: 'VOL', label: 'VOL' },
-    { name: 'MACD', label: 'MACD' },
-    { name: 'KDJ', label: 'KDJ' },
-    { name: 'RSI', label: 'RSI' },
-    { name: 'CCI', label: 'CCI' },
-    { name: 'DMI', label: 'DMI' },
-    { name: 'WR', label: 'WR' },
-    { name: 'MTM', label: 'MTM' },
-    { name: 'ROC', label: 'ROC' },
-    { name: 'BIAS', label: 'BIAS' },
-    { name: 'BRAR', label: 'BRAR' },
-    { name: 'OBV', label: 'OBV' },
-    { name: 'VR', label: 'VR' },
-    { name: 'CR', label: 'CR' },
-    { name: 'PSY', label: 'PSY' },
-    { name: 'DMA', label: 'DMA' },
-    { name: 'TRIX', label: 'TRIX' },
-    { name: 'EMV', label: 'EMV' },
-    { name: 'AO', label: 'AO' },
-    { name: 'PVT', label: 'PVT' },
-];
-
-// ─── Drawing tool definitions ─────────────────────────────────────────────────
-const DRAWING_TOOLS: { name: string; label: string; icon: string }[] = [
-    { name: 'segment', label: 'Trend Line', icon: '↗' },
-    { name: 'rayLine', label: 'Ray', icon: '→' },
-    { name: 'straightLine', label: 'Extended Line', icon: '↔' },
-    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: '—' },
-    { name: 'verticalStraightLine', label: 'Vertical Line', icon: '|' },
-    { name: 'priceLine', label: 'Price Line', icon: '$' },
-    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: '⫼' },
-    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'φ' },
-    { name: 'rect', label: 'Rectangle', icon: '▭' },
-    { name: 'circle', label: 'Circle', icon: '○' },
-    { name: 'triangle', label: 'Triangle', icon: '△' },
-    { name: 'text', label: 'Text', icon: 'T' },
-    { name: 'arrow', label: 'Arrow', icon: '➜' },
-];
-
-// ─── Candle types ─────────────────────────────────────────────────────────────
-const CANDLE_TYPES: { value: string; label: string }[] = [
-    { value: 'candle_solid', label: '🕯 Candle' },
-    { value: 'candle_stroke', label: '□ Hollow' },
-    { value: 'ohlc', label: '| OHLC' },
-    { value: 'area', label: '~ Area' },
-];
-
-const initialVisibleCandles = 100;
-
 export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
-    theme, isDarkMode, primaryCurrencySymbol, addTrade
+    theme, isDarkMode, addTrade
 }) => {
-    // ── UI State ───────────────────────────────────────────────────────────────
+    // Load / Replay
     const [symbol, setSymbol] = useState('BTCUSDT');
-    const [timeInterval, setTimeInterval] = useState('5m');
+    const [interval, setInterval] = useState('5m');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const [isFullscreen, setIsFullscreen] = useState(false);
-
-    // ── Replay State ───────────────────────────────────────────────────────────
-    const [historicalData, setHistoricalData] = useState<BinanceKline[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [historicalData, setData] = useState<BinanceKline[]>([]);
+    const [currentIndex, setIndex] = useState(0);
+    const [isPlaying, setPlaying] = useState(false);
     const [speed, setSpeed] = useState<1 | 2 | 5>(1);
 
-    // ── Trading State ──────────────────────────────────────────────────────────
+    // Trading
     const [activeTrade, setActiveTrade] = useState<{
         type: 'Long' | 'Short'; entryPrice: number; entryTime: number;
     } | null>(null);
-    const [currentPrice, setCurrentPrice] = useState(0);
-    const [positionSize, setPositionSize] = useState(1000);
+    const [positionSize, setSize] = useState(1000);
+    const [currentPrice, setPrice] = useState(0);
 
-    // ── Indicator State ────────────────────────────────────────────────────────
-    // Tracks which indicators are currently active (to allow toggle)
-    const [activeIndicators, setActiveIndicators] = useState<Set<string>>(new Set(['VOL', 'MA']));
-    const [showIndicatorMenu, setShowIndicatorMenu] = useState(false);
-
-    // ── Drawing Tool State ─────────────────────────────────────────────────────
-    const [activeTool, setActiveTool] = useState<string | null>(null);
-    const [showToolsMenu, setShowToolsMenu] = useState(false);
-
-    // ── Candle Type ────────────────────────────────────────────────────────────
+    // Chart toolbar
     const [candleType, setCandleType] = useState('candle_solid');
+    const [activeIndicators, setActiveInds] = useState<Set<string>>(new Set(['VOL', 'MA']));
+    const [activeTool, setActiveTool] = useState<string | null>(null);
+    const [showIndMenu, setShowIndMenu] = useState(false);
+    const [showToolMenu, setShowToolMenu] = useState(false);
     const [showCandleMenu, setShowCandleMenu] = useState(false);
+    const [isFullscreen, setFullscreen] = useState(false);
 
-    // ── Chart Refs ─────────────────────────────────────────────────────────────
-    const chartContainerRef = useRef<HTMLDivElement>(null);
-    const chartInstanceRef = useRef<Chart | null>(null);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    // Chart
+    const containerRef = useRef<HTMLDivElement>(null);
+    const chartRef = useRef<Chart | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Load Data
-    // ─────────────────────────────────────────────────────────────────────────
-    const handleLoadData = async () => {
-        setIsLoading(true);
-        setError('');
-        setIsPlaying(false);
-        setActiveTrade(null);
-        setActiveTool(null);
-        if (intervalRef.current) clearInterval(intervalRef.current);
+    // ── Chart theme ───────────────────────────────────────────────────────────
+    const applyTheme = useCallback((chart: Chart, type = candleType) => {
+        chart.setStyles({
+            grid: {
+                show: true,
+                horizontal: { color: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
+                vertical: { color: isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' },
+            },
+            candle: {
+                type: type as any,
+                bar: { upColor: '#22c55e', downColor: '#ef4444', upBorderColor: '#22c55e', downBorderColor: '#ef4444', upWickColor: '#22c55e', downWickColor: '#ef4444' },
+                area: {
+                    lineColor: '#3b82f6',
+                    backgroundColor: [
+                        { offset: 0, color: 'rgba(59,130,246,0.25)' },
+                        { offset: 1, color: 'rgba(59,130,246,0)' },
+                    ],
+                },
+            },
+            xAxis: { axisLine: { color: 'rgba(255,255,255,0.08)' }, tickLine: { color: 'rgba(255,255,255,0.08)' }, tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 } },
+            yAxis: { axisLine: { color: 'rgba(255,255,255,0.08)' }, tickLine: { color: 'rgba(255,255,255,0.08)' }, tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 } },
+        });
+    }, [isDarkMode, candleType]);
 
+    // ── Init chart ────────────────────────────────────────────────────────────
+    const initChart = useCallback((data: BinanceKline[]) => {
+        if (!containerRef.current) return;
+        if (chartRef.current) { kcDispose(containerRef.current); chartRef.current = null; }
+        const chart = kcInit(containerRef.current);
+        if (!chart) return;
+        applyTheme(chart);
+        chart.createIndicator('VOL', true, { id: 'pane_vol' });
+        chart.createIndicator('MA', false, { id: 'candle_pane' });
+        const formatted: KLineData[] = data.map(d => ({
+            timestamp: d.timestamp, open: d.open, high: d.high,
+            low: d.low, close: d.close, volume: d.volume,
+        }));
+        chart.applyNewData(formatted);
+        chartRef.current = chart;
+        setActiveInds(new Set(['VOL', 'MA']));
+    }, [applyTheme]);
+
+    // ── Load data ─────────────────────────────────────────────────────────────
+    const loadData = async () => {
+        setIsLoading(true); setError(''); setPlaying(false); setActiveTrade(null); setActiveTool(null);
+        if (timerRef.current) clearInterval(timerRef.current);
         try {
-            const data = await fetchBinanceKlines(symbol, timeInterval, undefined, undefined, 1000);
-            if (data.length < initialVisibleCandles + 10) {
-                setError('Not enough historical data returned.');
-                setIsLoading(false);
-                return;
-            }
-            setHistoricalData(data);
-            setCurrentIndex(initialVisibleCandles);
-            setCurrentPrice(data[initialVisibleCandles].close);
-            initChart(data.slice(0, initialVisibleCandles + 1));
-        } catch (err: any) {
-            setError(err.message || 'Failed to fetch data. Check symbol and connection.');
+            const data = await fetchBinanceKlines(symbol, interval, undefined, undefined, 1000);
+            if (data.length < INITIAL_VISIBLE + 10) { setError('Not enough data. Try a shorter interval.'); return; }
+            setData(data);
+            setIndex(INITIAL_VISIBLE);
+            setPrice(data[INITIAL_VISIBLE].close);
+            initChart(data.slice(0, INITIAL_VISIBLE + 1));
+        } catch (e: any) {
+            setError(e.message ?? 'Failed to fetch. Check symbol & connection.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Initialize Chart
-    // ─────────────────────────────────────────────────────────────────────────
-    const initChart = (initialData: BinanceKline[]) => {
-        if (!chartContainerRef.current) return;
-
-        if (chartInstanceRef.current) {
-            kcDispose(chartContainerRef.current);
-            chartInstanceRef.current = null;
-        }
-
-        const chart = kcInit(chartContainerRef.current);
-        if (!chart) return;
-
-        applyChartTheme(chart);
-
-        // Default indicators: VOL in its own pane, MA on candle pane
-        chart.createIndicator('VOL', true, { id: 'pane_vol' });
-        chart.createIndicator('MA', false, { id: 'candle_pane' });
-
-        const formattedData: KLineData[] = initialData.map(d => ({
-            timestamp: d.timestamp,
-            open: d.open,
-            high: d.high,
-            low: d.low,
-            close: d.close,
-            volume: d.volume,
-        }));
-
-        chart.applyNewData(formattedData);
-        chartInstanceRef.current = chart;
-        setActiveIndicators(new Set(['VOL', 'MA']));
-    };
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Apply Theme to Chart
-    // ─────────────────────────────────────────────────────────────────────────
-    const applyChartTheme = (chart: Chart) => {
-        chart.setStyles({
-            grid: {
-                show: true,
-                horizontal: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-                vertical: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-            },
-            candle: {
-                type: candleType as any,
-                bar: {
-                    upColor: '#26a69a',
-                    downColor: '#ef5350',
-                    upBorderColor: '#26a69a',
-                    downBorderColor: '#ef5350',
-                    upWickColor: '#26a69a',
-                    downWickColor: '#ef5350',
-                },
-                area: {
-                    lineColor: '#2196F3',
-                    backgroundColor: [
-                        { offset: 0, color: 'rgba(33,150,243,0.3)' },
-                        { offset: 1, color: 'rgba(33,150,243,0.0)' },
-                    ],
-                },
-            },
-            xAxis: {
-                axisLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-                tickLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-                tickText: { color: isDarkMode ? '#D1D5DB' : '#374151' },
-            },
-            yAxis: {
-                axisLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-                tickLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-                tickText: { color: isDarkMode ? '#D1D5DB' : '#374151' },
-            },
-        });
-    };
-
-    // Update candle type live when user changes it
+    // ── Candle type live switch ───────────────────────────────────────────────
     useEffect(() => {
-        if (!chartInstanceRef.current) return;
-        chartInstanceRef.current.setStyles({
-            candle: { type: candleType as any },
-        });
+        if (!chartRef.current) return;
+        chartRef.current.setStyles({ candle: { type: candleType as any } });
         setShowCandleMenu(false);
     }, [candleType]);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Indicator Management
-    // ─────────────────────────────────────────────────────────────────────────
-    const getPaneIdForIndicator = (name: string) => {
-        if (MAIN_PANE_INDICATORS.includes(name)) return 'candle_pane';
-        if (name === 'VOL') return 'pane_vol';
-        // Each sub-indicator gets its own named pane so they don't overlap
-        return `pane_${name.toLowerCase()}`;
-    };
-
-    const handleToggleIndicator = (name: string) => {
-        if (!chartInstanceRef.current) return;
-        const paneId = getPaneIdForIndicator(name);
-
+    // ── Indicator toggle ──────────────────────────────────────────────────────
+    const toggleIndicator = (name: string) => {
+        if (!chartRef.current) return;
+        const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane'
+            : name === 'VOL' ? 'pane_vol'
+                : `pane_${name.toLowerCase()}`;
         if (activeIndicators.has(name)) {
-            // Remove indicator
-            try {
-                if (MAIN_PANE_INDICATORS.includes(name)) {
-                    // On main pane, remove by name (keeps candle pane itself)
-                    chartInstanceRef.current.removeIndicator('candle_pane', name);
-                } else {
-                    // Sub-pane indicators — remove the whole pane
-                    chartInstanceRef.current.removeIndicator(paneId, name);
-                }
-            } catch (_) { }
-            setActiveIndicators(prev => {
-                const next = new Set(prev);
-                next.delete(name);
-                return next;
-            });
+            try { chartRef.current.removeIndicator(paneId, name); } catch { }
+            setActiveInds(prev => { const n = new Set(prev); n.delete(name); return n; });
         } else {
-            // Add indicator
-            chartInstanceRef.current.createIndicator(name, true, { id: paneId });
-            setActiveIndicators(prev => new Set(prev).add(name));
+            chartRef.current.createIndicator(name, true, { id: paneId });
+            setActiveInds(prev => new Set(prev).add(name));
         }
-
-        setShowIndicatorMenu(false);
+        setShowIndMenu(false);
     };
 
-    const handleClearAllIndicators = () => {
-        if (!chartInstanceRef.current) return;
-        // Remove all known indicators
+    const clearAllIndicators = () => {
+        if (!chartRef.current) return;
         [...activeIndicators].forEach(name => {
             try {
-                const paneId = getPaneIdForIndicator(name);
-                if (MAIN_PANE_INDICATORS.includes(name)) {
-                    chartInstanceRef.current!.removeIndicator('candle_pane', name);
-                } else {
-                    chartInstanceRef.current!.removeIndicator(paneId, name);
-                }
-            } catch (_) { }
+                const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane'
+                    : name === 'VOL' ? 'pane_vol' : `pane_${name.toLowerCase()}`;
+                chartRef.current!.removeIndicator(paneId, name);
+            } catch { }
         });
-        setActiveIndicators(new Set());
+        setActiveInds(new Set());
     };
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Drawing Tools Management
-    // ─────────────────────────────────────────────────────────────────────────
-    const handleSelectTool = (toolName: string) => {
-        if (!chartInstanceRef.current) return;
-        chartInstanceRef.current.createOverlay(toolName);
-        setActiveTool(toolName);
-        setShowToolsMenu(false);
+    // ── Drawing tools ─────────────────────────────────────────────────────────
+    const selectTool = (name: string) => {
+        if (!chartRef.current) return;
+        chartRef.current.createOverlay(name);
+        setActiveTool(name);
+        setShowToolMenu(false);
     };
-
-    const handleCursorMode = () => {
-        if (!chartInstanceRef.current) return;
-        // Cancel any pending overlay draws by removing unfinished overlays
-        chartInstanceRef.current.removeOverlay();
+    const clearTool = () => {
+        chartRef.current?.removeOverlay();
         setActiveTool(null);
-        setShowToolsMenu(false);
+        setShowToolMenu(false);
     };
+    const clearDrawings = () => { chartRef.current?.removeOverlay(); setActiveTool(null); };
 
-    const handleClearAllDrawings = () => {
-        if (!chartInstanceRef.current) return;
-        chartInstanceRef.current.removeOverlay();
-        setActiveTool(null);
-    };
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Replay Logic
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Replay ────────────────────────────────────────────────────────────────
     useEffect(() => {
         if (isPlaying && historicalData.length > 0 && currentIndex < historicalData.length - 1) {
-            const delay = 1000 / speed;
             const id = setInterval(() => {
-                setCurrentIndex(prev => {
-                    if (prev >= historicalData.length - 1) {
-                        setIsPlaying(false);
-                        return prev;
-                    }
+                setIndex(prev => {
+                    if (prev >= historicalData.length - 1) { setPlaying(false); return prev; }
                     return prev + 1;
                 });
-            }, delay);
-            intervalRef.current = id as unknown as NodeJS.Timeout;
+            }, 1000 / speed);
+            timerRef.current = id as unknown as NodeJS.Timeout;
         }
-        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+        return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [isPlaying, speed, historicalData.length]);
 
-    // Update chart when index changes
     useEffect(() => {
-        if (
-            historicalData.length > 0 &&
-            currentIndex >= initialVisibleCandles &&
-            chartInstanceRef.current
-        ) {
-            const newCandle = historicalData[currentIndex];
-            const kline: KLineData = {
-                timestamp: newCandle.timestamp,
-                open: newCandle.open,
-                high: newCandle.high,
-                low: newCandle.low,
-                close: newCandle.close,
-                volume: newCandle.volume,
-            };
-            chartInstanceRef.current.updateData(kline);
-            if (currentPrice !== newCandle.close) setCurrentPrice(newCandle.close);
-        }
+        if (!chartRef.current || historicalData.length === 0 || currentIndex < INITIAL_VISIBLE) return;
+        const c = historicalData[currentIndex];
+        chartRef.current.updateData({ timestamp: c.timestamp, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume });
+        if (c.close !== currentPrice) setPrice(c.close);
     }, [currentIndex, historicalData]);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Trading Logic
-    // ─────────────────────────────────────────────────────────────────────────
-    const handleBuy = () => {
-        if (activeTrade || historicalData.length === 0) return;
-        const entry = historicalData[currentIndex].close;
-        setActiveTrade({ type: 'Long', entryPrice: entry, entryTime: historicalData[currentIndex].timestamp });
+    // ── Trading ───────────────────────────────────────────────────────────────
+    const currentBar = historicalData.length > 0 && currentIndex < historicalData.length ? historicalData[currentIndex] : null;
+    const price = currentBar?.close ?? currentPrice;
+
+    const openTrade = (type: 'Long' | 'Short') => {
+        if (activeTrade || !currentBar) return;
+        setActiveTrade({ type, entryPrice: currentBar.close, entryTime: currentBar.timestamp });
     };
 
-    const handleSell = () => {
-        if (activeTrade || historicalData.length === 0) return;
-        const entry = historicalData[currentIndex].close;
-        setActiveTrade({ type: 'Short', entryPrice: entry, entryTime: historicalData[currentIndex].timestamp });
-    };
-
-    const handleCloseTrade = () => {
+    const closeTrade = () => {
         if (!activeTrade) return;
-        const exitPrice = historicalData.length > 0 ? historicalData[currentIndex].close : currentPrice;
         const size = positionSize || 1000;
-        let pnl = 0;
-        if (activeTrade.type === 'Long') {
-            pnl = ((exitPrice - activeTrade.entryPrice) / activeTrade.entryPrice) * size;
-        } else {
-            pnl = ((activeTrade.entryPrice - exitPrice) / activeTrade.entryPrice) * size;
-        }
-
+        const pnl = activeTrade.type === 'Long'
+            ? ((price - activeTrade.entryPrice) / activeTrade.entryPrice) * size
+            : ((activeTrade.entryPrice - price) / activeTrade.entryPrice) * size;
         addTrade({
             symbol: symbol.toUpperCase(),
             date: new Date(activeTrade.entryTime).toISOString().split('T')[0],
             entryPrice: activeTrade.entryPrice,
-            exitPrice,
+            exitPrice: price,
             pnl: parseFloat(pnl.toFixed(2)),
             type: activeTrade.type,
             strategy: 'Backtest',
-            note: `Backtesting simulation — $${size} position`,
+            note: `Backtest sim — $${size} position`,
             isBacktest: true,
         });
         setActiveTrade(null);
     };
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Computed values
-    // ─────────────────────────────────────────────────────────────────────────
-    const priceToUse = historicalData.length > 0 && currentIndex < historicalData.length
-        ? historicalData[currentIndex].close
-        : currentPrice;
+    const unrealizedPnl = activeTrade
+        ? activeTrade.type === 'Long'
+            ? ((price - activeTrade.entryPrice) / activeTrade.entryPrice) * positionSize
+            : ((activeTrade.entryPrice - price) / activeTrade.entryPrice) * positionSize
+        : 0;
 
-    let currentUnrealizedPnl = 0;
-    if (activeTrade) {
-        const size = positionSize || 1000;
-        if (activeTrade.type === 'Long') {
-            currentUnrealizedPnl = ((priceToUse - activeTrade.entryPrice) / activeTrade.entryPrice) * size;
-        } else {
-            currentUnrealizedPnl = ((activeTrade.entryPrice - priceToUse) / activeTrade.entryPrice) * size;
-        }
-    }
+    const pnlPositive = unrealizedPnl >= 0;
+    const priceDecimals = price < 1 ? 6 : price < 100 ? 4 : 2;
+    const toolLabel = activeTool ? DRAWING_TOOLS.find(t => t.name === activeTool)?.label ?? activeTool : 'Cursor';
 
-    const currentTimestamp = historicalData.length > 0 && currentIndex < historicalData.length
-        ? new Date(historicalData[currentIndex].timestamp).toLocaleString()
-        : '--';
-
-    const activeToolLabel = activeTool
-        ? DRAWING_TOOLS.find(t => t.name === activeTool)?.label ?? activeTool
-        : 'Cursor';
+    const closeAllMenus = () => { setShowIndMenu(false); setShowToolMenu(false); setShowCandleMenu(false); };
 
     // ─────────────────────────────────────────────────────────────────────────
     // Render
     // ─────────────────────────────────────────────────────────────────────────
     return (
         <div
-            className={`space-y-4 ${isFullscreen
-                ? `fixed inset-0 z-50 p-4 md:p-6 overflow-y-auto ${theme.bg} ${theme.text}`
-                : ''
-                }`}
-            onClick={() => {
-                // Close all menus when clicking outside
-                if (showIndicatorMenu) setShowIndicatorMenu(false);
-                if (showToolsMenu) setShowToolsMenu(false);
-                if (showCandleMenu) setShowCandleMenu(false);
-            }}
+            className={`flex flex-col gap-3 ${isFullscreen ? `fixed inset-0 z-50 p-3 overflow-y-auto ${theme.bg}` : ''}`}
+            onClick={closeAllMenus}
         >
-            {/* ── Header ── */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-2">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                    <HistoryIcon size={24} className="text-blue-500" />
-                    Chart Replay & Backtesting
-                </h2>
-
-                {/* Toolbar */}
-                <div className="flex flex-wrap gap-2 items-center relative">
-
-                    {/* ── Candle Type ── */}
-                    <div className="relative" onClick={e => e.stopPropagation()}>
-                        <button
-                            onClick={() => { setShowCandleMenu(!showCandleMenu); setShowIndicatorMenu(false); setShowToolsMenu(false); }}
-                            className={`px-3 py-1.5 text-xs rounded-md font-semibold transition-colors bg-gray-700 hover:bg-gray-600 text-white flex items-center gap-1.5`}
-                        >
-                            {CANDLE_TYPES.find(c => c.value === candleType)?.label ?? 'Candle'}
-                            <ChevronDown size={12} />
-                        </button>
-                        {showCandleMenu && (
-                            <div className={`absolute top-full left-0 mt-1 w-36 rounded-lg shadow-xl border ${theme.border} ${theme.card} z-50`}>
-                                {CANDLE_TYPES.map(ct => (
-                                    <button
-                                        key={ct.value}
-                                        onClick={() => { setCandleType(ct.value); setShowCandleMenu(false); }}
-                                        className={`w-full px-3 py-2 text-xs text-left transition-colors rounded-md
-                                            ${candleType === ct.value
-                                                ? 'bg-blue-600 text-white font-bold'
-                                                : `${theme.text} hover:bg-blue-500/20`
-                                            }`}
-                                    >
-                                        {ct.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+            {/* ══ TOP BAR ══════════════════════════════════════════════════════ */}
+            <div className={`flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-xl border ${theme.border} ${theme.card}`}>
+                {/* Icon + Title */}
+                <div className="flex items-center gap-2 mr-2">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <BarChart2 size={16} className="text-blue-400" />
                     </div>
-
-                    {/* ── Indicators ── */}
-                    <div className="relative" onClick={e => e.stopPropagation()}>
-                        <button
-                            onClick={() => { setShowIndicatorMenu(!showIndicatorMenu); setShowToolsMenu(false); setShowCandleMenu(false); }}
-                            className="px-3 py-1.5 text-xs rounded-md font-bold transition-colors bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5"
-                        >
-                            <TrendingUp size={13} />
-                            Indicators
-                            {activeIndicators.size > 0 && (
-                                <span className="bg-white/25 rounded-full px-1.5 py-0.5 font-black text-[10px]">
-                                    {activeIndicators.size}
-                                </span>
-                            )}
-                            <ChevronDown size={12} />
-                        </button>
-
-                        {showIndicatorMenu && (
-                            <div className={`absolute top-full right-0 mt-1 w-52 max-h-72 rounded-lg shadow-xl border ${theme.border} ${theme.card} z-50 flex flex-col`}>
-                                <div className="overflow-y-auto flex-1 p-2 grid grid-cols-2 gap-1">
-                                    {ALL_INDICATORS.map(ind => {
-                                        const isActive = activeIndicators.has(ind.name);
-                                        return (
-                                            <button
-                                                key={ind.name}
-                                                onClick={() => handleToggleIndicator(ind.name)}
-                                                className={`p-1.5 text-xs text-center rounded transition-colors font-semibold
-                                                    ${isActive
-                                                        ? 'bg-blue-600 text-white'
-                                                        : `${theme.text} hover:bg-blue-500/20`
-                                                    }`}
-                                            >
-                                                {isActive && '✓ '}{ind.label}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                <div className={`border-t ${theme.border} p-2`}>
-                                    <button
-                                        onClick={() => { handleClearAllIndicators(); setShowIndicatorMenu(false); }}
-                                        className="w-full p-1.5 text-xs text-center text-red-400 hover:bg-red-500/20 transition-colors rounded flex items-center justify-center gap-1"
-                                    >
-                                        <Trash2 size={11} /> Clear All
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* ── Drawing Tools ── */}
-                    <div className="relative" onClick={e => e.stopPropagation()}>
-                        <button
-                            onClick={() => { setShowToolsMenu(!showToolsMenu); setShowIndicatorMenu(false); setShowCandleMenu(false); }}
-                            className={`px-3 py-1.5 text-xs rounded-md font-bold transition-colors flex items-center gap-1.5
-                                ${activeTool ? 'bg-purple-600 text-white' : 'bg-purple-600/80 hover:bg-purple-600 text-white'}`}
-                        >
-                            ✏️ {activeToolLabel}
-                            <ChevronDown size={12} />
-                        </button>
-
-                        {showToolsMenu && (
-                            <div className={`absolute top-full right-0 mt-1 w-52 rounded-lg shadow-xl border ${theme.border} ${theme.card} z-50 flex flex-col`}>
-                                {/* Cursor / Pointer mode */}
-                                <div className="p-2 pb-0">
-                                    <button
-                                        onClick={handleCursorMode}
-                                        className={`w-full px-3 py-2 text-xs text-left rounded-md transition-colors flex items-center gap-2 font-semibold
-                                            ${!activeTool
-                                                ? 'bg-purple-600 text-white'
-                                                : `${theme.text} hover:bg-purple-500/20`
-                                            }`}
-                                    >
-                                        <MousePointer size={13} /> Cursor (No Tool)
-                                    </button>
-                                </div>
-                                <div className={`p-2 border-t ${theme.border} mt-2 overflow-y-auto max-h-60 flex flex-col gap-1`}>
-                                    {DRAWING_TOOLS.map(tool => (
-                                        <button
-                                            key={tool.name}
-                                            onClick={() => handleSelectTool(tool.name)}
-                                            className={`px-3 py-2 text-xs text-left rounded-md transition-colors flex items-center gap-2
-                                                ${activeTool === tool.name
-                                                    ? 'bg-purple-600 text-white font-bold'
-                                                    : `${theme.text} hover:bg-purple-500/20`
-                                                }`}
-                                        >
-                                            <span className="font-mono text-sm w-5 text-center">{tool.icon}</span>
-                                            {tool.label}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className={`border-t ${theme.border} p-2`}>
-                                    <button
-                                        onClick={() => { handleClearAllDrawings(); setShowToolsMenu(false); }}
-                                        className="w-full p-1.5 text-xs text-center text-red-400 hover:bg-red-500/20 transition-colors rounded flex items-center justify-center gap-1"
-                                    >
-                                        <Trash2 size={11} /> Clear All Drawings
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Fullscreen */}
-                    <button
-                        onClick={() => setIsFullscreen(!isFullscreen)}
-                        className={`p-1.5 rounded-md transition-colors ${isFullscreen
-                            ? 'bg-blue-500 text-white'
-                            : `${theme.card} border ${theme.border} text-gray-400 hover:text-blue-500`
-                            }`}
-                        title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-                    >
-                        {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
-                    </button>
+                    <span className="font-bold text-sm hidden sm:block" style={{ color: isDarkMode ? '#e5e7eb' : '#111827' }}>
+                        Chart Replay
+                    </span>
                 </div>
-            </div>
 
-            {/* ── Load Controls ── */}
-            <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-wrap gap-3 items-end`}>
-                <div className="flex-1 min-w-[110px]">
-                    <label className={`block text-xs font-bold mb-1 ${theme.subText}`}>Symbol</label>
+                {/* Symbol input */}
+                <div className="flex items-center gap-1.5">
                     <input
                         type="text"
                         value={symbol}
                         onChange={e => setSymbol(e.target.value.toUpperCase())}
                         placeholder="BTCUSDT"
-                        className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none text-sm ${theme.input}`}
+                        className={`w-28 px-2.5 py-1.5 text-xs font-bold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none uppercase tracking-wide ${theme.input}`}
                     />
-                </div>
-                <div className="flex-1 min-w-[90px]">
-                    <label className={`block text-xs font-bold mb-1 ${theme.subText}`}>Interval</label>
+                    {/* Interval select */}
                     <select
-                        value={timeInterval}
-                        onChange={e => setTimeInterval(e.target.value)}
-                        className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none text-sm ${theme.input}`}
+                        value={interval}
+                        onChange={e => setInterval(e.target.value)}
+                        className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
                     >
-                        <option value="1m">1m</option>
-                        <option value="3m">3m</option>
-                        <option value="5m">5m</option>
-                        <option value="15m">15m</option>
-                        <option value="30m">30m</option>
-                        <option value="1h">1H</option>
-                        <option value="2h">2H</option>
-                        <option value="4h">4H</option>
-                        <option value="1d">1D</option>
-                        <option value="1w">1W</option>
+                        {INTERVALS.map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
                     </select>
+                    {/* Load button */}
+                    <button
+                        onClick={e => { e.stopPropagation(); loadData(); }}
+                        disabled={isLoading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-all disabled:opacity-50"
+                    >
+                        {isLoading ? <RefreshCw size={12} className="animate-spin" /> : <Search size={12} />}
+                        {isLoading ? 'Loading…' : 'Load'}
+                    </button>
                 </div>
-                <button
-                    onClick={handleLoadData}
-                    disabled={isLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-6 rounded-lg transition-all flex items-center gap-2 text-sm"
-                >
-                    {isLoading ? <RefreshCw className="animate-spin" size={18} /> : <Search size={18} />}
-                    {isLoading ? 'Loading...' : 'Load'}
+
+                {/* Divider */}
+                <div className="h-5 w-px bg-gray-700/50 mx-1 hidden sm:block" />
+
+                {/* Candle type */}
+                <div className="relative" onClick={e => e.stopPropagation()}>
+                    <button
+                        onClick={() => { setShowCandleMenu(!showCandleMenu); setShowIndMenu(false); setShowToolMenu(false); }}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all
+                            ${theme.border} ${showCandleMenu ? 'bg-gray-700 text-white' : `${theme.card} hover:border-gray-500 ${theme.text}`}`}
+                    >
+                        <span>{CANDLE_TYPES.find(c => c.value === candleType)?.icon}</span>
+                        <span className="hidden sm:inline">{CANDLE_TYPES.find(c => c.value === candleType)?.label}</span>
+                        <ChevronDown size={11} />
+                    </button>
+                    {showCandleMenu && (
+                        <div className={`absolute top-full left-0 mt-1 w-32 rounded-xl shadow-2xl border ${theme.border} z-50`}
+                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
+                            {CANDLE_TYPES.map(ct => (
+                                <button key={ct.value} onClick={() => { setCandleType(ct.value); setShowCandleMenu(false); }}
+                                    className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl transition-colors
+                                        ${candleType === ct.value ? 'bg-blue-600 text-white font-bold' : `${theme.text} hover:bg-blue-500/10`}`}>
+                                    <span className="font-mono">{ct.icon}</span> {ct.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Indicators */}
+                <div className="relative" onClick={e => e.stopPropagation()}>
+                    <button
+                        onClick={() => { setShowIndMenu(!showIndMenu); setShowToolMenu(false); setShowCandleMenu(false); }}
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all
+                            ${showIndMenu ? 'bg-blue-600 border-blue-600 text-white' : 'border-blue-500/40 text-blue-400 hover:bg-blue-500/10'}`}
+                    >
+                        <TrendingUp size={12} />
+                        <span>Indicators</span>
+                        {activeIndicators.size > 0 && (
+                            <span className="bg-blue-500 text-white text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center">
+                                {activeIndicators.size}
+                            </span>
+                        )}
+                    </button>
+                    {showIndMenu && (
+                        <div className={`absolute top-full left-0 mt-1 w-64 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-50`}
+                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
+                            <div className="max-h-80 overflow-y-auto p-2 space-y-3">
+                                {INDICATOR_GROUPS.map(group => (
+                                    <div key={group.label}>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-1 mb-1">{group.label}</p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {group.items.map(name => {
+                                                const active = activeIndicators.has(name);
+                                                return (
+                                                    <button key={name} onClick={() => toggleIndicator(name)}
+                                                        className={`px-2 py-1 text-xs rounded-lg font-semibold transition-all
+                                                            ${active ? 'bg-blue-600 text-white' : `${theme.text} bg-gray-800/50 hover:bg-blue-500/20`}`}>
+                                                        {active && <span className="mr-0.5">✓</span>}{name}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={`border-t ${theme.border} px-3 py-2`}>
+                                <button onClick={() => { clearAllIndicators(); setShowIndMenu(false); }}
+                                    className="w-full text-xs text-red-400 hover:text-red-300 flex items-center justify-center gap-1 py-1 rounded-lg hover:bg-red-500/10 transition-colors">
+                                    <Trash2 size={11} /> Clear All Indicators
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Drawing Tools */}
+                <div className="relative" onClick={e => e.stopPropagation()}>
+                    <button
+                        onClick={() => { setShowToolMenu(!showToolMenu); setShowIndMenu(false); setShowCandleMenu(false); }}
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all
+                            ${activeTool || showToolMenu ? 'bg-purple-600 border-purple-600 text-white' : 'border-purple-500/40 text-purple-400 hover:bg-purple-500/10'}`}
+                    >
+                        <span>✏️</span>
+                        <span className="hidden sm:inline">{toolLabel}</span>
+                        <ChevronDown size={11} />
+                    </button>
+                    {showToolMenu && (
+                        <div className={`absolute top-full left-0 mt-1 w-48 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-50`}
+                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
+                            {/* Cursor */}
+                            <button onClick={clearTool}
+                                className={`w-full px-3 py-2.5 text-xs text-left flex items-center gap-2 border-b ${theme.border} transition-colors
+                                    ${!activeTool ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
+                                <MousePointer size={12} /> Cursor (No Tool)
+                            </button>
+                            <div className="max-h-60 overflow-y-auto">
+                                {DRAWING_TOOLS.map(tool => (
+                                    <button key={tool.name} onClick={() => selectTool(tool.name)}
+                                        className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2.5 transition-colors
+                                            ${activeTool === tool.name ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
+                                        <span className="font-mono w-4 text-center">{tool.icon}</span>
+                                        {tool.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className={`border-t ${theme.border} px-3 py-2`}>
+                                <button onClick={() => { clearDrawings(); setShowToolMenu(false); }}
+                                    className="w-full text-xs text-red-400 hover:text-red-300 flex items-center justify-center gap-1 py-1 rounded-lg hover:bg-red-500/10 transition-colors">
+                                    <Trash2 size={11} /> Clear All Drawings
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Fullscreen */}
+                <button onClick={() => setFullscreen(!isFullscreen)}
+                    className={`p-1.5 rounded-lg border transition-all ${theme.border} ${theme.text} hover:text-blue-400`}>
+                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
                 </button>
             </div>
 
             {/* Error */}
             {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-500 text-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                    <X size={14} className="shrink-0" />
                     {error}
                 </div>
             )}
 
-            {/* ── Chart ── */}
-            <div className={`${theme.card} rounded-xl border ${theme.border} ${isFullscreen ? 'h-[58vh]' : 'h-[420px]'} w-full relative overflow-hidden`}>
-                {/* Timestamp overlay — only shown when data is loaded */}
-                {historicalData.length > 0 && currentIndex < historicalData.length && (
-                    <div className="absolute top-2 left-2 z-20 text-xs text-white bg-black/60 px-2 py-1 rounded pointer-events-none">
-                        {currentTimestamp}
-                        {activeTool && (
-                            <span className="ml-2 text-purple-300">✏️ {activeToolLabel}</span>
-                        )}
-                    </div>
-                )}
+            {/* ══ CHART AREA ══════════════════════════════════════════════════ */}
+            <div className={`relative rounded-xl border overflow-hidden ${theme.border} ${isFullscreen ? 'h-[55vh]' : 'h-[420px] md:h-[490px]'}`}
+                style={{ background: isDarkMode ? '#111827' : '#f9fafb' }}>
 
-                {/* Empty state */}
+                {/* Chart container */}
+                <div ref={containerRef} className="w-full h-full" />
+
+                {/* Empty state overlay */}
                 {historicalData.length === 0 && !isLoading && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-gray-500 pointer-events-none">
-                        <HistoryIcon size={48} className="opacity-20" />
-                        <p className="text-sm">Enter a symbol and click <strong>Load</strong> to start replay</p>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-none"
+                        style={{ background: isDarkMode ? 'rgba(17,24,39,0.95)' : 'rgba(249,250,251,0.95)' }}>
+                        <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+                            <BarChart2 size={32} className="text-blue-400/50" />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-sm font-semibold text-gray-400">No Chart Data</p>
+                            <p className="text-xs text-gray-600 mt-1">Enter a symbol and click <strong className="text-gray-400">Load</strong> to begin replay</p>
+                        </div>
                     </div>
                 )}
 
-                <div ref={chartContainerRef} className="w-full h-full" />
+                {/* Loading overlay */}
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center"
+                        style={{ background: isDarkMode ? 'rgba(17,24,39,0.8)' : 'rgba(249,250,251,0.8)' }}>
+                        <div className="flex items-center gap-2 text-blue-400">
+                            <RefreshCw size={18} className="animate-spin" />
+                            <span className="text-sm font-semibold">Loading {symbol}…</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Live price badge - top right */}
+                {historicalData.length > 0 && (
+                    <div className="absolute top-3 right-3 flex items-center gap-2 pointer-events-none">
+                        <div className="px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-900/80 backdrop-blur border border-white/10 text-white">
+                            <span className="text-gray-400 mr-1">{symbol}</span>
+                            <span className={price > (historicalData[currentIndex > 0 ? currentIndex - 1 : 0]?.close ?? price) ? 'text-green-400' : 'text-red-400'}>
+                                {price.toFixed(priceDecimals)}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Active tool indicator */}
+                {activeTool && (
+                    <div className="absolute top-3 left-3 pointer-events-none">
+                        <div className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-600/90 backdrop-blur text-white flex items-center gap-1.5">
+                            <span>✏️</span> {toolLabel}
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* ── Replay Controls ── */}
-            <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-wrap justify-between items-center gap-3`}>
+            {/* ══ CONTROLS + INFO BAR ════════════════════════════════════════ */}
+            <div className={`flex flex-wrap items-center gap-3 px-4 py-3 rounded-xl border ${theme.border} ${theme.card}`}>
+                {/* Playback */}
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        disabled={historicalData.length === 0}
-                        className={`p-3 rounded-lg flex items-center justify-center transition-all disabled:opacity-40
-                            ${isPlaying ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}
-                        title={isPlaying ? 'Pause' : 'Play'}
-                    >
-                        {isPlaying ? <Pause size={22} /> : <Play size={22} />}
+                    <button onClick={() => setPlaying(!isPlaying)} disabled={historicalData.length === 0}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-40
+                            ${isPlaying ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>
+                        {isPlaying ? <><Pause size={13} /> Pause</> : <><Play size={13} /> Play</>}
                     </button>
                     <button
-                        onClick={() => {
-                            if (historicalData.length > 0 && currentIndex < historicalData.length - 1)
-                                setCurrentIndex(prev => prev + 1);
-                        }}
+                        onClick={() => historicalData.length > 0 && currentIndex < historicalData.length - 1 && setIndex(p => p + 1)}
                         disabled={isPlaying || historicalData.length === 0}
-                        className="p-3 bg-gray-500/20 text-gray-400 hover:text-white rounded-lg transition-all disabled:opacity-40"
-                        title="Next Candle"
-                    >
-                        <SkipForward size={22} />
+                        className={`p-1.5 rounded-lg border transition-all disabled:opacity-40 ${theme.border} text-gray-400 hover:text-white hover:border-gray-500`}>
+                        <SkipForward size={14} />
                     </button>
-                    {/* Speed */}
-                    <div className={`flex items-center rounded-lg p-1 ml-2 border ${theme.border} ${theme.card}`}>
-                        {([1, 2, 5] as const).map(s => (
-                            <button
-                                key={s}
-                                onClick={() => setSpeed(s)}
-                                className={`px-3 py-1 text-sm rounded cursor-pointer transition-colors
-                                    ${speed === s ? 'bg-blue-600 text-white font-bold' : 'text-gray-400 hover:text-white'}`}
-                            >
-                                {s}x
-                            </button>
-                        ))}
-                    </div>
                 </div>
 
-                {/* Progress */}
+                {/* Speed */}
+                <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border}`}>
+                    {([1, 2, 5] as const).map(s => (
+                        <button key={s} onClick={() => setSpeed(s)}
+                            className={`px-2.5 py-1 text-xs font-bold transition-colors
+                                ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}>
+                            {s}×
+                        </button>
+                    ))}
+                </div>
+
+                {/* Divider */}
+                <div className="h-5 w-px bg-gray-700/50" />
+
+                {/* Time & Progress */}
                 {historicalData.length > 0 && (
-                    <div className="text-xs text-gray-500 font-mono">
-                        Candle {currentIndex} / {historicalData.length - 1}
-                        &nbsp;·&nbsp;
-                        <span className={`font-bold ${priceToUse > 0 ? 'text-blue-400' : ''}`}>
-                            {priceToUse > 0 ? priceToUse.toFixed(priceToUse < 10 ? 4 : 2) : '--'}
+                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                        <span className="font-mono bg-gray-800/50 px-2 py-1 rounded-lg">
+                            {currentBar ? new Date(currentBar.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '--'}
                         </span>
+                        {/* Progress bar */}
+                        <div className="hidden sm:flex items-center gap-1.5">
+                            <div className="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                <div className="h-full bg-blue-500 rounded-full transition-all"
+                                    style={{ width: `${((currentIndex - INITIAL_VISIBLE) / (historicalData.length - INITIAL_VISIBLE - 1)) * 100}%` }} />
+                            </div>
+                            <span className="text-[10px]">{currentIndex}/{historicalData.length - 1}</span>
+                        </div>
                     </div>
                 )}
             </div>
 
-            {/* ── Trading Panel ── */}
+            {/* ══ TRADING PANEL ══════════════════════════════════════════════ */}
             {historicalData.length > 0 && (
-                <div className={`${theme.card} p-4 rounded-xl border ${theme.border} grid grid-cols-1 md:grid-cols-2 gap-6`}>
-                    {/* Buy / Sell */}
-                    <div className="flex gap-4">
-                        <button
-                            onClick={handleBuy}
-                            disabled={!!activeTrade}
-                            className={`flex-1 py-4 font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all
-                                ${!activeTrade
-                                    ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/40'
-                                    : 'opacity-30 cursor-not-allowed bg-gray-800 text-gray-500'
-                                }`}
-                        >
-                            <TrendingUp size={22} />
-                            <span className="text-sm">BUY LONG</span>
-                        </button>
-                        <button
-                            onClick={handleSell}
-                            disabled={!!activeTrade}
-                            className={`flex-1 py-4 font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all
-                                ${!activeTrade
-                                    ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/40'
-                                    : 'opacity-30 cursor-not-allowed bg-gray-800 text-gray-500'
-                                }`}
-                        >
-                            <TrendingDown size={22} />
-                            <span className="text-sm">SELL SHORT</span>
-                        </button>
-                    </div>
-
-                    {/* Position Info */}
-                    <div className={`flex flex-col justify-center border-l border-gray-700/50 pl-6 gap-3`}>
-                        {/* Position size input */}
+                <div className={`rounded-xl border ${theme.border} ${theme.card} overflow-hidden`}>
+                    {/* Panel header */}
+                    <div className={`px-4 py-2.5 border-b ${theme.border} flex items-center justify-between`}>
                         <div className="flex items-center gap-2">
-                            <label className={`text-xs font-bold ${theme.subText} whitespace-nowrap`}>Position Size</label>
-                            <div className="flex items-center border border-gray-600 rounded-lg overflow-hidden">
-                                <span className="px-2 text-xs text-gray-400 bg-gray-800">$</span>
+                            <Zap size={14} className="text-amber-400" />
+                            <span className="text-xs font-bold text-gray-400">Paper Trading</span>
+                        </div>
+                        {/* Position size */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-gray-500 font-semibold">SIZE</span>
+                            <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border}`}>
+                                <span className="px-2 py-1 text-xs text-gray-500 bg-gray-800/50">$</span>
                                 <input
                                     type="number"
                                     value={positionSize}
-                                    onChange={e => setPositionSize(Math.max(1, parseInt(e.target.value) || 1000))}
+                                    onChange={e => setSize(Math.max(1, parseInt(e.target.value) || 1000))}
                                     disabled={!!activeTrade}
                                     min={1}
-                                    className={`w-24 px-2 py-1 text-sm outline-none bg-transparent ${theme.text} disabled:opacity-50`}
+                                    className={`w-20 px-2 py-1 text-xs outline-none text-right bg-transparent ${theme.text} disabled:opacity-50 disabled:cursor-not-allowed`}
                                 />
                             </div>
                         </div>
+                    </div>
 
-                        {/* Active trade status */}
-                        {activeTrade ? (
-                            <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className={`font-bold text-sm ${activeTrade.type === 'Long' ? 'text-green-400' : 'text-red-400'}`}>
-                                        {activeTrade.type} @ {activeTrade.entryPrice.toFixed(activeTrade.entryPrice < 10 ? 4 : 2)}
-                                    </span>
-                                    <span className={`text-xl font-black ${currentUnrealizedPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                                        {currentUnrealizedPnl >= 0 ? '+' : ''}${currentUnrealizedPnl.toFixed(2)}
-                                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-800/50">
+                        {/* Buttons */}
+                        <div className="p-4 flex gap-3">
+                            <button onClick={() => openTrade('Long')} disabled={!!activeTrade}
+                                className={`flex-1 py-3 rounded-xl text-sm font-bold flex flex-col items-center gap-1 transition-all border
+                                    ${!activeTrade
+                                        ? 'bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20 hover:border-green-500/60 active:scale-95'
+                                        : 'opacity-30 cursor-not-allowed bg-gray-800/30 border-gray-700/30 text-gray-600'}`}>
+                                <TrendingUp size={20} />
+                                <span>BUY LONG</span>
+                            </button>
+                            <button onClick={() => openTrade('Short')} disabled={!!activeTrade}
+                                className={`flex-1 py-3 rounded-xl text-sm font-bold flex flex-col items-center gap-1 transition-all border
+                                    ${!activeTrade
+                                        ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/60 active:scale-95'
+                                        : 'opacity-30 cursor-not-allowed bg-gray-800/30 border-gray-700/30 text-gray-600'}`}>
+                                <TrendingDown size={20} />
+                                <span>SELL SHORT</span>
+                            </button>
+                        </div>
+
+                        {/* Active trade info */}
+                        <div className="p-4 flex flex-col justify-center">
+                            {activeTrade ? (
+                                <div className="space-y-2.5">
+                                    {/* Trade info row */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${activeTrade.type === 'Long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                                {activeTrade.type === 'Long' ? '▲ LONG' : '▼ SHORT'}
+                                            </span>
+                                            <span className="text-xs text-gray-500">@ {activeTrade.entryPrice.toFixed(priceDecimals)}</span>
+                                        </div>
+                                        <div className={`text-right`}>
+                                            <p className="text-[10px] text-gray-600 uppercase tracking-wide">Unrealized P&L</p>
+                                            <p className={`text-lg font-black leading-tight ${pnlPositive ? 'text-green-400' : 'text-red-400'}`}>
+                                                {pnlPositive ? '+' : ''}${unrealizedPnl.toFixed(2)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button onClick={closeTrade}
+                                        className="w-full py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold text-sm rounded-xl transition-all active:scale-95">
+                                        Close Position
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={handleCloseTrade}
-                                    className="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg transition-all text-sm"
-                                >
-                                    Close Position
-                                </button>
-                            </div>
-                        ) : (
-                            <p className="text-gray-500 italic text-sm text-center py-2">
-                                No active position. Buy or Sell to start.
-                            </p>
-                        )}
+                            ) : (
+                                <div className="flex flex-col items-center gap-1 py-2 text-center">
+                                    <p className="text-xs font-semibold text-gray-500">No Active Position</p>
+                                    <p className="text-[10px] text-gray-600">Click Buy or Sell to start a paper trade</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
         </div>
     );
 };
-
-// ── Inline SVG icon for "History" ─────────────────────────────────────────────
-const HistoryIcon = ({ size = 24, className = '' }) => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={size} height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className={className}
-    >
-        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-        <path d="M3 3v5h5" />
-        <path d="M12 7v5l4 2" />
-    </svg>
-);
