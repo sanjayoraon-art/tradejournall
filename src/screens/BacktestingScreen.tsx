@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RefreshCw, TrendingUp, TrendingDown, Search, SkipForward, Maximize, Minimize } from 'lucide-react';
-import { createChart, IChartApi, ISeriesApi, CandlestickData, Time } from 'lightweight-charts';
+import {
+    Play, Pause, RefreshCw, TrendingUp, TrendingDown, Search,
+    SkipForward, Maximize, Minimize, MousePointer, Trash2, ChevronDown
+} from 'lucide-react';
+import { init, dispose, Chart, KLineData } from 'klinecharts';
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
-import { Trade } from '../types';
-import { formatNumber, getCurrencySymbol } from '../utils/helpers';
+import { formatNumber } from '../utils/helpers';
 
 interface BacktestingScreenProps {
     theme: any;
@@ -12,68 +14,121 @@ interface BacktestingScreenProps {
     addTrade: (trade: any) => void;
 }
 
-export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isDarkMode, primaryCurrencySymbol, addTrade }) => {
-    // UI State
+// ─── Indicator definitions ────────────────────────────────────────────────────
+// "main" pane indicators go on top of candles; "sub" get their own pane below.
+const MAIN_PANE_INDICATORS = ['MA', 'EMA', 'SMA', 'BBI', 'BOLL', 'SAR'];
+const ALL_INDICATORS: { name: string; label: string }[] = [
+    { name: 'MA', label: 'MA' },
+    { name: 'EMA', label: 'EMA' },
+    { name: 'SMA', label: 'SMA' },
+    { name: 'BBI', label: 'BBI' },
+    { name: 'BOLL', label: 'BOLL' },
+    { name: 'SAR', label: 'SAR' },
+    { name: 'VOL', label: 'VOL' },
+    { name: 'MACD', label: 'MACD' },
+    { name: 'KDJ', label: 'KDJ' },
+    { name: 'RSI', label: 'RSI' },
+    { name: 'CCI', label: 'CCI' },
+    { name: 'DMI', label: 'DMI' },
+    { name: 'WR', label: 'WR' },
+    { name: 'MTM', label: 'MTM' },
+    { name: 'ROC', label: 'ROC' },
+    { name: 'BIAS', label: 'BIAS' },
+    { name: 'BRAR', label: 'BRAR' },
+    { name: 'OBV', label: 'OBV' },
+    { name: 'VR', label: 'VR' },
+    { name: 'CR', label: 'CR' },
+    { name: 'PSY', label: 'PSY' },
+    { name: 'DMA', label: 'DMA' },
+    { name: 'TRIX', label: 'TRIX' },
+    { name: 'EMV', label: 'EMV' },
+    { name: 'AO', label: 'AO' },
+    { name: 'PVT', label: 'PVT' },
+];
+
+// ─── Drawing tool definitions ─────────────────────────────────────────────────
+const DRAWING_TOOLS: { name: string; label: string; icon: string }[] = [
+    { name: 'segment', label: 'Trend Line', icon: '↗' },
+    { name: 'rayLine', label: 'Ray', icon: '→' },
+    { name: 'straightLine', label: 'Extended Line', icon: '↔' },
+    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: '—' },
+    { name: 'verticalStraightLine', label: 'Vertical Line', icon: '|' },
+    { name: 'priceLine', label: 'Price Line', icon: '$' },
+    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: '⫼' },
+    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'φ' },
+    { name: 'rect', label: 'Rectangle', icon: '▭' },
+    { name: 'circle', label: 'Circle', icon: '○' },
+    { name: 'triangle', label: 'Triangle', icon: '△' },
+    { name: 'text', label: 'Text', icon: 'T' },
+    { name: 'arrow', label: 'Arrow', icon: '➜' },
+];
+
+// ─── Candle types ─────────────────────────────────────────────────────────────
+const CANDLE_TYPES: { value: string; label: string }[] = [
+    { value: 'candle_solid', label: '🕯 Candle' },
+    { value: 'candle_stroke', label: '□ Hollow' },
+    { value: 'ohlc', label: '| OHLC' },
+    { value: 'area', label: '~ Area' },
+];
+
+const initialVisibleCandles = 100;
+
+export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
+    theme, isDarkMode, primaryCurrencySymbol, addTrade
+}) => {
+    // ── UI State ───────────────────────────────────────────────────────────────
     const [symbol, setSymbol] = useState('BTCUSDT');
-    const [interval, setTimeInterval] = useState('5m');
+    const [timeInterval, setTimeInterval] = useState('5m');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
-    // Replay State
+    // ── Replay State ───────────────────────────────────────────────────────────
     const [historicalData, setHistoricalData] = useState<BinanceKline[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [speed, setSpeed] = useState<1 | 2 | 5>(1); // Speed multiplier
+    const [speed, setSpeed] = useState<1 | 2 | 5>(1);
 
-    // Trading State
-    const [activeTrade, setActiveTrade] = useState<{ type: 'Long' | 'Short', entryPrice: number, entryTime: number } | null>(null);
+    // ── Trading State ──────────────────────────────────────────────────────────
+    const [activeTrade, setActiveTrade] = useState<{
+        type: 'Long' | 'Short'; entryPrice: number; entryTime: number;
+    } | null>(null);
     const [currentPrice, setCurrentPrice] = useState(0);
+    const [positionSize, setPositionSize] = useState(1000);
 
-    // Options State
-    const [isFullscreen, setIsFullscreen] = useState(false);
-    const [showSMA20, setShowSMA20] = useState(false);
-    const [showSMA50, setShowSMA50] = useState(false);
-    const [showVolume, setShowVolume] = useState(false);
+    // ── Indicator State ────────────────────────────────────────────────────────
+    // Tracks which indicators are currently active (to allow toggle)
+    const [activeIndicators, setActiveIndicators] = useState<Set<string>>(new Set(['VOL', 'MA']));
+    const [showIndicatorMenu, setShowIndicatorMenu] = useState(false);
 
-    // Chart Refs
+    // ── Drawing Tool State ─────────────────────────────────────────────────────
+    const [activeTool, setActiveTool] = useState<string | null>(null);
+    const [showToolsMenu, setShowToolsMenu] = useState(false);
+
+    // ── Candle Type ────────────────────────────────────────────────────────────
+    const [candleType, setCandleType] = useState('candle_solid');
+    const [showCandleMenu, setShowCandleMenu] = useState(false);
+
+    // ── Chart Refs ─────────────────────────────────────────────────────────────
     const chartContainerRef = useRef<HTMLDivElement>(null);
-    const chartInstanceRef = useRef<IChartApi | null>(null);
-    const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-
-    // Dynamic Series Refs
-    const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
-    const sma20SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
-    const sma50SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
-
-    const calcSMA = (data: BinanceKline[], period: number) => {
-        const smaData = [];
-        for (let i = 0; i < data.length; i++) {
-            if (i < period - 1) continue;
-            let sum = 0;
-            for (let j = 0; j < period; j++) {
-                sum += data[i - j].close;
-            }
-            smaData.push({ time: (data[i].openTime / 1000) as Time, value: sum / period });
-        }
-        return smaData;
-    };
+    const chartInstanceRef = useRef<Chart | null>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const initialVisibleCandles = 100;
-
+    // ─────────────────────────────────────────────────────────────────────────
     // Load Data
+    // ─────────────────────────────────────────────────────────────────────────
     const handleLoadData = async () => {
         setIsLoading(true);
         setError('');
         setIsPlaying(false);
         setActiveTrade(null);
+        setActiveTool(null);
         if (intervalRef.current) clearInterval(intervalRef.current);
 
         try {
-            // Fetch 1000 candles max to have historical context + future replay
-            const data = await fetchBinanceKlines(symbol, interval, undefined, undefined, 1000);
+            const data = await fetchBinanceKlines(symbol, timeInterval, undefined, undefined, 1000);
             if (data.length < initialVisibleCandles + 10) {
-                setError("Not enough historical data returned.");
+                setError('Not enough historical data returned.');
                 setIsLoading(false);
                 return;
             }
@@ -88,106 +143,175 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
         }
     };
 
+    // ─────────────────────────────────────────────────────────────────────────
     // Initialize Chart
+    // ─────────────────────────────────────────────────────────────────────────
     const initChart = (initialData: BinanceKline[]) => {
-        if (chartInstanceRef.current) {
-            chartInstanceRef.current.remove();
-        }
-
         if (!chartContainerRef.current) return;
 
-        const chart = createChart(chartContainerRef.current, {
-            layout: {
-                background: { color: isDarkMode ? '#1F2937' : '#FFFFFF' }, // gray-800 or white
-                textColor: isDarkMode ? '#D1D5DB' : '#374151',
-            },
-            grid: {
-                vertLines: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-                horzLines: { color: isDarkMode ? '#374151' : '#E5E7EB' },
-            },
-            timeScale: {
-                timeVisible: true,
-                secondsVisible: false,
-            },
-            rightPriceScale: {
-                borderColor: isDarkMode ? '#374151' : '#E5E7EB',
-            },
-        });
+        if (chartInstanceRef.current) {
+            dispose(chartContainerRef.current);
+            chartInstanceRef.current = null;
+        }
 
-        const series = chart.addCandlestickSeries({
-            upColor: '#26a69a',
-            downColor: '#ef5350',
-            borderVisible: false,
-            wickUpColor: '#26a69a',
-            wickDownColor: '#ef5350',
-        });
+        const chart = init(chartContainerRef.current);
+        if (!chart) return;
 
-        const formattedData: CandlestickData[] = initialData.map(d => ({
-            time: (d.openTime / 1000) as Time,
+        applyChartTheme(chart);
+
+        // Default indicators: VOL in its own pane, MA on candle pane
+        chart.createIndicator('VOL', true, { id: 'pane_vol' });
+        chart.createIndicator('MA', false, { id: 'candle_pane' });
+
+        const formattedData: KLineData[] = initialData.map(d => ({
+            timestamp: d.timestamp,
             open: d.open,
             high: d.high,
             low: d.low,
             close: d.close,
+            volume: d.volume,
         }));
 
-        series.setData(formattedData);
-        chart.timeScale().fitContent();
-
-        // Add Indicators
-        const volumeSeries = chart.addHistogramSeries({
-            color: '#26a69a',
-            priceFormat: { type: 'volume' },
-            priceScaleId: '',
-        });
-        chart.priceScale('').applyOptions({
-            scaleMargins: { top: 0.8, bottom: 0 }
-        });
-        volumeSeriesRef.current = volumeSeries;
-
-        const sma20Series = chart.addLineSeries({ color: 'rgba(41, 98, 255, 1)', lineWidth: 2, crosshairMarkerVisible: false });
-        sma20SeriesRef.current = sma20Series;
-
-        const sma50Series = chart.addLineSeries({ color: 'rgba(255, 152, 0, 1)', lineWidth: 2, crosshairMarkerVisible: false });
-        sma50SeriesRef.current = sma50Series;
-
-        const volData = initialData.map(d => ({
-            time: (d.openTime / 1000) as Time,
-            value: d.volume,
-            color: d.close >= d.open ? 'rgba(38, 166, 154, 0.4)' : 'rgba(239, 83, 80, 0.4)'
-        }));
-        volumeSeries.setData(volData);
-
-        sma20Series.setData(calcSMA(initialData, 20));
-        sma50Series.setData(calcSMA(initialData, 50));
-
-        // Initial Visibility
-        volumeSeries.applyOptions({ visible: showVolume });
-        sma20Series.applyOptions({ visible: showSMA20 });
-        sma50Series.applyOptions({ visible: showSMA50 });
-
+        chart.applyNewData(formattedData);
         chartInstanceRef.current = chart;
-        candleSeriesRef.current = series;
+        setActiveIndicators(new Set(['VOL', 'MA']));
     };
 
-    // Toggle Visibility Effects
-    useEffect(() => {
-        if (sma20SeriesRef.current) sma20SeriesRef.current.applyOptions({ visible: showSMA20 });
-    }, [showSMA20]);
+    // ─────────────────────────────────────────────────────────────────────────
+    // Apply Theme to Chart
+    // ─────────────────────────────────────────────────────────────────────────
+    const applyChartTheme = (chart: Chart) => {
+        chart.setStyles({
+            grid: {
+                show: true,
+                horizontal: { color: isDarkMode ? '#374151' : '#E5E7EB' },
+                vertical: { color: isDarkMode ? '#374151' : '#E5E7EB' },
+            },
+            candle: {
+                type: candleType as any,
+                bar: {
+                    upColor: '#26a69a',
+                    downColor: '#ef5350',
+                    upBorderColor: '#26a69a',
+                    downBorderColor: '#ef5350',
+                    upWickColor: '#26a69a',
+                    downWickColor: '#ef5350',
+                },
+                area: {
+                    lineColor: '#2196F3',
+                    backgroundColor: [
+                        { offset: 0, color: 'rgba(33,150,243,0.3)' },
+                        { offset: 1, color: 'rgba(33,150,243,0.0)' },
+                    ],
+                },
+            },
+            xAxis: {
+                axisLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
+                tickLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
+                tickText: { color: isDarkMode ? '#D1D5DB' : '#374151' },
+            },
+            yAxis: {
+                axisLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
+                tickLine: { color: isDarkMode ? '#374151' : '#E5E7EB' },
+                tickText: { color: isDarkMode ? '#D1D5DB' : '#374151' },
+            },
+        });
+    };
 
+    // Update candle type live when user changes it
     useEffect(() => {
-        if (sma50SeriesRef.current) sma50SeriesRef.current.applyOptions({ visible: showSMA50 });
-    }, [showSMA50]);
+        if (!chartInstanceRef.current) return;
+        chartInstanceRef.current.setStyles({
+            candle: { type: candleType as any },
+        });
+        setShowCandleMenu(false);
+    }, [candleType]);
 
-    useEffect(() => {
-        if (volumeSeriesRef.current) volumeSeriesRef.current.applyOptions({ visible: showVolume });
-    }, [showVolume]);
+    // ─────────────────────────────────────────────────────────────────────────
+    // Indicator Management
+    // ─────────────────────────────────────────────────────────────────────────
+    const getPaneIdForIndicator = (name: string) => {
+        if (MAIN_PANE_INDICATORS.includes(name)) return 'candle_pane';
+        if (name === 'VOL') return 'pane_vol';
+        // Each sub-indicator gets its own named pane so they don't overlap
+        return `pane_${name.toLowerCase()}`;
+    };
 
+    const handleToggleIndicator = (name: string) => {
+        if (!chartInstanceRef.current) return;
+        const paneId = getPaneIdForIndicator(name);
+
+        if (activeIndicators.has(name)) {
+            // Remove indicator
+            try {
+                if (MAIN_PANE_INDICATORS.includes(name)) {
+                    // On main pane, remove by name (keeps candle pane itself)
+                    chartInstanceRef.current.removeIndicator('candle_pane', name);
+                } else {
+                    // Sub-pane indicators — remove the whole pane
+                    chartInstanceRef.current.removeIndicator(paneId, name);
+                }
+            } catch (_) { }
+            setActiveIndicators(prev => {
+                const next = new Set(prev);
+                next.delete(name);
+                return next;
+            });
+        } else {
+            // Add indicator
+            chartInstanceRef.current.createIndicator(name, true, { id: paneId });
+            setActiveIndicators(prev => new Set(prev).add(name));
+        }
+
+        setShowIndicatorMenu(false);
+    };
+
+    const handleClearAllIndicators = () => {
+        if (!chartInstanceRef.current) return;
+        // Remove all known indicators
+        [...activeIndicators].forEach(name => {
+            try {
+                const paneId = getPaneIdForIndicator(name);
+                if (MAIN_PANE_INDICATORS.includes(name)) {
+                    chartInstanceRef.current!.removeIndicator('candle_pane', name);
+                } else {
+                    chartInstanceRef.current!.removeIndicator(paneId, name);
+                }
+            } catch (_) { }
+        });
+        setActiveIndicators(new Set());
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Drawing Tools Management
+    // ─────────────────────────────────────────────────────────────────────────
+    const handleSelectTool = (toolName: string) => {
+        if (!chartInstanceRef.current) return;
+        chartInstanceRef.current.createOverlay(toolName);
+        setActiveTool(toolName);
+        setShowToolsMenu(false);
+    };
+
+    const handleCursorMode = () => {
+        if (!chartInstanceRef.current) return;
+        // Cancel any pending overlay draws by removing unfinished overlays
+        chartInstanceRef.current.removeOverlay();
+        setActiveTool(null);
+        setShowToolsMenu(false);
+    };
+
+    const handleClearAllDrawings = () => {
+        if (!chartInstanceRef.current) return;
+        chartInstanceRef.current.removeOverlay();
+        setActiveTool(null);
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Replay Logic
+    // ─────────────────────────────────────────────────────────────────────────
     useEffect(() => {
         if (isPlaying && historicalData.length > 0 && currentIndex < historicalData.length - 1) {
-            const baseDelay = 1000;
-            const delay = baseDelay / speed;
-
+            const delay = 1000 / speed;
             const id = setInterval(() => {
                 setCurrentIndex(prev => {
                     if (prev >= historicalData.length - 1) {
@@ -199,275 +323,457 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
             }, delay);
             intervalRef.current = id as unknown as NodeJS.Timeout;
         }
-
-        return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-        };
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     }, [isPlaying, speed, historicalData.length]);
 
-    // Update Chart on Index Change
+    // Update chart when index changes
     useEffect(() => {
-        if (historicalData.length > 0 && candleSeriesRef.current && currentIndex >= initialVisibleCandles && chartInstanceRef.current) {
+        if (
+            historicalData.length > 0 &&
+            currentIndex >= initialVisibleCandles &&
+            chartInstanceRef.current
+        ) {
             const newCandle = historicalData[currentIndex];
-            const time = (newCandle.openTime / 1000) as Time;
-
-            candleSeriesRef.current.update({
-                time,
+            const kline: KLineData = {
+                timestamp: newCandle.timestamp,
                 open: newCandle.open,
                 high: newCandle.high,
                 low: newCandle.low,
                 close: newCandle.close,
-            });
-
-            if (volumeSeriesRef.current) {
-                volumeSeriesRef.current.update({
-                    time,
-                    value: newCandle.volume,
-                    color: newCandle.close >= newCandle.open ? 'rgba(38, 166, 154, 0.4)' : 'rgba(239, 83, 80, 0.4)'
-                });
-            }
-
-            if (sma20SeriesRef.current && currentIndex >= 19) {
-                let sum = 0;
-                for (let i = 0; i < 20; i++) sum += historicalData[currentIndex - i].close;
-                sma20SeriesRef.current.update({ time, value: sum / 20 });
-            }
-
-            if (sma50SeriesRef.current && currentIndex >= 49) {
-                let sum = 0;
-                for (let i = 0; i < 50; i++) sum += historicalData[currentIndex - i].close;
-                sma50SeriesRef.current.update({ time, value: sum / 50 });
-            }
-            // Only scroll to realtime if we are actively playing or stepping, to keep the new candle in view
-            if (isPlaying || currentIndex > initialVisibleCandles) {
-                chartInstanceRef.current.timeScale().scrollToRealTime();
-            }
+                volume: newCandle.volume,
+            };
+            chartInstanceRef.current.updateData(kline);
+            if (currentPrice !== newCandle.close) setCurrentPrice(newCandle.close);
         }
-    }, [currentIndex, historicalData, isPlaying]);
+    }, [currentIndex, historicalData]);
 
-    const handleNextCandle = () => {
-        if (historicalData.length > 0 && currentIndex < historicalData.length - 1) {
-            setCurrentIndex(prev => prev + 1);
-        }
-    };
-
-    const togglePlay = () => setIsPlaying(!isPlaying);
-
+    // ─────────────────────────────────────────────────────────────────────────
     // Trading Logic
-    // Trading Logic
+    // ─────────────────────────────────────────────────────────────────────────
     const handleBuy = () => {
-        if (!activeTrade) {
-            const entry = historicalData.length > 0 ? historicalData[currentIndex].close : currentPrice;
-            setActiveTrade({ type: 'Long', entryPrice: entry, entryTime: historicalData[currentIndex].openTime });
-        }
+        if (activeTrade || historicalData.length === 0) return;
+        const entry = historicalData[currentIndex].close;
+        setActiveTrade({ type: 'Long', entryPrice: entry, entryTime: historicalData[currentIndex].timestamp });
     };
 
     const handleSell = () => {
-        if (!activeTrade) {
-            const entry = historicalData.length > 0 ? historicalData[currentIndex].close : currentPrice;
-            setActiveTrade({ type: 'Short', entryPrice: entry, entryTime: historicalData[currentIndex].openTime });
-        }
+        if (activeTrade || historicalData.length === 0) return;
+        const entry = historicalData[currentIndex].close;
+        setActiveTrade({ type: 'Short', entryPrice: entry, entryTime: historicalData[currentIndex].timestamp });
     };
 
     const handleCloseTrade = () => {
         if (!activeTrade) return;
-
+        const exitPrice = historicalData.length > 0 ? historicalData[currentIndex].close : currentPrice;
+        const size = positionSize || 1000;
         let pnl = 0;
-        const exitPriceToUse = historicalData.length > 0 && currentIndex < historicalData.length
-            ? historicalData[currentIndex].close
-            : currentPrice;
-
         if (activeTrade.type === 'Long') {
-            pnl = ((exitPriceToUse - activeTrade.entryPrice) / activeTrade.entryPrice) * 1000; // Simulating $1000 position size
+            pnl = ((exitPrice - activeTrade.entryPrice) / activeTrade.entryPrice) * size;
         } else {
-            pnl = ((activeTrade.entryPrice - exitPriceToUse) / activeTrade.entryPrice) * 1000;
+            pnl = ((activeTrade.entryPrice - exitPrice) / activeTrade.entryPrice) * size;
         }
 
-        const newTrade = {
+        addTrade({
             symbol: symbol.toUpperCase(),
             date: new Date(activeTrade.entryTime).toISOString().split('T')[0],
             entryPrice: activeTrade.entryPrice,
-            exitPrice: exitPriceToUse,
+            exitPrice,
             pnl: parseFloat(pnl.toFixed(2)),
             type: activeTrade.type,
             strategy: 'Backtest',
-            note: 'Backtesting simulation trade',
-            isBacktest: true
-        };
-
-        addTrade(newTrade);
+            note: `Backtesting simulation — $${size} position`,
+            isBacktest: true,
+        });
         setActiveTrade(null);
     };
 
-    // Calculate Unr. PnL
-    // Calculate Unr. PnL
-    let currentUnrealizedPnl = 0;
+    // ─────────────────────────────────────────────────────────────────────────
+    // Computed values
+    // ─────────────────────────────────────────────────────────────────────────
     const priceToUse = historicalData.length > 0 && currentIndex < historicalData.length
         ? historicalData[currentIndex].close
         : currentPrice;
 
+    let currentUnrealizedPnl = 0;
     if (activeTrade) {
+        const size = positionSize || 1000;
         if (activeTrade.type === 'Long') {
-            currentUnrealizedPnl = ((priceToUse - activeTrade.entryPrice) / activeTrade.entryPrice) * 1000;
+            currentUnrealizedPnl = ((priceToUse - activeTrade.entryPrice) / activeTrade.entryPrice) * size;
         } else {
-            currentUnrealizedPnl = ((activeTrade.entryPrice - priceToUse) / activeTrade.entryPrice) * 1000;
+            currentUnrealizedPnl = ((activeTrade.entryPrice - priceToUse) / activeTrade.entryPrice) * size;
         }
     }
 
+    const currentTimestamp = historicalData.length > 0 && currentIndex < historicalData.length
+        ? new Date(historicalData[currentIndex].timestamp).toLocaleString()
+        : '--';
+
+    const activeToolLabel = activeTool
+        ? DRAWING_TOOLS.find(t => t.name === activeTool)?.label ?? activeTool
+        : 'Cursor';
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Render
+    // ─────────────────────────────────────────────────────────────────────────
     return (
-        <div className={`space-y-4 ${isFullscreen ? `fixed inset-0 z-50 p-4 md:p-8 overflow-y-auto ${theme.bg} ${theme.text}` : ''}`}>
-            <div className="flex flex-col md:flex-row items-center justify-between mb-4">
+        <div
+            className={`space-y-4 ${isFullscreen
+                ? `fixed inset-0 z-50 p-4 md:p-6 overflow-y-auto ${theme.bg} ${theme.text}`
+                : ''
+                }`}
+            onClick={() => {
+                // Close all menus when clicking outside
+                if (showIndicatorMenu) setShowIndicatorMenu(false);
+                if (showToolsMenu) setShowToolsMenu(false);
+                if (showCandleMenu) setShowCandleMenu(false);
+            }}
+        >
+            {/* ── Header ── */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-2">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                    <History size={24} className="text-blue-500" /> Chart Replay
+                    <HistoryIcon size={24} className="text-blue-500" />
+                    Chart Replay & Backtesting
                 </h2>
-                <div className="flex gap-2 items-center mt-2 md:mt-0">
-                    <button onClick={() => setShowSMA20(!showSMA20)} className={`px-2 py-1 text-xs rounded-md font-bold transition-colors ${showSMA20 ? 'bg-blue-600 text-white' : 'bg-gray-500/20 text-gray-500'}`}>
-                        SMA 20
-                    </button>
-                    <button onClick={() => setShowSMA50(!showSMA50)} className={`px-2 py-1 text-xs rounded-md font-bold transition-colors ${showSMA50 ? 'bg-orange-500 text-white' : 'bg-gray-500/20 text-gray-500'}`}>
-                        SMA 50
-                    </button>
-                    <button onClick={() => setShowVolume(!showVolume)} className={`px-2 py-1 text-xs rounded-md font-bold transition-colors ${showVolume ? 'bg-green-600 text-white' : 'bg-gray-500/20 text-gray-500'}`}>
-                        Volume
-                    </button>
-                    <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-md bg-gray-500/20 text-gray-500 hover:text-blue-500 transition-colors ml-2 hidden sm:block">
-                        {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+
+                {/* Toolbar */}
+                <div className="flex flex-wrap gap-2 items-center relative">
+
+                    {/* ── Candle Type ── */}
+                    <div className="relative" onClick={e => e.stopPropagation()}>
+                        <button
+                            onClick={() => { setShowCandleMenu(!showCandleMenu); setShowIndicatorMenu(false); setShowToolsMenu(false); }}
+                            className={`px-3 py-1.5 text-xs rounded-md font-semibold transition-colors bg-gray-700 hover:bg-gray-600 text-white flex items-center gap-1.5`}
+                        >
+                            {CANDLE_TYPES.find(c => c.value === candleType)?.label ?? 'Candle'}
+                            <ChevronDown size={12} />
+                        </button>
+                        {showCandleMenu && (
+                            <div className={`absolute top-full left-0 mt-1 w-36 rounded-lg shadow-xl border ${theme.border} ${theme.card} z-50`}>
+                                {CANDLE_TYPES.map(ct => (
+                                    <button
+                                        key={ct.value}
+                                        onClick={() => { setCandleType(ct.value); setShowCandleMenu(false); }}
+                                        className={`w-full px-3 py-2 text-xs text-left transition-colors rounded-md
+                                            ${candleType === ct.value
+                                                ? 'bg-blue-600 text-white font-bold'
+                                                : `${theme.text} hover:bg-blue-500/20`
+                                            }`}
+                                    >
+                                        {ct.label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* ── Indicators ── */}
+                    <div className="relative" onClick={e => e.stopPropagation()}>
+                        <button
+                            onClick={() => { setShowIndicatorMenu(!showIndicatorMenu); setShowToolsMenu(false); setShowCandleMenu(false); }}
+                            className="px-3 py-1.5 text-xs rounded-md font-bold transition-colors bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5"
+                        >
+                            <TrendingUp size={13} />
+                            Indicators
+                            {activeIndicators.size > 0 && (
+                                <span className="bg-white/25 rounded-full px-1.5 py-0.5 font-black text-[10px]">
+                                    {activeIndicators.size}
+                                </span>
+                            )}
+                            <ChevronDown size={12} />
+                        </button>
+
+                        {showIndicatorMenu && (
+                            <div className={`absolute top-full right-0 mt-1 w-52 max-h-72 rounded-lg shadow-xl border ${theme.border} ${theme.card} z-50 flex flex-col`}>
+                                <div className="overflow-y-auto flex-1 p-2 grid grid-cols-2 gap-1">
+                                    {ALL_INDICATORS.map(ind => {
+                                        const isActive = activeIndicators.has(ind.name);
+                                        return (
+                                            <button
+                                                key={ind.name}
+                                                onClick={() => handleToggleIndicator(ind.name)}
+                                                className={`p-1.5 text-xs text-center rounded transition-colors font-semibold
+                                                    ${isActive
+                                                        ? 'bg-blue-600 text-white'
+                                                        : `${theme.text} hover:bg-blue-500/20`
+                                                    }`}
+                                            >
+                                                {isActive && '✓ '}{ind.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <div className={`border-t ${theme.border} p-2`}>
+                                    <button
+                                        onClick={() => { handleClearAllIndicators(); setShowIndicatorMenu(false); }}
+                                        className="w-full p-1.5 text-xs text-center text-red-400 hover:bg-red-500/20 transition-colors rounded flex items-center justify-center gap-1"
+                                    >
+                                        <Trash2 size={11} /> Clear All
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* ── Drawing Tools ── */}
+                    <div className="relative" onClick={e => e.stopPropagation()}>
+                        <button
+                            onClick={() => { setShowToolsMenu(!showToolsMenu); setShowIndicatorMenu(false); setShowCandleMenu(false); }}
+                            className={`px-3 py-1.5 text-xs rounded-md font-bold transition-colors flex items-center gap-1.5
+                                ${activeTool ? 'bg-purple-600 text-white' : 'bg-purple-600/80 hover:bg-purple-600 text-white'}`}
+                        >
+                            ✏️ {activeToolLabel}
+                            <ChevronDown size={12} />
+                        </button>
+
+                        {showToolsMenu && (
+                            <div className={`absolute top-full right-0 mt-1 w-52 rounded-lg shadow-xl border ${theme.border} ${theme.card} z-50 flex flex-col`}>
+                                {/* Cursor / Pointer mode */}
+                                <div className="p-2 pb-0">
+                                    <button
+                                        onClick={handleCursorMode}
+                                        className={`w-full px-3 py-2 text-xs text-left rounded-md transition-colors flex items-center gap-2 font-semibold
+                                            ${!activeTool
+                                                ? 'bg-purple-600 text-white'
+                                                : `${theme.text} hover:bg-purple-500/20`
+                                            }`}
+                                    >
+                                        <MousePointer size={13} /> Cursor (No Tool)
+                                    </button>
+                                </div>
+                                <div className={`p-2 border-t ${theme.border} mt-2 overflow-y-auto max-h-60 flex flex-col gap-1`}>
+                                    {DRAWING_TOOLS.map(tool => (
+                                        <button
+                                            key={tool.name}
+                                            onClick={() => handleSelectTool(tool.name)}
+                                            className={`px-3 py-2 text-xs text-left rounded-md transition-colors flex items-center gap-2
+                                                ${activeTool === tool.name
+                                                    ? 'bg-purple-600 text-white font-bold'
+                                                    : `${theme.text} hover:bg-purple-500/20`
+                                                }`}
+                                        >
+                                            <span className="font-mono text-sm w-5 text-center">{tool.icon}</span>
+                                            {tool.label}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className={`border-t ${theme.border} p-2`}>
+                                    <button
+                                        onClick={() => { handleClearAllDrawings(); setShowToolsMenu(false); }}
+                                        className="w-full p-1.5 text-xs text-center text-red-400 hover:bg-red-500/20 transition-colors rounded flex items-center justify-center gap-1"
+                                    >
+                                        <Trash2 size={11} /> Clear All Drawings
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Fullscreen */}
+                    <button
+                        onClick={() => setIsFullscreen(!isFullscreen)}
+                        className={`p-1.5 rounded-md transition-colors ${isFullscreen
+                            ? 'bg-blue-500 text-white'
+                            : `${theme.card} border ${theme.border} text-gray-400 hover:text-blue-500`
+                            }`}
+                        title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                    >
+                        {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
                     </button>
                 </div>
             </div>
 
-            {/* Controls Header */}
-            <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-wrap gap-4 items-end`}>
-                <div className="flex-1 min-w-[120px]">
+            {/* ── Load Controls ── */}
+            <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-wrap gap-3 items-end`}>
+                <div className="flex-1 min-w-[110px]">
                     <label className={`block text-xs font-bold mb-1 ${theme.subText}`}>Symbol</label>
                     <input
                         type="text"
                         value={symbol}
-                        onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+                        onChange={e => setSymbol(e.target.value.toUpperCase())}
                         placeholder="BTCUSDT"
-                        className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
+                        className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none text-sm ${theme.input}`}
                     />
                 </div>
-                <div className="flex-1 min-w-[120px]">
+                <div className="flex-1 min-w-[90px]">
                     <label className={`block text-xs font-bold mb-1 ${theme.subText}`}>Interval</label>
                     <select
-                        value={interval}
-                        onChange={(e) => setTimeInterval(e.target.value)}
-                        className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
+                        value={timeInterval}
+                        onChange={e => setTimeInterval(e.target.value)}
+                        className={`w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none text-sm ${theme.input}`}
                     >
                         <option value="1m">1m</option>
+                        <option value="3m">3m</option>
                         <option value="5m">5m</option>
                         <option value="15m">15m</option>
+                        <option value="30m">30m</option>
                         <option value="1h">1H</option>
+                        <option value="2h">2H</option>
                         <option value="4h">4H</option>
                         <option value="1d">1D</option>
+                        <option value="1w">1W</option>
                     </select>
                 </div>
                 <button
                     onClick={handleLoadData}
                     disabled={isLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-6 rounded-lg transition-all flex items-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-6 rounded-lg transition-all flex items-center gap-2 text-sm"
                 >
-                    {isLoading ? <RefreshCw className="animate-spin" size={20} /> : <Search size={20} />}
+                    {isLoading ? <RefreshCw className="animate-spin" size={18} /> : <Search size={18} />}
                     {isLoading ? 'Loading...' : 'Load'}
                 </button>
             </div>
 
+            {/* Error */}
             {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-500">
+                <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-500 text-sm">
                     {error}
                 </div>
             )}
 
-            {/* Main Chart Area */}
-            <div className={`${theme.card} p-1 rounded-xl border ${theme.border} ${isFullscreen ? 'h-[60vh] md:h-[70vh]' : 'h-[400px]'} w-full relative overflow-hidden`}>
-                {historicalData.length === 0 && !isLoading && !error && (
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-500 z-10 bg-black/5">
-                        Enter a symbol and hit Load to start backtesting
+            {/* ── Chart ── */}
+            <div className={`${theme.card} rounded-xl border ${theme.border} ${isFullscreen ? 'h-[58vh]' : 'h-[420px]'} w-full relative overflow-hidden`}>
+                {/* Timestamp overlay — only shown when data is loaded */}
+                {historicalData.length > 0 && currentIndex < historicalData.length && (
+                    <div className="absolute top-2 left-2 z-20 text-xs text-white bg-black/60 px-2 py-1 rounded pointer-events-none">
+                        {currentTimestamp}
+                        {activeTool && (
+                            <span className="ml-2 text-purple-300">✏️ {activeToolLabel}</span>
+                        )}
                     </div>
                 )}
+
+                {/* Empty state */}
+                {historicalData.length === 0 && !isLoading && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-gray-500 pointer-events-none">
+                        <HistoryIcon size={48} className="opacity-20" />
+                        <p className="text-sm">Enter a symbol and click <strong>Load</strong> to start replay</p>
+                    </div>
+                )}
+
                 <div ref={chartContainerRef} className="w-full h-full" />
             </div>
 
-            {/* Replay Controls */}
-            <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex justify-between items-center`}>
+            {/* ── Replay Controls ── */}
+            <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-wrap justify-between items-center gap-3`}>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={togglePlay}
+                        onClick={() => setIsPlaying(!isPlaying)}
                         disabled={historicalData.length === 0}
-                        className={`p-3 rounded-lg flex items-center justify-center transition-all ${isPlaying ? 'bg-yellow-500/20 text-yellow-500' : 'bg-green-500/20 text-green-500'}`}
+                        className={`p-3 rounded-lg flex items-center justify-center transition-all disabled:opacity-40
+                            ${isPlaying ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}
+                        title={isPlaying ? 'Pause' : 'Play'}
                     >
-                        {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                        {isPlaying ? <Pause size={22} /> : <Play size={22} />}
                     </button>
                     <button
-                        onClick={handleNextCandle}
+                        onClick={() => {
+                            if (historicalData.length > 0 && currentIndex < historicalData.length - 1)
+                                setCurrentIndex(prev => prev + 1);
+                        }}
                         disabled={isPlaying || historicalData.length === 0}
-                        className="p-3 bg-gray-500/20 text-gray-400 hover:text-white rounded-lg transition-all disabled:opacity-50"
+                        className="p-3 bg-gray-500/20 text-gray-400 hover:text-white rounded-lg transition-all disabled:opacity-40"
+                        title="Next Candle"
                     >
-                        <SkipForward size={24} />
+                        <SkipForward size={22} />
                     </button>
-                    <div className="flex items-center bg-gray-800 rounded-lg p-1 ml-4 border border-gray-700">
-                        {[1, 2, 5].map(s => (
+                    {/* Speed */}
+                    <div className={`flex items-center rounded-lg p-1 ml-2 border ${theme.border} ${theme.card}`}>
+                        {([1, 2, 5] as const).map(s => (
                             <button
                                 key={s}
-                                onClick={() => setSpeed(s as any)}
-                                className={`px-3 py-1 text-sm rounded cursor-pointer transition-colors ${speed === s ? 'bg-blue-600 text-white font-bold' : 'text-gray-400 hover:text-white'}`}
+                                onClick={() => setSpeed(s)}
+                                className={`px-3 py-1 text-sm rounded cursor-pointer transition-colors
+                                    ${speed === s ? 'bg-blue-600 text-white font-bold' : 'text-gray-400 hover:text-white'}`}
                             >
                                 {s}x
                             </button>
                         ))}
                     </div>
                 </div>
-                <div className="text-sm font-mono text-gray-400">
-                    {historicalData.length > 0 && currentIndex < historicalData.length ? new Date(historicalData[currentIndex].openTime).toLocaleString() : '--'}
-                </div>
+
+                {/* Progress */}
+                {historicalData.length > 0 && (
+                    <div className="text-xs text-gray-500 font-mono">
+                        Candle {currentIndex} / {historicalData.length - 1}
+                        &nbsp;·&nbsp;
+                        <span className={`font-bold ${priceToUse > 0 ? 'text-blue-400' : ''}`}>
+                            {priceToUse > 0 ? priceToUse.toFixed(priceToUse < 10 ? 4 : 2) : '--'}
+                        </span>
+                    </div>
+                )}
             </div>
 
-            {/* Trading Area */}
+            {/* ── Trading Panel ── */}
             {historicalData.length > 0 && (
                 <div className={`${theme.card} p-4 rounded-xl border ${theme.border} grid grid-cols-1 md:grid-cols-2 gap-6`}>
+                    {/* Buy / Sell */}
                     <div className="flex gap-4">
                         <button
                             onClick={handleBuy}
                             disabled={!!activeTrade}
-                            className={`flex-1 py-4 font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all ${!activeTrade ? 'bg-green-500/20 text-green-500 hover:bg-green-500/30 border border-green-500/50' : 'opacity-30 cursor-not-allowed bg-gray-800 text-gray-500'}`}
+                            className={`flex-1 py-4 font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all
+                                ${!activeTrade
+                                    ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/40'
+                                    : 'opacity-30 cursor-not-allowed bg-gray-800 text-gray-500'
+                                }`}
                         >
-                            <TrendingUp size={24} />
-                            <span>BUY LONG</span>
+                            <TrendingUp size={22} />
+                            <span className="text-sm">BUY LONG</span>
                         </button>
                         <button
                             onClick={handleSell}
                             disabled={!!activeTrade}
-                            className={`flex-1 py-4 font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all ${!activeTrade ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30 border border-red-500/50' : 'opacity-30 cursor-not-allowed bg-gray-800 text-gray-500'}`}
+                            className={`flex-1 py-4 font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all
+                                ${!activeTrade
+                                    ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/40'
+                                    : 'opacity-30 cursor-not-allowed bg-gray-800 text-gray-500'
+                                }`}
                         >
-                            <TrendingDown size={24} />
-                            <span>SELL SHORT</span>
+                            <TrendingDown size={22} />
+                            <span className="text-sm">SELL SHORT</span>
                         </button>
                     </div>
 
-                    <div className="flex flex-col justify-center border-l border-gray-700/50 pl-6">
-                        <h3 className="text-sm text-gray-400 mb-1">Active Simulation ($1000 size)</h3>
+                    {/* Position Info */}
+                    <div className={`flex flex-col justify-center border-l border-gray-700/50 pl-6 gap-3`}>
+                        {/* Position size input */}
+                        <div className="flex items-center gap-2">
+                            <label className={`text-xs font-bold ${theme.subText} whitespace-nowrap`}>Position Size</label>
+                            <div className="flex items-center border border-gray-600 rounded-lg overflow-hidden">
+                                <span className="px-2 text-xs text-gray-400 bg-gray-800">$</span>
+                                <input
+                                    type="number"
+                                    value={positionSize}
+                                    onChange={e => setPositionSize(Math.max(1, parseInt(e.target.value) || 1000))}
+                                    disabled={!!activeTrade}
+                                    min={1}
+                                    className={`w-24 px-2 py-1 text-sm outline-none bg-transparent ${theme.text} disabled:opacity-50`}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Active trade status */}
                         {activeTrade ? (
                             <div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <span className={`font-bold ${activeTrade.type === 'Long' ? 'text-green-500' : 'text-red-500'}`}>
-                                        {activeTrade.type} @ {activeTrade.entryPrice}
+                                    <span className={`font-bold text-sm ${activeTrade.type === 'Long' ? 'text-green-400' : 'text-red-400'}`}>
+                                        {activeTrade.type} @ {activeTrade.entryPrice.toFixed(activeTrade.entryPrice < 10 ? 4 : 2)}
                                     </span>
-                                    <span className={`text-xl font-black ${currentUnrealizedPnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                    <span className={`text-xl font-black ${currentUnrealizedPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                         {currentUnrealizedPnl >= 0 ? '+' : ''}${currentUnrealizedPnl.toFixed(2)}
                                     </span>
                                 </div>
                                 <button
                                     onClick={handleCloseTrade}
-                                    className="w-full py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition-all"
+                                    className="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg transition-all text-sm"
                                 >
                                     Close Position
                                 </button>
                             </div>
                         ) : (
-                            <div className="text-gray-500 italic text-center py-4">
-                                No active position.
-                            </div>
+                            <p className="text-gray-500 italic text-sm text-center py-2">
+                                No active position. Buy or Sell to start.
+                            </p>
                         )}
                     </div>
                 </div>
@@ -476,9 +782,19 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({ theme, isD
     );
 };
 
-// Lucide Icon for History that isn't imported from lucide-react above by default
-const History = ({ size = 24, className = "" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+// ── Inline SVG icon for "History" ─────────────────────────────────────────────
+const HistoryIcon = ({ size = 24, className = '' }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size} height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
         <path d="M3 3v5h5" />
         <path d="M12 7v5l4 2" />
