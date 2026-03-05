@@ -1,27 +1,24 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [react()],
-    resolve: {
-        alias: {
-            // Point directly to the ESM build of klinecharts to avoid Rollup resolution issues
-            'klinecharts': path.resolve('./node_modules/klinecharts/dist/index.esm.js'),
-        },
-    },
     optimizeDeps: {
-        include: ['klinecharts'],
+        exclude: ['klinecharts'],
     },
     build: {
         minify: 'esbuild',
         rollupOptions: {
+            // Mark klinecharts as external — loaded via CDN in index.html
+            external: ['klinecharts'],
             output: {
+                globals: {
+                    klinecharts: 'klinecharts',
+                },
                 manualChunks: {
                     vendor: ['react', 'react-dom', 'firebase/app', 'firebase/auth', 'firebase/firestore'],
                     icons: ['lucide-react'],
-                    chart: ['klinecharts'],
                 }
             }
         }
