@@ -182,6 +182,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     const loadData = useCallback(async (currentSymbol = symbol, currentInterval = chartInterval, currentMarketSource = marketSource) => {
         setIsLoading(true); setError(''); setPlaying(false); setActiveTrade(null); setActiveTool(null);
         if (timerRef.current) clearInterval(timerRef.current);
+        setData([]); // Clear old data
         try {
             const data = currentMarketSource === 'crypto'
                 ? await fetchBinanceKlines(currentSymbol, currentInterval, undefined, undefined, 1000)
@@ -626,7 +627,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         style={{ background: isDarkMode ? 'rgba(17,24,39,0.8)' : 'rgba(249,250,251,0.8)' }}>
                         <div className="flex items-center gap-2 text-blue-400">
                             <RefreshCw size={18} className="animate-spin" />
-                            <span className="text-sm font-semibold">Loading {symbol}â€¦</span>
+                            <span className="text-sm font-semibold">Loading {symbol}...</span>
                         </div>
                     </div>
                 )}

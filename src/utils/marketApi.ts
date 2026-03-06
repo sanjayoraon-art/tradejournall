@@ -33,48 +33,57 @@ export const fetchYahooKlines = async (
 
         const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol.toUpperCase())}?interval=${yInterval}&range=${range}`;
 
-        // Use AllOrigins with /get to handle cases where Yahoo doesn't return raw JSON sometimes
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&timestamp=${Date.now()}`;
+        // corsproxy.io is typically very robust
+        const url = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}&cache_bust=${Date.now()}`;
 
-        const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error(`Proxy failed: ${response.statusText}`);
-
-        const resultDict = await response.json();
-        const json = JSON.parse(resultDict.contents);
-
-        if (json.chart.error) {
-            throw new Error(`Yahoo Error: ${json.chart.error.description || JSON.stringify(json.chart.error)}`);
+        const response = await fetch(url);
+        if (!response.ok) {
+            // Fallback to AllOrigins if corsproxy fails
+            const allOriginsUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+            const altResponse = await fetch(allOriginsUrl);
+            if (!altResponse.ok) throw new Error("Both proxies failed to reach Yahoo Finance");
+            const resultDict = await altResponse.json();
+            const json = JSON.parse(resultDict.contents);
+            return processYahooData(json, limit);
         }
 
-        const data = json.chart.result?.[0];
-        if (!data || !data.timestamp || !data.indicators?.quote?.[0]) {
-            throw new Error("Invalid or empty data returned from Yahoo");
-        }
-
-        const timestamps = data.timestamp;
-        const q = data.indicators.quote[0];
-        const klines: BinanceKline[] = [];
-
-        for (let i = 0; i < timestamps.length; i++) {
-            // Filter out nulls
-            if (q.open[i] == null || q.close[i] == null || q.low[i] == null || q.high[i] == null) continue;
-
-            klines.push({
-                timestamp: timestamps[i] * 1000,
-                open: parseFloat(q.open[i].toFixed(4)),
-                high: parseFloat(q.high[i].toFixed(4)),
-                low: parseFloat(q.low[i].toFixed(4)),
-                close: parseFloat(q.close[i].toFixed(4)),
-                volume: parseFloat((q.volume[i] || 0).toFixed(0)),
-                closeTime: (i < timestamps.length - 1) ? timestamps[i + 1] * 1000 : timestamps[i] * 1000 + 3600000
-            });
-        }
-
-        // Apply limit at the end to get the most recent ones
-        return klines.slice(-limit);
+        const json = await response.json();
+        return processYahooData(json, limit);
 
     } catch (error) {
         console.error("Error fetching Yahoo Klines:", error);
         throw error;
     }
 };
+
+/** Helper to process Yahoo format into our common Kline format */
+function processYahooData(json: any, limit: number): BinanceKline[] {
+    if (json.chart.error) {
+        throw new Error(`Yahoo Error: ${json.chart.error.description || JSON.stringify(json.chart.error)}`);
+    }
+
+    const data = json.chart.result?.[0];
+    if (!data || !data.timestamp || !data.indicators?.quote?.[0]) {
+        throw new Error("Invalid or empty data returned from Yahoo");
+    }
+
+    const timestamps = data.timestamp;
+    const q = data.indicators.quote[0];
+    const klines: BinanceKline[] = [];
+
+    for (let i = 0; i < timestamps.length; i++) {
+        if (q.open?.[i] == null || q.close?.[i] == null) continue;
+
+        klines.push({
+            timestamp: timestamps[i] * 1000,
+            open: parseFloat(q.open[i].toFixed(4)),
+            high: parseFloat(q.high[i].toFixed(4)),
+            low: parseFloat(q.low[i].toFixed(4)),
+            close: parseFloat(q.close[i].toFixed(4)),
+            volume: parseFloat((q.volume[i] || 0).toFixed(0)),
+            closeTime: (i < timestamps.length - 1) ? timestamps[i + 1] * 1000 : timestamps[i] * 1000 + 3600000
+        });
+    }
+
+    return klines.slice(-limit);
+}
