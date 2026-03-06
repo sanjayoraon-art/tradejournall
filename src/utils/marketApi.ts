@@ -31,8 +31,8 @@ export const fetchYahooKlines = async (
         // Yahoo Finance chart API endpoint
         const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=${yInterval}&range=1y`;
 
-        // Using corsproxy.io to bypass browser CORS restrictions
-        const proxyUrl = 'https://corsproxy.io/?url=';
+        // Using allorigins to bypass browser CORS restrictions
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
         const url = proxyUrl + encodeURIComponent(targetUrl);
 
         const response = await fetch(url);
