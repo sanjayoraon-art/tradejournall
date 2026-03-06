@@ -2,85 +2,75 @@ import { BinanceKline } from './binanceApi';
 
 /**
  * Fetches historical K-lines (candlesticks) from Yahoo Finance via a public CORS proxy.
- * This allows fetching data for Stocks (e.g. AAPL) and Forex (e.g. EURUSD=X) without a backend.
+ * This allows fetching data for Stocks (e.g. AAPL) and Forex (e.g. EURUSD=X).
  * 
- * Note: Public proxies can be rate-limited.
+ * Yahoo API Constraints:
+ * - 1m: max 7 days
+ * - 2m/5m/15m/30m: max 60 days
+ * - 60m/1h: max 730 days
+ * - 1d+: max available
  */
 export const fetchYahooKlines = async (
     symbol: string,
-    interval: string, // Expected format: '1m', '5m', '15m', '30m', '1h', '1d', '1wk', '1mo'
+    interval: string,
     limit: number = 500
 ): Promise<BinanceKline[]> => {
     try {
-        // Map common Binance intervals to Yahoo intervals
         const intervalMap: Record<string, string> = {
-            '1m': '1m',
-            '3m': '1m', // Yahoo doesn't support 3m natively, fallback to 1m requires aggregation (taking shortcut here)
-            '5m': '5m',
-            '15m': '15m',
-            '30m': '30m',
-            '1h': '1h',
-            '2h': '1h', // Fallback
-            '4h': '1h', // Fallback 
-            '1d': '1d',
-            '1w': '1wk',
+            '1m': '1m', '3m': '2m', '5m': '5m', '15m': '15m',
+            '30m': '30m', '1h': '1h', '2h': '1h', '4h': '1h',
+            '1d': '1d', '1w': '1wk', '1M': '1mo'
         };
 
         const yInterval = intervalMap[interval] || '1d';
 
-        // Yahoo Finance chart API endpoint
-        const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=${yInterval}&range=1y`;
+        // Determine valid range based on interval
+        let range = '1y';
+        if (yInterval === '1m') range = '7d';
+        else if (['2m', '5m', '15m', '30m'].includes(yInterval)) range = '60d';
+        else if (['1h', '60m'].includes(yInterval)) range = '2y';
+        else range = 'max';
 
-        // Using allorigins to bypass browser CORS restrictions
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const url = proxyUrl + encodeURIComponent(targetUrl);
+        const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol.toUpperCase())}?interval=${yInterval}&range=${range}`;
 
-        const response = await fetch(url);
+        // Use AllOrigins with /get to handle cases where Yahoo doesn't return raw JSON sometimes
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&timestamp=${Date.now()}`;
 
-        if (!response.ok) {
-            throw new Error(`Yahoo Finance API error: ${response.statusText}`);
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error(`Proxy failed: ${response.statusText}`);
+
+        const resultDict = await response.json();
+        const json = JSON.parse(resultDict.contents);
+
+        if (json.chart.error) {
+            throw new Error(`Yahoo Error: ${json.chart.error.description || JSON.stringify(json.chart.error)}`);
         }
 
-        const json = await response.json();
-
-        if (!json.chart || !json.chart.result || json.chart.result.length === 0) {
-            throw new Error(`No data found for symbol: ${symbol}`);
+        const data = json.chart.result?.[0];
+        if (!data || !data.timestamp || !data.indicators?.quote?.[0]) {
+            throw new Error("Invalid or empty data returned from Yahoo");
         }
 
-        const result = json.chart.result[0];
-        const timestamps = result.timestamp;
-
-        if (!timestamps || timestamps.length === 0) {
-            throw new Error(`No timestamp data found for symbol: ${symbol}`);
-        }
-
-        const quote = result.indicators.quote[0];
-
-        if (!quote) {
-            throw new Error(`No quote data found for symbol: ${symbol}`);
-        }
-
-        // Map to our BinanceKline format so the chart doesn't need to care where it came from
+        const timestamps = data.timestamp;
+        const q = data.indicators.quote[0];
         const klines: BinanceKline[] = [];
 
         for (let i = 0; i < timestamps.length; i++) {
-            // Yahoo sometimes has nulls for missing periods
-            if (quote.open[i] === null || quote.high[i] === null || quote.low[i] === null || quote.close[i] === null) {
-                continue;
-            }
+            // Filter out nulls
+            if (q.open[i] == null || q.close[i] == null || q.low[i] == null || q.high[i] == null) continue;
 
             klines.push({
-                timestamp: timestamps[i] * 1000, // Convert to ms
-                open: quote.open[i],
-                high: quote.high[i],
-                low: quote.low[i],
-                close: quote.close[i],
-                volume: quote.volume[i] || 0,
-                closeTime: timestamps[i] * 1000,
+                timestamp: timestamps[i] * 1000,
+                open: parseFloat(q.open[i].toFixed(4)),
+                high: parseFloat(q.high[i].toFixed(4)),
+                low: parseFloat(q.low[i].toFixed(4)),
+                close: parseFloat(q.close[i].toFixed(4)),
+                volume: parseFloat((q.volume[i] || 0).toFixed(0)),
+                closeTime: (i < timestamps.length - 1) ? timestamps[i + 1] * 1000 : timestamps[i] * 1000 + 3600000
             });
         }
 
-        // Return latest `limit` records
+        // Apply limit at the end to get the most recent ones
         return klines.slice(-limit);
 
     } catch (error) {
