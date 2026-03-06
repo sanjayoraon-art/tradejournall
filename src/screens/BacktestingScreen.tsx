@@ -123,6 +123,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             },
             candle: {
                 type: type as any,
+                tooltip: { showRule: 'none' as any }, // Hides the top-left OHLC numbers
                 bar: { upColor: '#22c55e', downColor: '#ef4444', upBorderColor: '#22c55e', downBorderColor: '#ef4444', upWickColor: '#22c55e', downWickColor: '#ef4444' },
                 area: {
                     lineColor: '#3b82f6',
@@ -133,9 +134,15 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 },
             },
             xAxis: { axisLine: { color: 'rgba(255,255,255,0.08)' }, tickLine: { color: 'rgba(255,255,255,0.08)' }, tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 } },
-            yAxis: { axisLine: { color: 'rgba(255,255,255,0.08)' }, tickLine: { color: 'rgba(255,255,255,0.08)' }, tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 } },
+            yAxis: {
+                axisLine: { color: 'rgba(255,255,255,0.08)' },
+                tickLine: { color: 'rgba(255,255,255,0.08)' },
+                tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 },
+                inside: true // Better for mobile interaction
+            },
             indicator: {
                 tooltip: {
+                    showRule: 'none' as any, // Hides indicator numeric values
                     icons: [
                         {
                             id: 'setting', position: 'middle' as any, marginLeft: 8, marginTop: 7, marginRight: 0, marginBottom: 0, paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0,
@@ -607,7 +614,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             <div className={`relative rounded-xl border overflow-hidden ${theme.border} ${isFullscreen ? 'h-[55vh]' : 'h-[420px] md:h-[490px]'}`}
                 style={{ background: isDarkMode ? '#111827' : '#f9fafb' }}>
 
-                <div ref={containerRef} className="w-full h-full" />
+                <div ref={containerRef} className="w-full h-full" style={{ touchAction: 'none' }} />
 
                 {historicalData.length === 0 && !isLoading && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-none"
@@ -708,17 +715,13 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         </div>
                     </div>
                     {/* The chart fills the rest */}
-                    <div className="flex-1 relative w-full overflow-hidden" ref={modalContainerRef} />
+                    <div className="flex-1 relative w-full overflow-hidden" ref={modalContainerRef} style={{ touchAction: 'none' }} />
                     {/* Bottom info bar */}
                     {currentBar && (
-                        <div className="px-4 py-2 border-t border-white/10 flex items-center gap-4 text-xs text-gray-500 shrink-0" style={{ background: isDarkMode ? '#1f2937' : '#1e293b' }}>
+                        <div className="px-4 py-2 border-t border-white/10 flex items-center justify-between text-xs text-gray-500 shrink-0" style={{ background: isDarkMode ? '#1f2937' : '#1e293b' }}>
                             <span className="font-mono">{new Date(currentBar.timestamp).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                            <span>O: <strong className="text-white">{currentBar.open.toFixed(priceDecimals)}</strong></span>
-                            <span>H: <strong className="text-green-400">{currentBar.high.toFixed(priceDecimals)}</strong></span>
-                            <span>L: <strong className="text-red-400">{currentBar.low.toFixed(priceDecimals)}</strong></span>
-                            <span>C: <strong className="text-white">{currentBar.close.toFixed(priceDecimals)}</strong></span>
                             {activeTrade && (
-                                <span className={`ml-auto font-bold ${pnlPositive ? 'text-green-400' : 'text-red-400'}`}>
+                                <span className={`font-bold ${pnlPositive ? 'text-green-400' : 'text-red-400'}`}>
                                     P&L: {pnlPositive ? '+' : ''}${unrealizedPnl.toFixed(2)}
                                 </span>
                             )}
