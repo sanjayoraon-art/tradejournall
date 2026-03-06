@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import type { Chart, KLineData } from 'klinecharts';
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
+import { fetchYahooKlines } from '../utils/marketApi';
 
 // ─── CDN global wrappers ─────────────────────────────────────────────────────
 const _kc = () => (window as any).klinecharts as typeof import('klinecharts');
@@ -60,6 +61,7 @@ const CANDLE_TYPES = [
 ];
 
 const INTERVALS = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '1d', '1w'];
+const YAHOO_INTERVALS = ['1m', '5m', '15m', '30m', '1h', '1d', '1w'];
 
 // ─── Component ───────────────────────────────────────────────────────────────
 interface BacktestingScreenProps {
@@ -73,6 +75,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     theme, isDarkMode, addTrade
 }) => {
     // Load / Replay
+    const [marketSource, setMarketSource] = useState<'crypto' | 'stocks'>('crypto');
     const [symbol, setSymbol] = useState('BTCUSDT');
     const [chartInterval, setChartInterval] = useState('5m');
     const [isLoading, setIsLoading] = useState(false);
@@ -178,14 +181,17 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         setIsLoading(true); setError(''); setPlaying(false); setActiveTrade(null); setActiveTool(null);
         if (timerRef.current) clearInterval(timerRef.current);
         try {
-            const data = await fetchBinanceKlines(symbol, chartInterval, undefined, undefined, 1000);
-            if (data.length < INITIAL_VISIBLE + 10) { setError('Not enough data. Try a shorter interval.'); return; }
+            const data = marketSource === 'crypto'
+                ? await fetchBinanceKlines(symbol, chartInterval, undefined, undefined, 1000)
+                : await fetchYahooKlines(symbol, chartInterval, 1000);
+
+            if (data.length < INITIAL_VISIBLE + 10) { setError('Not enough data. Try a longer timeframe or different symbol.'); return; }
             setData(data);
             setIndex(INITIAL_VISIBLE);
             setPrice(data[INITIAL_VISIBLE].close);
             initChart(data.slice(0, INITIAL_VISIBLE + 1));
         } catch (e: any) {
-            setError(e.message ?? 'Failed to fetch. Check symbol & connection.');
+            setError(e.message ?? 'Failed to fetch. Check symbol format (e.g. AAPL, EURUSD=X) & connection.');
         } finally {
             setIsLoading(false);
         }
@@ -328,21 +334,37 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 </div>
 
                 {/* Symbol input */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 focus-within:ring-2 focus-within:ring-blue-500 rounded-lg border overflow-hidden" style={{ borderColor: isDarkMode ? '#374151' : '#e5e7eb' }}>
+                    <select
+                        value={marketSource}
+                        onChange={e => {
+                            const val = e.target.value as 'crypto' | 'stocks';
+                            setMarketSource(val);
+                            if (val === 'crypto') setSymbol('BTCUSDT');
+                            else { setSymbol('AAPL'); setChartInterval('1d'); }
+                        }}
+                        className={`px-2 py-1.5 text-xs font-semibold outline-none border-r cursor-pointer ${theme.input} ${theme.border}`}
+                    >
+                        <option value="crypto">Crypto</option>
+                        <option value="stocks">Stocks/Forex</option>
+                    </select>
                     <input
                         type="text"
                         value={symbol}
                         onChange={e => setSymbol(e.target.value.toUpperCase())}
-                        placeholder="BTCUSDT"
-                        className={`w-28 px-2.5 py-1.5 text-xs font-bold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none uppercase tracking-wide ${theme.input}`}
+                        placeholder={marketSource === 'crypto' ? "BTCUSDT" : "AAPL, EURUSD=X"}
+                        className={`w-28 px-2 py-1.5 text-xs font-bold outline-none uppercase tracking-wide ${theme.input}`}
                     />
+                </div>
+
+                <div className="flex items-center gap-1.5">
                     {/* Interval select */}
                     <select
                         value={chartInterval}
                         onChange={e => setChartInterval(e.target.value)}
                         className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
                     >
-                        {INTERVALS.map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
+                        {(marketSource === 'crypto' ? INTERVALS : YAHOO_INTERVALS).map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
                     </select>
                     {/* Load button */}
                     <button
