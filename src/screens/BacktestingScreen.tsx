@@ -108,8 +108,10 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     // Chart
     const containerRef = useRef<HTMLDivElement>(null);
+    const modalContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<Chart | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const [chartModalOpen, setChartModalOpen] = useState(false);
 
     // â”€â”€ Chart theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const applyTheme = useCallback((chart: Chart, type = candleType) => {
@@ -310,6 +312,43 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             }
         }
     }, [currentIndex, historicalData, activeTrade]);
+
+    // ── Modal chart (fullscreen mirror) ───────────────────────────────────────
+    const modalChartRef = useRef<Chart | null>(null);
+
+    useEffect(() => {
+        if (!chartModalOpen) {
+            // Dispose modal chart when closed
+            if (modalChartRef.current && modalContainerRef.current) {
+                try { kcDispose(modalContainerRef.current); } catch { }
+                modalChartRef.current = null;
+            }
+            return;
+        }
+        // Wait for the DOM to be ready
+        const timer = setTimeout(() => {
+            if (!modalContainerRef.current) return;
+            try { kcDispose(modalContainerRef.current); } catch { }
+            const mc = kcInit(modalContainerRef.current);
+            if (!mc) return;
+            applyTheme(mc);
+            if (historicalData.length > 0) {
+                const slice = historicalData.slice(0, currentIndex + 1);
+                mc.applyNewData(slice.map(d => ({ timestamp: d.timestamp, open: d.open, high: d.high, low: d.low, close: d.close, volume: d.volume })));
+            }
+            modalChartRef.current = mc;
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [chartModalOpen]);
+
+    // Sync modal chart during replay
+    useEffect(() => {
+        if (!modalChartRef.current || !chartModalOpen || historicalData.length === 0 || currentIndex < INITIAL_VISIBLE) return;
+        const c = historicalData[currentIndex];
+        try {
+            modalChartRef.current.updateData({ timestamp: c.timestamp, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume });
+        } catch { }
+    }, [currentIndex, chartModalOpen]);
 
     // â”€â”€ Trading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const currentBar = historicalData.length > 0 && currentIndex < historicalData.length ? historicalData[currentIndex] : null;
@@ -606,13 +645,88 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 {activeTool && (
                     <div className="absolute top-3 left-3 pointer-events-none">
                         <div className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-600/90 backdrop-blur text-white flex items-center gap-1.5">
-                            âœï¸ {toolLabel}
+                            ✏️ {toolLabel}
                         </div>
                     </div>
                 )}
+
+                {/* Expand button - always visible */}
+                <button
+                    onClick={() => setChartModalOpen(true)}
+                    title="Chart ko fullscreen mein kholein"
+                    className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-gray-900/80 backdrop-blur border border-white/10 text-white hover:bg-blue-600/80 hover:border-blue-500/50 active:scale-95 transition-all"
+                >
+                    <Maximize2 size={13} />
+                    <span>Expand</span>
+                </button>
             </div>
 
-            {/* â•â• CONTROLS BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+            {/* ══ CHART FULLSCREEN MODAL ════════════════════════════════════════ */}
+            {chartModalOpen && (
+                <div className="fixed inset-0 z-[200] flex flex-col" style={{ background: isDarkMode ? '#111827' : '#0f172a' }}>
+                    {/* Modal Top Bar */}
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 shrink-0" style={{ background: isDarkMode ? '#1f2937' : '#1e293b' }}>
+                        <div className="flex items-center gap-2">
+                            <BarChart2 size={16} className="text-blue-400" />
+                            <span className="text-sm font-bold text-white">{symbol}</span>
+                            <span className="text-xs text-gray-400 ml-1">{chartInterval.toUpperCase()}</span>
+                            {historicalData.length > 0 && (
+                                <span className={`text-sm font-bold ml-2 ${price > (historicalData[currentIndex > 0 ? currentIndex - 1 : 0]?.close ?? price) ? 'text-green-400' : 'text-red-400'}`}>
+                                    {price.toFixed(priceDecimals)}
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            {/* Playback inside modal */}
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    onClick={() => historicalData.length > 0 && setIndex(p => Math.max(INITIAL_VISIBLE, p - 1))}
+                                    disabled={isPlaying}
+                                    className="p-1.5 rounded-lg border border-white/10 text-gray-400 hover:text-white disabled:opacity-40 transition-all">
+                                    <SkipForward size={13} className="rotate-180" />
+                                </button>
+                                <button
+                                    onClick={() => setPlaying(p => !p)}
+                                    disabled={historicalData.length === 0}
+                                    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold disabled:opacity-40 transition-all
+                                        ${isPlaying ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>
+                                    {isPlaying ? <><Pause size={12} /> Pause</> : <><Play size={12} /> Play</>}
+                                </button>
+                                <button
+                                    onClick={() => historicalData.length > 0 && currentIndex < historicalData.length - 1 && setIndex(p => p + 1)}
+                                    disabled={isPlaying}
+                                    className="p-1.5 rounded-lg border border-white/10 text-gray-400 hover:text-white disabled:opacity-40 transition-all">
+                                    <SkipForward size={13} />
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => setChartModalOpen(false)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
+                                <Minimize2 size={14} /> Close
+                            </button>
+                        </div>
+                    </div>
+                    {/* The chart fills the rest */}
+                    <div className="flex-1 relative w-full overflow-hidden" ref={modalContainerRef} />
+                    {/* Bottom info bar */}
+                    {currentBar && (
+                        <div className="px-4 py-2 border-t border-white/10 flex items-center gap-4 text-xs text-gray-500 shrink-0" style={{ background: isDarkMode ? '#1f2937' : '#1e293b' }}>
+                            <span className="font-mono">{new Date(currentBar.timestamp).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            <span>O: <strong className="text-white">{currentBar.open.toFixed(priceDecimals)}</strong></span>
+                            <span>H: <strong className="text-green-400">{currentBar.high.toFixed(priceDecimals)}</strong></span>
+                            <span>L: <strong className="text-red-400">{currentBar.low.toFixed(priceDecimals)}</strong></span>
+                            <span>C: <strong className="text-white">{currentBar.close.toFixed(priceDecimals)}</strong></span>
+                            {activeTrade && (
+                                <span className={`ml-auto font-bold ${pnlPositive ? 'text-green-400' : 'text-red-400'}`}>
+                                    P&L: {pnlPositive ? '+' : ''}${unrealizedPnl.toFixed(2)}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* ━━ CONTROLS BAR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
             <div className={`flex flex-wrap items-center gap-2 px-3 py-2.5 rounded-xl border ${theme.border} ${theme.card}`}>
                 {/* Playback controls */}
                 <div className="flex items-center gap-1.5">
