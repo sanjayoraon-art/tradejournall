@@ -177,13 +177,13 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     }, [applyTheme]);
 
     // ── Load data ─────────────────────────────────────────────────────────────
-    const loadData = async () => {
+    const loadData = useCallback(async (currentSymbol = symbol, currentInterval = chartInterval, currentMarketSource = marketSource) => {
         setIsLoading(true); setError(''); setPlaying(false); setActiveTrade(null); setActiveTool(null);
         if (timerRef.current) clearInterval(timerRef.current);
         try {
-            const data = marketSource === 'crypto'
-                ? await fetchBinanceKlines(symbol, chartInterval, undefined, undefined, 1000)
-                : await fetchYahooKlines(symbol, chartInterval, 1000);
+            const data = currentMarketSource === 'crypto'
+                ? await fetchBinanceKlines(currentSymbol, currentInterval, undefined, undefined, 1000)
+                : await fetchYahooKlines(currentSymbol, currentInterval, 1000);
 
             if (data.length < INITIAL_VISIBLE + 10) { setError('Not enough data. Try a longer timeframe or different symbol.'); return; }
             setData(data);
@@ -195,7 +195,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [symbol, chartInterval, marketSource, initChart]);
 
     // ── Candle type live switch ───────────────────────────────────────────────
     useEffect(() => {
@@ -203,6 +203,14 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         chartRef.current.setStyles({ candle: { type: candleType as any } });
         setShowCandleMenu(false);
     }, [candleType]);
+
+    // ── Auto-load Data ──────────────────────────────────────────────────────
+    const initialLoadDone = useRef(false);
+    useEffect(() => {
+        if (initialLoadDone.current) return;
+        initialLoadDone.current = true;
+        loadData('BTCUSDT', '5m', 'crypto');
+    }, [loadData]);
 
     // ── Indicator toggle ──────────────────────────────────────────────────────
     const toggleIndicator = (name: string) => {
@@ -361,7 +369,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     {/* Interval select */}
                     <select
                         value={chartInterval}
-                        onChange={e => setChartInterval(e.target.value)}
+                        onChange={e => {
+                            const newInterval = e.target.value;
+                            setChartInterval(newInterval);
+                            // Auto-refresh when interval changes
+                            loadData(symbol, newInterval, marketSource);
+                        }}
                         className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
                     >
                         {(marketSource === 'crypto' ? INTERVALS : YAHOO_INTERVALS).map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
