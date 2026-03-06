@@ -87,10 +87,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     // Trading
     const [activeTrade, setActiveTrade] = useState<{
-        type: 'Long' | 'Short'; entryPrice: number; entryTime: number;
+        type: 'Long' | 'Short'; entryPrice: number; entryTime: number; takeProfit?: number; stopLoss?: number;
     } | null>(null);
     const [positionSize, setSize] = useState(1000);
     const [currentPrice, setPrice] = useState(0);
+    const [takeProfitStr, setTakeProfitStr] = useState('');
+    const [stopLossStr, setStopLossStr] = useState('');
 
     // Chart toolbar
     const [candleType, setCandleType] = useState('candle_solid');
@@ -278,7 +280,38 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         const c = historicalData[currentIndex];
         chartRef.current.updateData({ timestamp: c.timestamp, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume });
         if (c.close !== currentPrice) setPrice(c.close);
-    }, [currentIndex, historicalData]);
+
+        // Check TP / SL hits
+        if (activeTrade) {
+            let triggeredExit: number | null = null;
+            let note = '';
+
+            if (activeTrade.type === 'Long') {
+                if (activeTrade.stopLoss && c.low <= activeTrade.stopLoss) {
+                    // Check if gap down bypassed SL completely, exit at open if so, else SL price
+                    triggeredExit = c.open <= activeTrade.stopLoss ? c.open : activeTrade.stopLoss;
+                    note = 'Hit Stop Loss';
+                } else if (activeTrade.takeProfit && c.high >= activeTrade.takeProfit) {
+                    triggeredExit = c.open >= activeTrade.takeProfit ? c.open : activeTrade.takeProfit;
+                    note = 'Hit Take Profit';
+                }
+            } else {
+                if (activeTrade.stopLoss && c.high >= activeTrade.stopLoss) {
+                    triggeredExit = c.open >= activeTrade.stopLoss ? c.open : activeTrade.stopLoss;
+                    note = 'Hit Stop Loss';
+                } else if (activeTrade.takeProfit && c.low <= activeTrade.takeProfit) {
+                    triggeredExit = c.open <= activeTrade.takeProfit ? c.open : activeTrade.takeProfit;
+                    note = 'Hit Take Profit';
+                }
+            }
+
+            if (triggeredExit !== null) {
+                // Pause automatically when hitting target
+                setPlaying(false);
+                closeTrade(triggeredExit, `Auto-closed: ${note}`);
+            }
+        }
+    }, [currentIndex, historicalData, activeTrade]);
 
     // ── Trading ───────────────────────────────────────────────────────────────
     const currentBar = historicalData.length > 0 && currentIndex < historicalData.length ? historicalData[currentIndex] : null;
@@ -286,24 +319,32 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     const openTrade = (type: 'Long' | 'Short') => {
         if (activeTrade || !currentBar) return;
-        setActiveTrade({ type, entryPrice: currentBar.close, entryTime: currentBar.timestamp });
+        const tp = parseFloat(takeProfitStr);
+        const sl = parseFloat(stopLossStr);
+        setActiveTrade({
+            type,
+            entryPrice: currentBar.close,
+            entryTime: currentBar.timestamp,
+            takeProfit: !isNaN(tp) && tp > 0 ? tp : undefined,
+            stopLoss: !isNaN(sl) && sl > 0 ? sl : undefined,
+        });
     };
 
-    const closeTrade = () => {
+    const closeTrade = (exitPrice = price, noteOverride?: string) => {
         if (!activeTrade) return;
         const size = positionSize || 1000;
         const pnl = activeTrade.type === 'Long'
-            ? ((price - activeTrade.entryPrice) / activeTrade.entryPrice) * size
-            : ((activeTrade.entryPrice - price) / activeTrade.entryPrice) * size;
+            ? ((exitPrice - activeTrade.entryPrice) / activeTrade.entryPrice) * size
+            : ((activeTrade.entryPrice - exitPrice) / activeTrade.entryPrice) * size;
         addTrade({
             symbol: symbol.toUpperCase(),
             date: new Date(activeTrade.entryTime).toISOString().split('T')[0],
             entryPrice: activeTrade.entryPrice,
-            exitPrice: price,
+            exitPrice: exitPrice,
             pnl: parseFloat(pnl.toFixed(2)),
             type: activeTrade.type,
             strategy: 'Backtest',
-            note: `Backtest sim — $${size} position`,
+            note: noteOverride || `Backtest sim — $${size} position`,
             isBacktest: true,
         });
         setActiveTrade(null);
@@ -635,19 +676,48 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                             <Zap size={14} className="text-amber-400" />
                             <span className="text-xs font-bold text-gray-400">Paper Trading</span>
                         </div>
-                        {/* Position size */}
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-gray-500 font-semibold">SIZE</span>
-                            <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border}`}>
-                                <span className="px-2 py-1 text-xs text-gray-500 bg-gray-800/50">$</span>
+
+                        <div className="flex items-center gap-4">
+                            {/* Take Profit */}
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] text-green-500 font-semibold">TARGET (TP)</span>
                                 <input
                                     type="number"
-                                    value={positionSize}
-                                    onChange={e => setSize(Math.max(1, parseInt(e.target.value) || 1000))}
+                                    value={takeProfitStr}
+                                    onChange={e => setTakeProfitStr(e.target.value)}
                                     disabled={!!activeTrade}
-                                    min={1}
-                                    className={`w-20 px-2 py-1 text-xs outline-none text-right bg-transparent ${theme.text} disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    placeholder="Price"
+                                    className={`w-20 px-2 py-1 text-xs outline-none text-right rounded-lg border ${theme.border} bg-transparent ${theme.text} disabled:opacity-50`}
                                 />
+                            </div>
+
+                            {/* Stop Loss */}
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] text-red-500 font-semibold">STOP (SL)</span>
+                                <input
+                                    type="number"
+                                    value={stopLossStr}
+                                    onChange={e => setStopLossStr(e.target.value)}
+                                    disabled={!!activeTrade}
+                                    placeholder="Price"
+                                    className={`w-20 px-2 py-1 text-xs outline-none text-right rounded-lg border ${theme.border} bg-transparent ${theme.text} disabled:opacity-50`}
+                                />
+                            </div>
+
+                            {/* Position size */}
+                            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-gray-700/50">
+                                <span className="text-[10px] text-gray-500 font-semibold">SIZE</span>
+                                <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border}`}>
+                                    <span className="px-2 py-1 text-xs text-gray-500 bg-gray-800/50">$</span>
+                                    <input
+                                        type="number"
+                                        value={positionSize}
+                                        onChange={e => setSize(Math.max(1, parseInt(e.target.value) || 1000))}
+                                        disabled={!!activeTrade}
+                                        min={1}
+                                        className={`w-20 px-2 py-1 text-xs outline-none text-right bg-transparent ${theme.text} disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -684,6 +754,22 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                                 {activeTrade.type === 'Long' ? '▲ LONG' : '▼ SHORT'}
                                             </span>
                                             <span className="text-xs text-gray-500">@ {activeTrade.entryPrice.toFixed(priceDecimals)}</span>
+
+                                            {/* Show SL/TP if set */}
+                                            {(activeTrade.takeProfit || activeTrade.stopLoss) && (
+                                                <div className="flex items-center gap-2 ml-3">
+                                                    {activeTrade.takeProfit && (
+                                                        <span className="text-[10px] bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded border border-green-500/20">
+                                                            🎯 {activeTrade.takeProfit.toFixed(priceDecimals)}
+                                                        </span>
+                                                    )}
+                                                    {activeTrade.stopLoss && (
+                                                        <span className="text-[10px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded border border-red-500/20">
+                                                            🛑 {activeTrade.stopLoss.toFixed(priceDecimals)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className={`text-right`}>
                                             <p className="text-[10px] text-gray-600 uppercase tracking-wide">Unrealized P&L</p>
@@ -692,7 +778,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                             </p>
                                         </div>
                                     </div>
-                                    <button onClick={closeTrade}
+                                    <button onClick={() => closeTrade(price)}
                                         className="w-full py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold text-sm rounded-xl transition-all active:scale-95">
                                         Close Position
                                     </button>
