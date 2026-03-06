@@ -2,7 +2,7 @@
 import {
     Play, Pause, SkipForward, RefreshCw, Search,
     TrendingUp, TrendingDown, Maximize2, Minimize2,
-    MousePointer, Trash2, ChevronDown, X, BarChart2, Zap
+    MousePointer, Trash2, ChevronDown, X, BarChart2, Zap, Pencil
 } from 'lucide-react';
 import type { Chart, KLineData } from 'klinecharts';
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
@@ -38,25 +38,25 @@ const INDICATOR_GROUPS = [
 ];
 
 const DRAWING_TOOLS = [
-    { name: 'segment', label: 'Trend Line', icon: 'â†—' },
-    { name: 'rayLine', label: 'Ray', icon: 'â†’' },
-    { name: 'straightLine', label: 'Extended Line', icon: 'â†”' },
-    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: 'â€”' },
+    { name: 'segment', label: 'Trend Line', icon: '/' },
+    { name: 'rayLine', label: 'Ray', icon: '->' },
+    { name: 'straightLine', label: 'Extended Line', icon: '<->' },
+    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: '--' },
     { name: 'verticalStraightLine', label: 'Vertical Line', icon: '|' },
     { name: 'priceLine', label: 'Price Level', icon: '$' },
-    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: 'â«¼' },
-    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'Ï†' },
-    { name: 'rect', label: 'Rectangle', icon: 'â–­' },
-    { name: 'circle', label: 'Circle', icon: 'â—‹' },
-    { name: 'triangle', label: 'Triangle', icon: 'â–³' },
+    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: '=' },
+    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'Fib' },
+    { name: 'rect', label: 'Rectangle', icon: '[]' },
+    { name: 'circle', label: 'Circle', icon: 'O' },
+    { name: 'triangle', label: 'Triangle', icon: '/\\' },
     { name: 'text', label: 'Note', icon: 'T' },
-    { name: 'arrow', label: 'Arrow', icon: 'âžœ' },
+    { name: 'arrow', label: 'Arrow', icon: '->' },
 ];
 
 const CANDLE_TYPES = [
-    { value: 'candle_solid', label: 'Candle', icon: 'ðŸ•¯' },
-    { value: 'candle_stroke', label: 'Hollow', icon: 'â–¡' },
-    { value: 'ohlc', label: 'OHLC', icon: '|' },
+    { value: 'candle_solid', label: 'Candle', icon: 'C' },
+    { value: 'candle_stroke', label: 'Hollow', icon: 'H' },
+    { value: 'ohlc', label: 'OHLC', icon: 'B' },
     { value: 'area', label: 'Area', icon: '~' },
 ];
 
@@ -528,7 +528,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                                             <button key={name} onClick={() => toggleIndicator(name)}
                                                                 className={`px-2 py-1 text-xs rounded-lg font-semibold transition-all
                                                                     ${active ? 'bg-blue-600 text-white' : `${theme.text} bg-gray-800/50 hover:bg-blue-500/20`}`}>
-                                                                {active && <span className="mr-0.5">âœ“</span>}{name}
+                                                                {active && <span className="mr-0.5">&#10003;</span>}{name}
                                                             </button>
                                                         );
                                                     })}
@@ -553,7 +553,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                 className={`flex justify-center items-center w-full sm:w-auto gap-1.5 px-2.5 py-2 sm:py-1.5 text-xs font-semibold rounded-lg border transition-all
                                     ${activeTool || showToolMenu ? 'bg-purple-600 border-purple-600 text-white' : 'border-purple-500/40 text-purple-400 hover:bg-purple-500/10'}`}
                             >
-                                <span>âœï¸</span>
+                                <Pencil size={12} />
                                 <span className="hidden sm:inline">{toolLabel}</span>
                                 <ChevronDown size={11} />
                             </button>
@@ -645,7 +645,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 {activeTool && (
                     <div className="absolute top-3 left-3 pointer-events-none">
                         <div className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-600/90 backdrop-blur text-white flex items-center gap-1.5">
-                            ✏️ {toolLabel}
+                            <Pencil size={11} /> {toolLabel}
                         </div>
                     </div>
                 )}
@@ -664,8 +664,8 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             {/* ══ CHART FULLSCREEN MODAL ════════════════════════════════════════ */}
             {chartModalOpen && (
                 <div className="fixed inset-0 z-[200] flex flex-col" style={{ background: isDarkMode ? '#111827' : '#0f172a' }}>
-                    {/* Modal Top Bar */}
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 shrink-0" style={{ background: isDarkMode ? '#1f2937' : '#1e293b' }}>
+                    {/* Modal Top Bar - wraps on mobile so Close is always visible */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-white/10 shrink-0" style={{ background: isDarkMode ? '#1f2937' : '#1e293b' }}>
                         <div className="flex items-center gap-2">
                             <BarChart2 size={16} className="text-blue-400" />
                             <span className="text-sm font-bold text-white">{symbol}</span>
@@ -757,7 +757,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         <button key={s} onClick={() => setSpeed(s)}
                             className={`px-2.5 py-1 text-xs font-bold transition-colors
                                 ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {s}Ã—
+                            {s}x
                         </button>
                     ))}
                 </div>
