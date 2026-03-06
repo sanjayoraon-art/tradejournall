@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Play, Pause, SkipForward, RefreshCw, Search,
     TrendingUp, TrendingDown, Maximize2, Minimize2,
@@ -8,12 +8,12 @@ import type { Chart, KLineData } from 'klinecharts';
 import { fetchBinanceKlines, BinanceKline } from '../utils/binanceApi';
 import { fetchYahooKlines } from '../utils/marketApi';
 
-// ─── CDN global wrappers ─────────────────────────────────────────────────────
+// â”€â”€â”€ CDN global wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const _kc = () => (window as any).klinecharts as typeof import('klinecharts');
 const kcInit: typeof import('klinecharts')['init'] = (...args) => _kc().init(...args);
 const kcDispose: typeof import('klinecharts')['dispose'] = (...args) => _kc().dispose(...args);
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const INITIAL_VISIBLE = 150;
 
 const MAIN_INDICATORS = new Set(['MA', 'EMA', 'SMA', 'BBI', 'BOLL', 'SAR']);
@@ -38,24 +38,24 @@ const INDICATOR_GROUPS = [
 ];
 
 const DRAWING_TOOLS = [
-    { name: 'segment', label: 'Trend Line', icon: '↗' },
-    { name: 'rayLine', label: 'Ray', icon: '→' },
-    { name: 'straightLine', label: 'Extended Line', icon: '↔' },
-    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: '—' },
+    { name: 'segment', label: 'Trend Line', icon: 'â†—' },
+    { name: 'rayLine', label: 'Ray', icon: 'â†’' },
+    { name: 'straightLine', label: 'Extended Line', icon: 'â†”' },
+    { name: 'horizontalStraightLine', label: 'Horizontal Line', icon: 'â€”' },
     { name: 'verticalStraightLine', label: 'Vertical Line', icon: '|' },
     { name: 'priceLine', label: 'Price Level', icon: '$' },
-    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: '⫼' },
-    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'φ' },
-    { name: 'rect', label: 'Rectangle', icon: '▭' },
-    { name: 'circle', label: 'Circle', icon: '○' },
-    { name: 'triangle', label: 'Triangle', icon: '△' },
+    { name: 'parallelStraightLine', label: 'Parallel Channel', icon: 'â«¼' },
+    { name: 'fibonacciLine', label: 'Fibonacci', icon: 'Ï†' },
+    { name: 'rect', label: 'Rectangle', icon: 'â–­' },
+    { name: 'circle', label: 'Circle', icon: 'â—‹' },
+    { name: 'triangle', label: 'Triangle', icon: 'â–³' },
     { name: 'text', label: 'Note', icon: 'T' },
-    { name: 'arrow', label: 'Arrow', icon: '➜' },
+    { name: 'arrow', label: 'Arrow', icon: 'âžœ' },
 ];
 
 const CANDLE_TYPES = [
-    { value: 'candle_solid', label: 'Candle', icon: '🕯' },
-    { value: 'candle_stroke', label: 'Hollow', icon: '□' },
+    { value: 'candle_solid', label: 'Candle', icon: 'ðŸ•¯' },
+    { value: 'candle_stroke', label: 'Hollow', icon: 'â–¡' },
     { value: 'ohlc', label: 'OHLC', icon: '|' },
     { value: 'area', label: 'Area', icon: '~' },
 ];
@@ -63,7 +63,7 @@ const CANDLE_TYPES = [
 const INTERVALS = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '1d', '1w'];
 const YAHOO_INTERVALS = ['1m', '5m', '15m', '30m', '1h', '1d', '1w'];
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface BacktestingScreenProps {
     theme: any;
     isDarkMode: boolean;
@@ -96,7 +96,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     // Chart toolbar
     const [candleType, setCandleType] = useState('candle_solid');
-    const [activeIndicators, setActiveInds] = useState<Set<string>>(new Set(['VOL', 'MA']));
+    const [activeIndicators, setActiveInds] = useState<Set<string>>(new Set());
     const [activeTool, setActiveTool] = useState<string | null>(null);
     const [showIndMenu, setShowIndMenu] = useState(false);
     const [showToolMenu, setShowToolMenu] = useState(false);
@@ -111,7 +111,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     const chartRef = useRef<Chart | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // ── Chart theme ───────────────────────────────────────────────────────────
+    // â”€â”€ Chart theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const applyTheme = useCallback((chart: Chart, type = candleType) => {
         chart.setStyles({
             grid: {
@@ -149,15 +149,13 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         });
     }, [isDarkMode, candleType]);
 
-    // ── Init chart ────────────────────────────────────────────────────────────
+    // â”€â”€ Init chart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const initChart = useCallback((data: BinanceKline[]) => {
         if (!containerRef.current) return;
         if (chartRef.current) { kcDispose(containerRef.current); chartRef.current = null; }
         const chart = kcInit(containerRef.current);
         if (!chart) return;
         applyTheme(chart);
-        chart.createIndicator('VOL', true, { id: 'pane_vol' });
-        chart.createIndicator('MA', false, { id: 'candle_pane' });
         const formatted: KLineData[] = data.map(d => ({
             timestamp: d.timestamp, open: d.open, high: d.high,
             low: d.low, close: d.close, volume: d.volume,
@@ -175,10 +173,10 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             }
         });
         chartRef.current = chart;
-        setActiveInds(new Set(['VOL', 'MA']));
+        setActiveInds(new Set());
     }, [applyTheme]);
 
-    // ── Load data ─────────────────────────────────────────────────────────────
+    // â”€â”€ Load data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const loadData = useCallback(async (currentSymbol = symbol, currentInterval = chartInterval, currentMarketSource = marketSource) => {
         setIsLoading(true); setError(''); setPlaying(false); setActiveTrade(null); setActiveTool(null);
         if (timerRef.current) clearInterval(timerRef.current);
@@ -199,14 +197,14 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         }
     }, [symbol, chartInterval, marketSource, initChart]);
 
-    // ── Candle type live switch ───────────────────────────────────────────────
+    // â”€â”€ Candle type live switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!chartRef.current) return;
         chartRef.current.setStyles({ candle: { type: candleType as any } });
         setShowCandleMenu(false);
     }, [candleType]);
 
-    // ── Auto-load Data ──────────────────────────────────────────────────────
+    // â”€â”€ Auto-load Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const initialLoadDone = useRef(false);
     useEffect(() => {
         if (initialLoadDone.current) return;
@@ -214,7 +212,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         loadData('BTCUSDT', '5m', 'crypto');
     }, [loadData]);
 
-    // ── Indicator toggle ──────────────────────────────────────────────────────
+    // â”€â”€ Indicator toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const toggleIndicator = (name: string) => {
         if (!chartRef.current) return;
         const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane'
@@ -242,7 +240,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         setActiveInds(new Set());
     };
 
-    // ── Drawing tools ─────────────────────────────────────────────────────────
+    // â”€â”€ Drawing tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const selectTool = (name: string) => {
         if (!chartRef.current) return;
         chartRef.current.createOverlay({
@@ -261,7 +259,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     };
     const clearDrawings = () => { chartRef.current?.removeOverlay(); setActiveTool(null); };
 
-    // ── Replay ────────────────────────────────────────────────────────────────
+    // â”€â”€ Replay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (isPlaying && historicalData.length > 0 && currentIndex < historicalData.length - 1) {
             const id = window.setInterval(() => {
@@ -313,7 +311,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         }
     }, [currentIndex, historicalData, activeTrade]);
 
-    // ── Trading ───────────────────────────────────────────────────────────────
+    // â”€â”€ Trading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const currentBar = historicalData.length > 0 && currentIndex < historicalData.length ? historicalData[currentIndex] : null;
     const price = currentBar?.close ?? currentPrice;
 
@@ -344,7 +342,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             pnl: parseFloat(pnl.toFixed(2)),
             type: activeTrade.type,
             strategy: 'Backtest',
-            note: noteOverride || `Backtest sim — $${size} position`,
+            note: noteOverride || `Backtest sim â€” $${size} position`,
             isBacktest: true,
         });
         setActiveTrade(null);
@@ -362,198 +360,199 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     const closeAllMenus = () => { setShowIndMenu(false); setShowToolMenu(false); setShowCandleMenu(false); };
 
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Render
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
         <div
             className={`flex flex-col gap-3 ${isFullscreen ? `fixed inset-0 z-50 p-3 overflow-y-auto ${theme.bg}` : ''}`}
             onClick={closeAllMenus}
         >
-            {/* ══ TOP BAR ══════════════════════════════════════════════════════ */}
-            <div className={`flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-xl border ${theme.border} ${theme.card}`}>
-                {/* Icon + Title */}
-                <div className="flex items-center gap-2 mr-2">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                        <BarChart2 size={16} className="text-blue-400" />
+            {/* â•â• TOP BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+            <div className={`flex flex-col sm:flex-row flex-wrap sm:items-center gap-3 px-3 py-3 rounded-xl border ${theme.border} ${theme.card}`}>
+                {/* Title + Fullscreen (Mobile) */}
+                <div className="flex items-center justify-between sm:mr-2">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                            <BarChart2 size={16} className="text-blue-400" />
+                        </div>
+                        <span className="font-bold text-sm" style={{ color: isDarkMode ? '#e5e7eb' : '#111827' }}>
+                            Chart Replay
+                        </span>
                     </div>
-                    <span className="font-bold text-sm hidden sm:block" style={{ color: isDarkMode ? '#e5e7eb' : '#111827' }}>
-                        Chart Replay
-                    </span>
-                </div>
-
-                {/* Symbol input */}
-                <div className="flex items-center gap-1.5 focus-within:ring-2 focus-within:ring-blue-500 rounded-lg border overflow-hidden" style={{ borderColor: isDarkMode ? '#374151' : '#e5e7eb' }}>
-                    <select
-                        value={marketSource}
-                        onChange={e => {
-                            const val = e.target.value as 'crypto' | 'stocks';
-                            setMarketSource(val);
-                            if (val === 'crypto') setSymbol('BTCUSDT');
-                            else { setSymbol('AAPL'); setChartInterval('1d'); }
-                        }}
-                        className={`px-2 py-1.5 text-xs font-semibold outline-none border-r cursor-pointer ${theme.input} ${theme.border}`}
-                    >
-                        <option value="crypto">Crypto</option>
-                        <option value="stocks">Stocks/Forex</option>
-                    </select>
-                    <input
-                        type="text"
-                        value={symbol}
-                        onChange={e => setSymbol(e.target.value.toUpperCase())}
-                        placeholder={marketSource === 'crypto' ? "BTCUSDT" : "AAPL, EURUSD=X"}
-                        className={`w-28 px-2 py-1.5 text-xs font-bold outline-none uppercase tracking-wide ${theme.input}`}
-                    />
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                    {/* Interval select */}
-                    <select
-                        value={chartInterval}
-                        onChange={e => {
-                            const newInterval = e.target.value;
-                            setChartInterval(newInterval);
-                            // Auto-refresh when interval changes
-                            loadData(symbol, newInterval, marketSource);
-                        }}
-                        className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
-                    >
-                        {(marketSource === 'crypto' ? INTERVALS : YAHOO_INTERVALS).map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
-                    </select>
-                    {/* Load button */}
-                    <button
-                        onClick={e => { e.stopPropagation(); loadData(); }}
-                        disabled={isLoading}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-all disabled:opacity-50"
-                    >
-                        {isLoading ? <RefreshCw size={12} className="animate-spin" /> : <Search size={12} />}
-                        {isLoading ? 'Loading…' : 'Load'}
+                    <button onClick={() => setFullscreen(!isFullscreen)}
+                        className={`sm:hidden p-1.5 rounded-lg border transition-all ${theme.border} ${theme.text} hover:text-blue-400`}>
+                        {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
                     </button>
                 </div>
 
-                {/* Divider */}
-                <div className="h-5 w-px bg-gray-700/50 mx-1 hidden sm:block" />
+                {/* Symbol & Load */}
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-1.5 focus-within:ring-2 focus-within:ring-blue-500 rounded-lg border overflow-hidden" style={{ borderColor: isDarkMode ? '#374151' : '#e5e7eb' }}>
+                        <select
+                            value={marketSource}
+                            onChange={e => {
+                                const val = e.target.value as 'crypto' | 'stocks';
+                                setMarketSource(val);
+                                if (val === 'crypto') setSymbol('BTCUSDT');
+                                else { setSymbol('AAPL'); setChartInterval('1d'); }
+                            }}
+                            className={`px-2 py-1.5 text-xs font-semibold outline-none border-r cursor-pointer ${theme.input} ${theme.border}`}
+                        >
+                            <option value="crypto">Crypto</option>
+                            <option value="stocks">Stocks/Forex</option>
+                        </select>
+                        <input
+                            type="text"
+                            value={symbol}
+                            onChange={e => setSymbol(e.target.value.toUpperCase())}
+                            placeholder={marketSource === 'crypto' ? 'BTCUSDT' : 'AAPL, EURUSD=X'}
+                            className={`w-28 px-2 py-1.5 text-xs font-bold outline-none uppercase tracking-wide ${theme.input}`}
+                        />
+                    </div>
 
-                {/* Candle type */}
-                <div className="relative" onClick={e => e.stopPropagation()}>
-                    <button
-                        onClick={() => { setShowCandleMenu(!showCandleMenu); setShowIndMenu(false); setShowToolMenu(false); }}
-                        className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all
-                            ${theme.border} ${showCandleMenu ? 'bg-gray-700 text-white' : `${theme.card} hover:border-gray-500 ${theme.text}`}`}
-                    >
-                        <span>{CANDLE_TYPES.find(c => c.value === candleType)?.icon}</span>
-                        <span className="hidden sm:inline">{CANDLE_TYPES.find(c => c.value === candleType)?.label}</span>
-                        <ChevronDown size={11} />
-                    </button>
-                    {showCandleMenu && (
-                        <div className={`absolute top-full left-0 mt-1 w-32 rounded-xl shadow-2xl border ${theme.border} z-50`}
-                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
-                            {CANDLE_TYPES.map(ct => (
-                                <button key={ct.value} onClick={() => { setCandleType(ct.value); setShowCandleMenu(false); }}
-                                    className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl transition-colors
-                                        ${candleType === ct.value ? 'bg-blue-600 text-white font-bold' : `${theme.text} hover:bg-blue-500/10`}`}>
-                                    <span className="font-mono">{ct.icon}</span> {ct.label}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                    <div className="flex items-center gap-1.5">
+                        <select
+                            value={chartInterval}
+                            onChange={e => {
+                                const newInterval = e.target.value;
+                                setChartInterval(newInterval);
+                                loadData(symbol, newInterval, marketSource);
+                            }}
+                            className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
+                        >
+                            {(marketSource === 'crypto' ? INTERVALS : YAHOO_INTERVALS).map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
+                        </select>
+                        <button
+                            onClick={e => { e.stopPropagation(); loadData(); }}
+                            disabled={isLoading}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-all disabled:opacity-50"
+                        >
+                            {isLoading ? <RefreshCw size={12} className="animate-spin" /> : <Search size={12} />}
+                            {isLoading ? 'Loadingâ€¦' : 'Load'}
+                        </button>
+                    </div>
 
-                {/* Indicators */}
-                <div className="relative" onClick={e => e.stopPropagation()}>
-                    <button
-                        onClick={() => { setShowIndMenu(!showIndMenu); setShowToolMenu(false); setShowCandleMenu(false); }}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all
-                            ${showIndMenu ? 'bg-blue-600 border-blue-600 text-white' : 'border-blue-500/40 text-blue-400 hover:bg-blue-500/10'}`}
-                    >
-                        <TrendingUp size={12} />
-                        <span>Indicators</span>
-                        {activeIndicators.size > 0 && (
-                            <span className="bg-blue-500 text-white text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center">
-                                {activeIndicators.size}
-                            </span>
-                        )}
-                    </button>
-                    {showIndMenu && (
-                        <div className={`absolute top-full left-0 mt-1 w-64 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-50`}
-                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
-                            <div className="max-h-80 overflow-y-auto p-2 space-y-3">
-                                {INDICATOR_GROUPS.map(group => (
-                                    <div key={group.label}>
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-1 mb-1">{group.label}</p>
-                                        <div className="flex flex-wrap gap-1">
-                                            {group.items.map(name => {
-                                                const active = activeIndicators.has(name);
-                                                return (
-                                                    <button key={name} onClick={() => toggleIndicator(name)}
-                                                        className={`px-2 py-1 text-xs rounded-lg font-semibold transition-all
-                                                            ${active ? 'bg-blue-600 text-white' : `${theme.text} bg-gray-800/50 hover:bg-blue-500/20`}`}>
-                                                        {active && <span className="mr-0.5">✓</span>}{name}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className={`border-t ${theme.border} px-3 py-2`}>
-                                <button onClick={() => { clearAllIndicators(); setShowIndMenu(false); }}
-                                    className="w-full text-xs text-red-400 hover:text-red-300 flex items-center justify-center gap-1 py-1 rounded-lg hover:bg-red-500/10 transition-colors">
-                                    <Trash2 size={11} /> Clear All Indicators
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Drawing Tools */}
-                <div className="relative" onClick={e => e.stopPropagation()}>
-                    <button
-                        onClick={() => { setShowToolMenu(!showToolMenu); setShowIndMenu(false); setShowCandleMenu(false); }}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all
-                            ${activeTool || showToolMenu ? 'bg-purple-600 border-purple-600 text-white' : 'border-purple-500/40 text-purple-400 hover:bg-purple-500/10'}`}
-                    >
-                        <span>✏️</span>
-                        <span className="hidden sm:inline">{toolLabel}</span>
-                        <ChevronDown size={11} />
-                    </button>
-                    {showToolMenu && (
-                        <div className={`absolute top-full left-0 mt-1 w-48 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-50`}
-                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
-                            {/* Cursor */}
-                            <button onClick={clearTool}
-                                className={`w-full px-3 py-2.5 text-xs text-left flex items-center gap-2 border-b ${theme.border} transition-colors
-                                    ${!activeTool ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
-                                <MousePointer size={12} /> Cursor (No Tool)
+                    {/* Tools Row */}
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        {/* Candle type */}
+                        <div className="relative flex-1 sm:flex-none" onClick={e => e.stopPropagation()}>
+                            <button
+                                onClick={() => { setShowCandleMenu(!showCandleMenu); setShowIndMenu(false); setShowToolMenu(false); }}
+                                className={`flex justify-center items-center w-full sm:w-auto gap-1 px-2.5 py-2 sm:py-1.5 text-xs font-semibold rounded-lg border transition-all
+                                    ${theme.border} ${showCandleMenu ? 'bg-gray-700 text-white' : `${theme.card} hover:border-gray-500 ${theme.text}`}`}
+                            >
+                                <span>{CANDLE_TYPES.find(c => c.value === candleType)?.icon}</span>
+                                <span className="hidden sm:inline">{CANDLE_TYPES.find(c => c.value === candleType)?.label}</span>
+                                <ChevronDown size={11} />
                             </button>
-                            <div className="max-h-60 overflow-y-auto">
-                                {DRAWING_TOOLS.map(tool => (
-                                    <button key={tool.name} onClick={() => selectTool(tool.name)}
-                                        className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2.5 transition-colors
-                                            ${activeTool === tool.name ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
-                                        <span className="font-mono w-4 text-center">{tool.icon}</span>
-                                        {tool.label}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className={`border-t ${theme.border} px-3 py-2`}>
-                                <button onClick={() => { clearDrawings(); setShowToolMenu(false); }}
-                                    className="w-full text-xs text-red-400 hover:text-red-300 flex items-center justify-center gap-1 py-1 rounded-lg hover:bg-red-500/10 transition-colors">
-                                    <Trash2 size={11} /> Clear All Drawings
-                                </button>
-                            </div>
+                            {showCandleMenu && (
+                                <div className={`absolute top-full left-0 mt-1 w-32 rounded-xl shadow-2xl border ${theme.border} z-50`}
+                                    style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
+                                    {CANDLE_TYPES.map(ct => (
+                                        <button key={ct.value} onClick={() => { setCandleType(ct.value); setShowCandleMenu(false); }}
+                                            className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl transition-colors
+                                                ${candleType === ct.value ? 'bg-blue-600 text-white font-bold' : `${theme.text} hover:bg-blue-500/10`}`}>
+                                            <span className="font-mono">{ct.icon}</span> {ct.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                    )}
+
+                        {/* Indicators */}
+                        <div className="relative flex-1 sm:flex-none" onClick={e => e.stopPropagation()}>
+                            <button
+                                onClick={() => { setShowIndMenu(!showIndMenu); setShowToolMenu(false); setShowCandleMenu(false); }}
+                                className={`flex justify-center items-center w-full sm:w-auto gap-1.5 px-2.5 py-2 sm:py-1.5 text-xs font-semibold rounded-lg border transition-all
+                                    ${showIndMenu ? 'bg-blue-600 border-blue-600 text-white' : 'border-blue-500/40 text-blue-400 hover:bg-blue-500/10'}`}
+                            >
+                                <TrendingUp size={12} />
+                                <span>Indicators</span>
+                                {activeIndicators.size > 0 && (
+                                    <span className="bg-blue-500 text-white text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center">
+                                        {activeIndicators.size}
+                                    </span>
+                                )}
+                            </button>
+                            {showIndMenu && (
+                                <div className={`absolute top-full left-0 mt-1 w-64 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-50`}
+                                    style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
+                                    <div className="max-h-80 overflow-y-auto p-2 space-y-3">
+                                        {INDICATOR_GROUPS.map(group => (
+                                            <div key={group.label}>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-1 mb-1">{group.label}</p>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {group.items.map(name => {
+                                                        const active = activeIndicators.has(name);
+                                                        return (
+                                                            <button key={name} onClick={() => toggleIndicator(name)}
+                                                                className={`px-2 py-1 text-xs rounded-lg font-semibold transition-all
+                                                                    ${active ? 'bg-blue-600 text-white' : `${theme.text} bg-gray-800/50 hover:bg-blue-500/20`}`}>
+                                                                {active && <span className="mr-0.5">âœ“</span>}{name}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className={`border-t ${theme.border} px-3 py-2`}>
+                                        <button onClick={() => { clearAllIndicators(); setShowIndMenu(false); }}
+                                            className="w-full text-xs text-red-400 hover:text-red-300 flex items-center justify-center gap-1 py-1 rounded-lg hover:bg-red-500/10 transition-colors">
+                                            <Trash2 size={11} /> Clear All Indicators
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Drawing Tools */}
+                        <div className="relative flex-1 sm:flex-none" onClick={e => e.stopPropagation()}>
+                            <button
+                                onClick={() => { setShowToolMenu(!showToolMenu); setShowIndMenu(false); setShowCandleMenu(false); }}
+                                className={`flex justify-center items-center w-full sm:w-auto gap-1.5 px-2.5 py-2 sm:py-1.5 text-xs font-semibold rounded-lg border transition-all
+                                    ${activeTool || showToolMenu ? 'bg-purple-600 border-purple-600 text-white' : 'border-purple-500/40 text-purple-400 hover:bg-purple-500/10'}`}
+                            >
+                                <span>âœï¸</span>
+                                <span className="hidden sm:inline">{toolLabel}</span>
+                                <ChevronDown size={11} />
+                            </button>
+                            {showToolMenu && (
+                                <div className={`absolute top-full left-0 mt-1 w-48 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-50`}
+                                    style={{ background: isDarkMode ? '#1f2937' : '#fff' }}>
+                                    <button onClick={clearTool}
+                                        className={`w-full px-3 py-2.5 text-xs text-left flex items-center gap-2 border-b ${theme.border} transition-colors
+                                            ${!activeTool ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
+                                        <MousePointer size={12} /> Cursor (No Tool)
+                                    </button>
+                                    <div className="max-h-60 overflow-y-auto">
+                                        {DRAWING_TOOLS.map(tool => (
+                                            <button key={tool.name} onClick={() => selectTool(tool.name)}
+                                                className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2.5 transition-colors
+                                                    ${activeTool === tool.name ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
+                                                <span className="font-mono w-4 text-center">{tool.icon}</span>
+                                                {tool.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className={`border-t ${theme.border} px-3 py-2`}>
+                                        <button onClick={() => { clearDrawings(); setShowToolMenu(false); }}
+                                            className="w-full text-xs text-red-400 hover:text-red-300 flex items-center justify-center gap-1 py-1 rounded-lg hover:bg-red-500/10 transition-colors">
+                                            <Trash2 size={11} /> Clear All Drawings
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Fullscreen (Desktop) */}
+                        <button onClick={() => setFullscreen(!isFullscreen)}
+                            className={`hidden sm:flex p-1.5 rounded-lg border transition-all ${theme.border} ${theme.text} hover:text-blue-400`}>
+                            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                        </button>
+                    </div>
                 </div>
-
-                {/* Spacer */}
-                <div className="flex-1" />
-
-                {/* Fullscreen */}
-                <button onClick={() => setFullscreen(!isFullscreen)}
-                    className={`p-1.5 rounded-lg border transition-all ${theme.border} ${theme.text} hover:text-blue-400`}>
-                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                </button>
             </div>
 
             {/* Error */}
@@ -564,14 +563,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 </div>
             )}
 
-            {/* ══ CHART AREA ══════════════════════════════════════════════════ */}
+            {/* â•â• CHART AREA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <div className={`relative rounded-xl border overflow-hidden ${theme.border} ${isFullscreen ? 'h-[55vh]' : 'h-[420px] md:h-[490px]'}`}
                 style={{ background: isDarkMode ? '#111827' : '#f9fafb' }}>
 
-                {/* Chart container */}
                 <div ref={containerRef} className="w-full h-full" />
 
-                {/* Empty state overlay */}
                 {historicalData.length === 0 && !isLoading && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-none"
                         style={{ background: isDarkMode ? 'rgba(17,24,39,0.95)' : 'rgba(249,250,251,0.95)' }}>
@@ -585,18 +582,16 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     </div>
                 )}
 
-                {/* Loading overlay */}
                 {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center"
                         style={{ background: isDarkMode ? 'rgba(17,24,39,0.8)' : 'rgba(249,250,251,0.8)' }}>
                         <div className="flex items-center gap-2 text-blue-400">
                             <RefreshCw size={18} className="animate-spin" />
-                            <span className="text-sm font-semibold">Loading {symbol}…</span>
+                            <span className="text-sm font-semibold">Loading {symbol}â€¦</span>
                         </div>
                     </div>
                 )}
 
-                {/* Live price badge - top right */}
                 {historicalData.length > 0 && (
                     <div className="absolute top-3 right-3 flex items-center gap-2 pointer-events-none">
                         <div className="px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-900/80 backdrop-blur border border-white/10 text-white">
@@ -608,22 +603,29 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     </div>
                 )}
 
-                {/* Active tool indicator */}
                 {activeTool && (
                     <div className="absolute top-3 left-3 pointer-events-none">
                         <div className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-600/90 backdrop-blur text-white flex items-center gap-1.5">
-                            <span>✏️</span> {toolLabel}
+                            âœï¸ {toolLabel}
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* ══ CONTROLS + INFO BAR ════════════════════════════════════════ */}
-            <div className={`flex flex-wrap items-center gap-3 px-4 py-3 rounded-xl border ${theme.border} ${theme.card}`}>
-                {/* Playback */}
-                <div className="flex items-center gap-2">
-                    <button onClick={() => setPlaying(!isPlaying)} disabled={historicalData.length === 0}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-40
+            {/* â•â• CONTROLS BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+            <div className={`flex flex-wrap items-center gap-2 px-3 py-2.5 rounded-xl border ${theme.border} ${theme.card}`}>
+                {/* Playback controls */}
+                <div className="flex items-center gap-1.5">
+                    <button
+                        onClick={() => historicalData.length > 0 && setIndex(p => Math.max(INITIAL_VISIBLE, p - 1))}
+                        disabled={isPlaying || historicalData.length === 0}
+                        className={`p-1.5 rounded-lg border transition-all disabled:opacity-40 ${theme.border} text-gray-400 hover:text-white hover:border-gray-500`}>
+                        <SkipForward size={14} className="rotate-180" />
+                    </button>
+                    <button
+                        onClick={() => setPlaying(p => !p)}
+                        disabled={historicalData.length === 0 || currentIndex >= historicalData.length - 1}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-40
                             ${isPlaying ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>
                         {isPlaying ? <><Pause size={13} /> Pause</> : <><Play size={13} /> Play</>}
                     </button>
@@ -641,12 +643,11 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         <button key={s} onClick={() => setSpeed(s)}
                             className={`px-2.5 py-1 text-xs font-bold transition-colors
                                 ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {s}×
+                            {s}Ã—
                         </button>
                     ))}
                 </div>
 
-                {/* Divider */}
                 <div className="h-5 w-px bg-gray-700/50" />
 
                 {/* Time & Progress */}
@@ -655,7 +656,6 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         <span className="font-mono bg-gray-800/50 px-2 py-1 rounded-lg">
                             {currentBar ? new Date(currentBar.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '--'}
                         </span>
-                        {/* Progress bar */}
                         <div className="hidden sm:flex items-center gap-1.5">
                             <div className="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-500 rounded-full transition-all"
@@ -667,20 +667,20 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 )}
             </div>
 
-            {/* ══ TRADING PANEL ══════════════════════════════════════════════ */}
+            {/* â•â• TRADING PANEL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             {historicalData.length > 0 && (
                 <div className={`rounded-xl border ${theme.border} ${theme.card} overflow-hidden`}>
                     {/* Panel header */}
-                    <div className={`px-4 py-2.5 border-b ${theme.border} flex items-center justify-between`}>
+                    <div className={`px-4 py-2.5 border-b ${theme.border} flex flex-col sm:flex-row sm:items-center justify-between gap-3`}>
                         <div className="flex items-center gap-2">
                             <Zap size={14} className="text-amber-400" />
                             <span className="text-xs font-bold text-gray-400">Paper Trading</span>
                         </div>
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center flex-wrap gap-x-4 gap-y-2">
                             {/* Take Profit */}
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-green-500 font-semibold">TARGET (TP)</span>
+                            <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                                <span className="text-[10px] text-green-500 font-semibold w-16 sm:w-auto">TARGET</span>
                                 <input
                                     type="number"
                                     value={takeProfitStr}
@@ -692,8 +692,8 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                             </div>
 
                             {/* Stop Loss */}
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-red-500 font-semibold">STOP (SL)</span>
+                            <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                                <span className="text-[10px] text-red-500 font-semibold w-16 sm:w-auto">STOP</span>
                                 <input
                                     type="number"
                                     value={stopLossStr}
@@ -705,9 +705,9 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                             </div>
 
                             {/* Position size */}
-                            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-gray-700/50">
-                                <span className="text-[10px] text-gray-500 font-semibold">SIZE</span>
-                                <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border}`}>
+                            <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-2 sm:pl-4 sm:border-l sm:border-gray-700/50 pt-2 sm:pt-0 border-t border-gray-700/50 sm:border-t-0">
+                                <span className="text-[10px] text-gray-500 font-semibold w-16 sm:w-auto">SIZE</span>
+                                <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border} flex-1 sm:flex-none`}>
                                     <span className="px-2 py-1 text-xs text-gray-500 bg-gray-800/50">$</span>
                                     <input
                                         type="number"
@@ -715,7 +715,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                         onChange={e => setSize(Math.max(1, parseInt(e.target.value) || 1000))}
                                         disabled={!!activeTrade}
                                         min={1}
-                                        className={`w-20 px-2 py-1 text-xs outline-none text-right bg-transparent ${theme.text} disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        className={`w-full sm:w-20 px-2 py-1 text-xs outline-none text-right bg-transparent ${theme.text} disabled:opacity-50 disabled:cursor-not-allowed`}
                                     />
                                 </div>
                             </div>
@@ -723,7 +723,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-800/50">
-                        {/* Buttons */}
+                        {/* Buy/Sell Buttons */}
                         <div className="p-4 flex gap-3">
                             <button onClick={() => openTrade('Long')} disabled={!!activeTrade}
                                 className={`flex-1 py-3 rounded-xl text-sm font-bold flex flex-col items-center gap-1 transition-all border
@@ -747,31 +747,28 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         <div className="p-4 flex flex-col justify-center">
                             {activeTrade ? (
                                 <div className="space-y-2.5">
-                                    {/* Trade info row */}
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 flex-wrap">
                                             <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${activeTrade.type === 'Long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                                                {activeTrade.type === 'Long' ? '▲ LONG' : '▼ SHORT'}
+                                                {activeTrade.type === 'Long' ? 'â–² LONG' : 'â–¼ SHORT'}
                                             </span>
                                             <span className="text-xs text-gray-500">@ {activeTrade.entryPrice.toFixed(priceDecimals)}</span>
-
-                                            {/* Show SL/TP if set */}
                                             {(activeTrade.takeProfit || activeTrade.stopLoss) && (
-                                                <div className="flex items-center gap-2 ml-3">
+                                                <div className="flex items-center gap-2">
                                                     {activeTrade.takeProfit && (
                                                         <span className="text-[10px] bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded border border-green-500/20">
-                                                            🎯 {activeTrade.takeProfit.toFixed(priceDecimals)}
+                                                            ðŸŽ¯ {activeTrade.takeProfit.toFixed(priceDecimals)}
                                                         </span>
                                                     )}
                                                     {activeTrade.stopLoss && (
                                                         <span className="text-[10px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded border border-red-500/20">
-                                                            🛑 {activeTrade.stopLoss.toFixed(priceDecimals)}
+                                                            ðŸ›‘ {activeTrade.stopLoss.toFixed(priceDecimals)}
                                                         </span>
                                                     )}
                                                 </div>
                                             )}
                                         </div>
-                                        <div className={`text-right`}>
+                                        <div className="text-right">
                                             <p className="text-[10px] text-gray-600 uppercase tracking-wide">Unrealized P&L</p>
                                             <p className={`text-lg font-black leading-tight ${pnlPositive ? 'text-green-400' : 'text-red-400'}`}>
                                                 {pnlPositive ? '+' : ''}${unrealizedPnl.toFixed(2)}
@@ -794,7 +791,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 </div>
             )}
 
-            {/* Indicator Settings Modal */}
+            {/* â•â• INDICATOR SETTINGS MODAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             {editingIndicator && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className={`w-full max-w-sm rounded-2xl shadow-2xl border ${theme.border} ${theme.card} overflow-hidden`}
@@ -852,3 +849,5 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         </div>
     );
 };
+
+export default BacktestingScreen;
