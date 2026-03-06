@@ -468,7 +468,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-all disabled:opacity-50"
                         >
                             {isLoading ? <RefreshCw size={12} className="animate-spin" /> : <Search size={12} />}
-                            {isLoading ? 'Loadingâ€¦' : 'Load'}
+                            {isLoading ? 'Loading...' : 'Load'}
                         </button>
                     </div>
 
@@ -755,7 +755,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 <div className={`flex items-center rounded-lg border overflow-hidden ${theme.border}`}>
                     {([1, 2, 5] as const).map(s => (
                         <button key={s} onClick={() => setSpeed(s)}
-                            className={`px-2.5 py-1 text-xs font-bold transition-colors
+                            className={`px-2.5 py-1 text-xs font-bold transition-colors whitespace-nowrap
                                 ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}>
                             {s}x
                         </button>
