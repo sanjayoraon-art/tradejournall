@@ -74,7 +74,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 }) => {
     // Load / Replay
     const [symbol, setSymbol] = useState('BTCUSDT');
-    const [interval, setInterval] = useState('5m');
+    const [chartInterval, setChartInterval] = useState('5m');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [historicalData, setData] = useState<BinanceKline[]>([]);
@@ -97,6 +97,9 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     const [showToolMenu, setShowToolMenu] = useState(false);
     const [showCandleMenu, setShowCandleMenu] = useState(false);
     const [isFullscreen, setFullscreen] = useState(false);
+
+    // Indicator settings
+    const [editingIndicator, setEditingIndicator] = useState<{ paneId: string; name: string; params: number[] } | null>(null);
 
     // Chart
     const containerRef = useRef<HTMLDivElement>(null);
@@ -124,6 +127,20 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             },
             xAxis: { axisLine: { color: 'rgba(255,255,255,0.08)' }, tickLine: { color: 'rgba(255,255,255,0.08)' }, tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 } },
             yAxis: { axisLine: { color: 'rgba(255,255,255,0.08)' }, tickLine: { color: 'rgba(255,255,255,0.08)' }, tickText: { color: isDarkMode ? '#6b7280' : '#9ca3af', size: 11 } },
+            indicator: {
+                tooltip: {
+                    icons: [
+                        {
+                            id: 'setting', position: 'middle' as any, marginLeft: 8, marginTop: 7, marginRight: 0, marginBottom: 0, paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0,
+                            icon: '\u2699\uFE0F', fontFamily: 'Helvetica', size: 14, color: '#76808F', activeColor: '#3b82f6', backgroundColor: 'transparent', activeBackgroundColor: 'transparent'
+                        },
+                        {
+                            id: 'close', position: 'middle' as any, marginLeft: 8, marginTop: 7, marginRight: 0, marginBottom: 0, paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0,
+                            icon: '\u274C', fontFamily: 'Helvetica', size: 14, color: '#76808F', activeColor: '#ef4444', backgroundColor: 'transparent', activeBackgroundColor: 'transparent'
+                        }
+                    ]
+                }
+            }
         });
     }, [isDarkMode, candleType]);
 
@@ -141,6 +158,17 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             low: d.low, close: d.close, volume: d.volume,
         }));
         chart.applyNewData(formatted);
+        chart.subscribeAction('onTooltipIconClick' as any, (data: any) => {
+            const { paneId, indicatorName, iconId } = data;
+            if (iconId === 'setting') {
+                const ind = chart.getIndicatorByPaneId(paneId, indicatorName) as any;
+                const params = ind?.calcParams || [];
+                setEditingIndicator({ paneId, name: indicatorName, params: [...params] });
+            } else if (iconId === 'close') {
+                try { chart.removeIndicator(paneId, indicatorName); } catch { }
+                setActiveInds(prev => { const n = new Set(prev); n.delete(indicatorName); return n; });
+            }
+        });
         chartRef.current = chart;
         setActiveInds(new Set(['VOL', 'MA']));
     }, [applyTheme]);
@@ -150,7 +178,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
         setIsLoading(true); setError(''); setPlaying(false); setActiveTrade(null); setActiveTool(null);
         if (timerRef.current) clearInterval(timerRef.current);
         try {
-            const data = await fetchBinanceKlines(symbol, interval, undefined, undefined, 1000);
+            const data = await fetchBinanceKlines(symbol, chartInterval, undefined, undefined, 1000);
             if (data.length < INITIAL_VISIBLE + 10) { setError('Not enough data. Try a shorter interval.'); return; }
             setData(data);
             setIndex(INITIAL_VISIBLE);
@@ -201,12 +229,17 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     // ── Drawing tools ─────────────────────────────────────────────────────────
     const selectTool = (name: string) => {
         if (!chartRef.current) return;
-        chartRef.current.createOverlay(name);
+        chartRef.current.createOverlay({
+            name,
+            onDrawEnd: () => { setActiveTool(null); return true; }
+        });
         setActiveTool(name);
         setShowToolMenu(false);
     };
     const clearTool = () => {
-        chartRef.current?.removeOverlay();
+        // Just cancel the active drawing mode
+        chartRef.current?.overrideOverlay({ name: 'segment', lock: true } as any); // Simple way to lock/end drawing
+        // In klinecharts v9 just setting active tool to null and creating no overlays stops drawing
         setActiveTool(null);
         setShowToolMenu(false);
     };
@@ -215,7 +248,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     // ── Replay ────────────────────────────────────────────────────────────────
     useEffect(() => {
         if (isPlaying && historicalData.length > 0 && currentIndex < historicalData.length - 1) {
-            const id = setInterval(() => {
+            const id = window.setInterval(() => {
                 setIndex(prev => {
                     if (prev >= historicalData.length - 1) { setPlaying(false); return prev; }
                     return prev + 1;
@@ -305,8 +338,8 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     />
                     {/* Interval select */}
                     <select
-                        value={interval}
-                        onChange={e => setInterval(e.target.value)}
+                        value={chartInterval}
+                        onChange={e => setChartInterval(e.target.value)}
                         className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
                     >
                         {INTERVALS.map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
@@ -635,6 +668,62 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                     <p className="text-[10px] text-gray-600">Click Buy or Sell to start a paper trade</p>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Indicator Settings Modal */}
+            {editingIndicator && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className={`w-full max-w-sm rounded-2xl shadow-2xl border ${theme.border} ${theme.card} overflow-hidden`}
+                        style={{ background: isDarkMode ? '#1f2937' : '#ffffff' }}>
+                        <div className={`px-4 py-3 border-b ${theme.border} flex items-center justify-between`}>
+                            <h3 className={`font-bold ${theme.text}`}>
+                                {editingIndicator.name} Settings
+                            </h3>
+                            <button onClick={() => setEditingIndicator(null)} className="text-gray-400 hover:text-white transition-colors">
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <div className="p-4 space-y-4">
+                            {editingIndicator.params.map((val, idx) => (
+                                <div key={idx} className="flex items-center justify-between gap-4">
+                                    <label className="text-xs font-semibold text-gray-400">Length {idx + 1}</label>
+                                    <input
+                                        type="number"
+                                        value={val}
+                                        onChange={e => {
+                                            const newParams = [...editingIndicator.params];
+                                            newParams[idx] = parseFloat(e.target.value) || 0;
+                                            setEditingIndicator(prev => prev ? { ...prev, params: newParams } : null);
+                                        }}
+                                        className={`w-24 px-3 py-1.5 text-sm font-bold rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none ${theme.input}`}
+                                    />
+                                </div>
+                            ))}
+                            {editingIndicator.params.length === 0 && (
+                                <div className="text-sm text-gray-500 text-center py-4">No parameters to configure.</div>
+                            )}
+                        </div>
+                        <div className={`p-4 border-t ${theme.border} flex gap-3`}>
+                            <button onClick={() => setEditingIndicator(null)}
+                                className={`flex-1 py-2 text-sm font-bold rounded-xl border ${theme.border} ${theme.text} hover:bg-gray-800 transition-colors`}>
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (chartRef.current) {
+                                        chartRef.current.overrideIndicator({
+                                            name: editingIndicator.name,
+                                            calcParams: editingIndicator.params
+                                        });
+                                    }
+                                    setEditingIndicator(null);
+                                }}
+                                className="flex-1 py-2 text-sm font-bold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl transition-all">
+                                Apply
+                            </button>
                         </div>
                     </div>
                 </div>

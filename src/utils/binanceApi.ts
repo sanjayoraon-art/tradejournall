@@ -1,5 +1,5 @@
 export interface BinanceKline {
-    openTime: number;
+    timestamp: number;
     open: number;
     high: number;
     low: number;
@@ -41,7 +41,7 @@ export const fetchBinanceKlines = async (
         // Map Binance response array to our interface
         // Binance format: [Open time, Open, High, Low, Close, Volume, Close time, Quote asset volume, Number of trades, Taker buy base asset volume, Taker buy quote asset volume, Ignore]
         return data.map((d: any[]) => ({
-            openTime: d[0],
+            timestamp: d[0],
             open: parseFloat(d[1]),
             high: parseFloat(d[2]),
             low: parseFloat(d[3]),
