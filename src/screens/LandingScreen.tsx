@@ -58,11 +58,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             The Ultimate AI Trading Journal
                         </div>
 
-                        <h1 className="text-5xl lg:text-5xl xl:text-7xl font-black leading-[1.1] tracking-tight">
-                            Master Your Trades with the<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
-                                Ultimate Free Online Trading Journal
-                            </span>
+                        <h1 className="text-5xl lg:text-5xl xl:text-7xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
+                            Master Your Trades with the Ultimate Free Online Trading Journal
                         </h1>
 
                         <p className="text-xl text-gray-400 leading-relaxed max-w-xl pr-4 mt-6">
@@ -153,18 +150,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                     <div className="grid md:grid-cols-3 gap-8">
                         <div className="bg-gray-800/50 p-8 rounded-3xl border border-gray-700 hover:border-green-500 transition-colors">
                             <div className="w-16 h-16 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">1</div>
-                            <h3 className="text-2xl font-bold mb-4">Login Securely</h3>
-                            <p className="text-gray-400">Create your free account instantly and securely using Firebase authentication.</p>
+                            <h3 className="text-2xl font-bold mb-4">Step 1: Connect your trades</h3>
+                            <p className="text-gray-400">Manual entry ya CSV upload ke zariye apne trades add karein.</p>
                         </div>
                         <div className="bg-gray-800/50 p-8 rounded-3xl border border-gray-700 hover:border-blue-500 transition-colors">
                             <div className="w-16 h-16 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">2</div>
-                            <h3 className="text-2xl font-bold mb-4">Add Trade</h3>
-                            <p className="text-gray-400">Log your entry, exit, Nifty/BankNifty symbol, stop loss, and market emotions seamlessly.</p>
+                            <h3 className="text-2xl font-bold mb-4">Step 2: Get Deep Analytics</h3>
+                            <p className="text-gray-400">Hamara AI-driven system aapke risk-reward aur win-rate ko calculate karega.</p>
                         </div>
                         <div className="bg-gray-800/50 p-8 rounded-3xl border border-gray-700 hover:border-purple-500 transition-colors">
                             <div className="w-16 h-16 bg-purple-500/10 text-purple-500 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">3</div>
-                            <h3 className="text-2xl font-bold mb-4">Analyze Growth</h3>
-                            <p className="text-gray-400">Let the AI calculate your Risk-Reward and render your exact Equity Curve chart.</p>
+                            <h3 className="text-2xl font-bold mb-4">Step 3: Improve & Grow</h3>
+                            <p className="text-gray-400">Apni galtiyon ko pehchanein aur ek disciplined trader banein.</p>
                         </div>
                     </div>
                 </div>
