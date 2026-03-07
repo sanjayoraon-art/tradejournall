@@ -13,7 +13,7 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenInfo, theme, isDarkMode }) => {
     // Add page-specific SEO tags when the landing page mounts
     useEffect(() => {
-        document.title = "TradeJournall - Best Free Online Trading Journal for Stock Market";
+        document.title = "TradeJournall | Best Free Online Trading Journal for Stock Market";
 
         // Optional: Add more specific meta tags dynamically if needed
         // The generic ones in index.html already cover most cases well
@@ -65,8 +65,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </span>
                         </h1>
 
-                        <p className="text-xl text-gray-400 leading-relaxed max-w-xl pr-4">
-                            Elevate your day trading and portfolio management with the best AI trade tracker. Fully supported for Indian Markets (Nifty, BankNifty), Crypto, and Forex traders to dominate the charts.
+                        <p className="text-xl text-gray-400 leading-relaxed max-w-xl pr-4 mt-6">
+                            <strong className="text-gray-200">Built for Indian Traders:</strong> Track Nifty, BankNifty, Equity (NSE/BSE), and Crypto in one centralized place.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-2">
@@ -81,10 +81,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
 
                         <div className="flex items-center gap-4 pt-4 mt-2">
                             <div className="flex -space-x-3">
-                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
-                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
-                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
-                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100" alt="Trade Journal Dashboard Screen user" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100" alt="Trade Journal Dashboard Screen user" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=100" alt="Trade Journal Dashboard Screen user" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" alt="Trade Journal Dashboard Screen user" />
                                 <div className="w-10 h-10 rounded-full border-2 border-gray-900 bg-gray-800 flex items-center justify-center text-xs font-bold text-green-500">+5k</div>
                             </div>
                             <div className="text-sm font-medium text-gray-400 flex flex-col items-start leading-tight">
@@ -99,7 +99,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 to-transparent rounded-3xl"></div>
                         <img
                             src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200"
-                            alt="trade journal dashboard"
+                            alt="Trade Journal Dashboard Screen"
                             className="rounded-2xl w-full h-[400px] lg:h-[500px] object-cover opacity-90 sepia-[.2] hue-rotate-[-10deg]"
                         />
                         {/* Floating UI Elements for depth */}
@@ -116,6 +116,30 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
 
                 </div>
             </header>
+
+            {/* How It Works Section */}
+            <section className="w-full py-20 bg-gray-900/50">
+                <div className="max-w-6xl mx-auto px-4 text-center">
+                    <h2 className="text-3xl lg:text-5xl font-black mb-12">How It Works</h2>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        <div className="bg-gray-800/50 p-8 rounded-3xl border border-gray-700 hover:border-green-500 transition-colors">
+                            <div className="w-16 h-16 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">1</div>
+                            <h3 className="text-2xl font-bold mb-4">Login Securely</h3>
+                            <p className="text-gray-400">Create your free account instantly and securely using Firebase authentication.</p>
+                        </div>
+                        <div className="bg-gray-800/50 p-8 rounded-3xl border border-gray-700 hover:border-blue-500 transition-colors">
+                            <div className="w-16 h-16 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">2</div>
+                            <h3 className="text-2xl font-bold mb-4">Add Trade</h3>
+                            <p className="text-gray-400">Log your entry, exit, Nifty/BankNifty symbol, stop loss, and market emotions seamlessly.</p>
+                        </div>
+                        <div className="bg-gray-800/50 p-8 rounded-3xl border border-gray-700 hover:border-purple-500 transition-colors">
+                            <div className="w-16 h-16 bg-purple-500/10 text-purple-500 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">3</div>
+                            <h3 className="text-2xl font-bold mb-4">Analyze Growth</h3>
+                            <p className="text-gray-400">Let the AI calculate your Risk-Reward and render your exact Equity Curve chart.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Comprehensive Page Details Section */}
             <main className="w-full py-20 bg-gray-900 border-t border-gray-800">
@@ -146,7 +170,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -170,7 +194,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -194,7 +218,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -218,7 +242,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -242,7 +266,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1616422285623-1d22dc05c486?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1616422285623-1d22dc05c486?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -266,7 +290,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -290,7 +314,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=1200" alt="Trade Journal Dashboard Screen" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
                     </div>
