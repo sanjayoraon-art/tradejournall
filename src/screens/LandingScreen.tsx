@@ -117,6 +117,35 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                 </div>
             </header>
 
+            {/* User-Provided SEO Features Section */}
+            <section id="features" className="py-16 bg-gray-900 border-t border-gray-800">
+                <div className="max-w-6xl mx-auto px-4">
+                    <h2 className="text-3xl md:text-5xl font-black text-center text-white mb-12 leading-tight">
+                        Everything You Need in a <span className="text-green-500">Free Online Trading Journal</span>
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="p-8 border border-gray-700 bg-gray-800/50 rounded-3xl hover:border-blue-500 transition-colors shadow-lg">
+                            <div className="text-blue-500 text-4xl mb-6">📊</div>
+                            <h3 className="text-xl font-bold mb-4 text-white">Automated Trade Analysis</h3>
+                            <p className="text-gray-400">Apne trades ko analyze karein aur dekhein ki aap kahan galti kar rahe hain. Stock market mein profit badhane ka sabse sahi tarika.</p>
+                        </div>
+
+                        <div className="p-8 border border-gray-700 bg-gray-800/50 rounded-3xl hover:border-purple-500 transition-colors shadow-lg">
+                            <div className="text-purple-500 text-4xl mb-6">🧠</div>
+                            <h3 className="text-xl font-bold mb-4 text-white">Psychology Tracking</h3>
+                            <p className="text-gray-400">Trade lete waqt aapka mindset kya tha? FOMO ya Discipline? Hamara journal aapki trading psychology track karta hai.</p>
+                        </div>
+
+                        <div className="p-8 border border-gray-700 bg-gray-800/50 rounded-3xl hover:border-cyan-500 transition-colors shadow-lg">
+                            <div className="text-cyan-500 text-4xl mb-6">⚡</div>
+                            <h3 className="text-xl font-bold mb-4 text-white">Built for Indian Markets</h3>
+                            <p className="text-gray-400">Special support for Nifty, BankNifty, and Equity. India ke traders ke liye banaya gaya best digital trade log.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* How It Works Section */}
             <section className="w-full py-20 bg-gray-900/50">
                 <div className="max-w-6xl mx-auto px-4 text-center">
@@ -408,6 +437,15 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
 
             {/* SEO Article Area */}
             <SeoArticle />
+
+            {/* User-Provided Hidden Keywords Section */}
+            <div className="w-full bg-gray-900 border-t border-gray-800/50 text-center py-10 px-4">
+                <div className="max-w-4xl mx-auto">
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                        TradeJournall is a professional-grade <strong className="text-gray-400">free online trading journal for stock market</strong> enthusiasts. Whether you are into <strong className="text-gray-400">Intraday trading</strong>, <strong className="text-gray-400">Options buying</strong>, or <strong className="text-gray-400">Crypto</strong>, our tool helps you maintain discipline and improve your Win-Rate. Stop using boring Excel sheets and start your digital journaling journey today.
+                    </p>
+                </div>
+            </div>
 
             {/* Footer */}
             <footer className="w-full py-12 text-sm border-t border-gray-800/50 bg-gray-900/50">
