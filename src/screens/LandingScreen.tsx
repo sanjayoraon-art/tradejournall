@@ -13,14 +13,14 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenInfo, theme, isDarkMode }) => {
     // Add page-specific SEO tags when the landing page mounts
     useEffect(() => {
-        document.title = "Best AI Trade Tracker & Trading Journal - Master Your Trading Strategy";
+        document.title = "TradeJournall - Best Free Online Trading Journal for Stock Market";
 
         // Optional: Add more specific meta tags dynamically if needed
         // The generic ones in index.html already cover most cases well
 
         return () => {
             // Clean up if we navigate away (though resetting title is usually enough)
-            document.title = "Trade Journal";
+            document.title = "TradeJournall";
         };
     }, []);
 
@@ -58,15 +58,15 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             The Ultimate AI Trading Journal
                         </div>
 
-                        <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight">
-                            Trade Smarter.<br />
+                        <h1 className="text-5xl lg:text-5xl xl:text-7xl font-black leading-[1.1] tracking-tight">
+                            Master Your Trades with the<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
-                                Track Better.
+                                Ultimate Free Online Trading Journal
                             </span>
                         </h1>
 
-                        <p className="text-xl text-gray-400 leading-relaxed max-w-xl">
-                            Elevate your day trading and portfolio management with the best AI trade tracker. Built for serious crypto, forex, and stock traders to dominate the markets.
+                        <p className="text-xl text-gray-400 leading-relaxed max-w-xl pr-4">
+                            Elevate your day trading and portfolio management with the best AI trade tracker. Fully supported for Indian Markets (Nifty, BankNifty), Crypto, and Forex traders to dominate the charts.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-2">
@@ -79,10 +79,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-6 pt-4 text-sm text-gray-500 font-medium">
-                            <div className="flex items-center gap-2"><ShieldCheck size={18} className="text-green-500" /> Secure Data</div>
-                            <div className="flex items-center gap-2"><BarChart3 size={18} className="text-blue-500" /> Advanced Stats</div>
-                            <div className="flex items-center gap-2"><Brain size={18} className="text-purple-500" /> AI Coach</div>
+                        <div className="flex items-center gap-4 pt-4 mt-2">
+                            <div className="flex -space-x-3">
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
+                                <img className="w-10 h-10 rounded-full border-2 border-gray-900 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" alt="trade journal dashboard" />
+                                <div className="w-10 h-10 rounded-full border-2 border-gray-900 bg-gray-800 flex items-center justify-center text-xs font-bold text-green-500">+5k</div>
+                            </div>
+                            <div className="text-sm font-medium text-gray-400 flex flex-col items-start leading-tight">
+                                <span className="text-white font-bold">Trusted by 5,000+ Traders</span>
+                                <span>across Nifty, Forex & Crypto</span>
+                            </div>
                         </div>
                     </div>
 
@@ -91,7 +99,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 to-transparent rounded-3xl"></div>
                         <img
                             src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200"
-                            alt="Trading dashboard and charts showing market analysis"
+                            alt="trade journal dashboard"
                             className="rounded-2xl w-full h-[400px] lg:h-[500px] object-cover opacity-90 sepia-[.2] hue-rotate-[-10deg]"
                         />
                         {/* Floating UI Elements for depth */}
@@ -138,7 +146,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="Trading Dashboard Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -162,7 +170,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200" alt="Trade Log and History Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -186,7 +194,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200" alt="AI Coach Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -210,7 +218,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" alt="Trading Analytics and Stats Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
@@ -234,16 +242,40 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1616422285623-1d22dc05c486?auto=format&fit=crop&q=80&w=1200" alt="Risk Reward Calculator Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1616422285623-1d22dc05c486?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
 
-                        {/* 6. Profile */}
+                        {/* 6. Advanced Backtesting */}
+                        <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
+                            <div className="lg:flex gap-12 items-center">
+                                <div className="lg:w-1/3 mb-6 lg:mb-0">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 text-cyan-400 font-bold mb-4 border border-cyan-500/20">
+                                        <TrendingUp size={18} /> 06. Backtesting
+                                    </div>
+                                    <h3 className="text-3xl font-black mb-4">Advanced Backtesting Tool for Indian Traders</h3>
+                                </div>
+                                <div className="lg:w-2/3">
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-gray-300">
+                                        <li className="flex items-start gap-2"><span className="text-cyan-500">✔</span> <strong>Test Nifty & BankNifty:</strong> Precisely backtest your strategies on historical Indian stock market data before using real capital.</li>
+                                        <li className="flex items-start gap-2"><span className="text-cyan-500">✔</span> <strong>Detailed Playback:</strong> Replay candlestick data bar-by-bar to simulate live market conditions without the emotional risk.</li>
+                                        <li className="flex items-start gap-2"><span className="text-cyan-500">✔</span> <strong>Win Rate Optimization:</strong> Automatically log your backtested trades to see the true probabilistic edge of your setup.</li>
+                                        <li className="flex items-start gap-2"><span className="text-cyan-500">✔</span> <strong>Custom Indicators:</strong> Overlay RSI, MACD, and moving averages directly onto your backtesting environment.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                            </div>
+                        </div>
+
+                        {/* 7. Profile */}
                         <div className="bg-gray-800/50 border border-gray-700 p-8 rounded-3xl flex flex-col gap-8">
                             <div className="lg:flex gap-12 items-center">
                                 <div className="lg:w-1/3 mb-6 lg:mb-0">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-500/10 text-gray-400 font-bold mb-4 border border-gray-500/20">
-                                        <ShieldCheck size={18} /> 06. Profile & Settings
+                                        <ShieldCheck size={18} /> 07. Profile & Settings
                                     </div>
                                     <h3 className="text-3xl font-black mb-4">Account Customization</h3>
                                 </div>
@@ -258,7 +290,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="w-full rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                                 <div className="absolute inset-0 bg-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=1200" alt="App Settings and Profile Interface Screenshot" className="w-full h-[250px] sm:h-[400px] object-cover" />
+                                <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=1200" alt="trade journal dashboard" className="w-full h-[250px] sm:h-[400px] object-cover" />
                             </div>
                         </div>
                     </div>
@@ -368,8 +400,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         <button onClick={() => onOpenInfo('terms')} className="hover:text-white transition-colors">Terms & Conditions</button>
                     </div>
 
-                    <div className="text-gray-600">
-                        &copy; {new Date().getFullYear()} Trade Journal App. All rights reserved.
+                    <div className="text-gray-600 flex flex-col items-end text-right">
+                        <span>&copy; {new Date().getFullYear()} Trade Journal App. All rights reserved.</span>
+                        <span className="text-xs mt-2 max-w-sm text-gray-500 hidden md:block">TradeJournall (with double L) is a specialized tool designed for serious traders seeking the ultimate free stock market trade tracker.</span>
                     </div>
                 </div>
             </footer>
