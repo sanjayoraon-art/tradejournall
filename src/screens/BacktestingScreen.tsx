@@ -101,6 +101,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     const [showIndMenu, setShowIndMenu] = useState(false);
     const [showToolMenu, setShowToolMenu] = useState(false);
     const [showCandleMenu, setShowCandleMenu] = useState(false);
+    const [showTimeframeMenu, setShowTimeframeMenu] = useState(false);
     const [isFullscreen, setFullscreen] = useState(false);
 
     // Indicator settings
@@ -224,27 +225,27 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     // â”€â”€ Indicator toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const toggleIndicator = (name: string) => {
-        if (!chartRef.current) return;
         const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane'
             : name === 'VOL' ? 'pane_vol'
                 : `pane_${name.toLowerCase()}`;
         if (activeIndicators.has(name)) {
-            try { chartRef.current.removeIndicator(paneId, name); } catch { }
+            try { chartRef.current?.removeIndicator(paneId, name); } catch { }
+            try { modalChartRef.current?.removeIndicator(paneId, name); } catch { }
             setActiveInds(prev => { const n = new Set(prev); n.delete(name); return n; });
         } else {
-            chartRef.current.createIndicator(name, true, { id: paneId });
+            try { chartRef.current?.createIndicator(name, true, { id: paneId }); } catch { }
+            try { modalChartRef.current?.createIndicator(name, true, { id: paneId }); } catch { }
             setActiveInds(prev => new Set(prev).add(name));
         }
         setShowIndMenu(false);
     };
 
     const clearAllIndicators = () => {
-        if (!chartRef.current) return;
         [...activeIndicators].forEach(name => {
             try {
-                const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane'
-                    : name === 'VOL' ? 'pane_vol' : `pane_${name.toLowerCase()}`;
-                chartRef.current!.removeIndicator(paneId, name);
+                const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane' : name === 'VOL' ? 'pane_vol' : `pane_${name.toLowerCase()}`;
+                chartRef.current?.removeIndicator(paneId, name);
+                modalChartRef.current?.removeIndicator(paneId, name);
             } catch { }
         });
         setActiveInds(new Set());
@@ -252,22 +253,23 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     // â”€â”€ Drawing tools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const selectTool = (name: string) => {
-        if (!chartRef.current) return;
-        chartRef.current.createOverlay({
-            name,
-            onDrawEnd: () => { setActiveTool(null); return true; }
-        });
+        const onDrawEnd = () => { setActiveTool(null); return true; };
+        try { chartRef.current?.createOverlay({ name, onDrawEnd }); } catch { }
+        try { modalChartRef.current?.createOverlay({ name, onDrawEnd }); } catch { }
         setActiveTool(name);
         setShowToolMenu(false);
     };
     const clearTool = () => {
-        // Just cancel the active drawing mode
-        chartRef.current?.overrideOverlay({ name: 'segment', lock: true } as any); // Simple way to lock/end drawing
-        // In klinecharts v9 just setting active tool to null and creating no overlays stops drawing
+        try { chartRef.current?.overrideOverlay({ name: 'segment', lock: true } as any); } catch { }
+        try { modalChartRef.current?.overrideOverlay({ name: 'segment', lock: true } as any); } catch { }
         setActiveTool(null);
         setShowToolMenu(false);
     };
-    const clearDrawings = () => { chartRef.current?.removeOverlay(); setActiveTool(null); };
+    const clearDrawings = () => {
+        try { chartRef.current?.removeOverlay(); } catch { }
+        try { modalChartRef.current?.removeOverlay(); } catch { }
+        setActiveTool(null);
+    };
 
     // â”€â”€ Replay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
@@ -393,6 +395,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             const mc = kcInit(modalContainerRef.current);
             if (!mc) return;
             applyTheme(mc);
+            if (activeIndicators.size > 0) {
+                activeIndicators.forEach(name => {
+                    const paneId = MAIN_INDICATORS.has(name) ? 'candle_pane' : name === 'VOL' ? 'pane_vol' : `pane_${name.toLowerCase()}`;
+                    try { mc.createIndicator(name, true, { id: paneId }); } catch { }
+                });
+            }
             if (historicalData.length > 0) {
                 const slice = historicalData.slice(0, currentIndex + 1);
                 mc.applyNewData(slice.map(d => ({ timestamp: d.timestamp, open: d.open, high: d.high, low: d.low, close: d.close, volume: d.volume })));
@@ -467,7 +475,7 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
     const priceDecimals = price < 1 ? 6 : price < 100 ? 4 : 2;
     const toolLabel = activeTool ? DRAWING_TOOLS.find(t => t.name === activeTool)?.label ?? activeTool : 'Cursor';
 
-    const closeAllMenus = () => { setShowIndMenu(false); setShowToolMenu(false); setShowCandleMenu(false); };
+    const closeAllMenus = () => { setShowIndMenu(false); setShowToolMenu(false); setShowCandleMenu(false); setShowTimeframeMenu(false); };
 
     // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Render
@@ -738,28 +746,46 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     className="fixed inset-0 z-[200] flex animate-in fade-in duration-300 overflow-hidden"
                     style={{ background: isDarkMode ? '#111827' : '#0f172a' }}
                 >
-                    {/* LEFT SIDE: TOOLBAR/DRAWING TOOLS (Subtle icons) */}
-                    <div className="hidden sm:flex flex-col items-center gap-4 py-4 w-12 border-right border-white/5 bg-black/20 shrink-0">
-                        <button className="p-2 text-gray-500 hover:text-white transition-colors"><MousePointer size={18} /></button>
-                        <button className="p-2 text-gray-500 hover:text-white transition-colors" onClick={() => selectTool('segment')}><Pencil size={18} /></button>
-                        <button className="p-2 text-gray-500 hover:text-white transition-colors" onClick={() => selectTool('fibonacciLine')}><Zap size={18} /></button>
-                        <div className="flex-1" />
-                        <button className="p-2 text-red-500/50 hover:text-red-500 transition-colors" onClick={clearDrawings}><Trash2 size={18} /></button>
-                    </div>
-
                     {/* CENTER: CHART + TOP/BOTTOM BARS */}
-                    <div className="flex-1 flex flex-col relative">
+                    <div className="flex-1 flex flex-col relative w-full">
                         {/* Modal Top Bar */}
                         <div className="flex items-center justify-between gap-1 px-2 py-1 border-b border-white/10 shrink-0 bg-gray-900/90 backdrop-blur-sm">
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1.5 cursor-pointer hover:bg-white/5 px-1 rounded transition-colors"
+                                <div className="flex items-center gap-1.5 cursor-pointer hover:bg-white/5 px-1 rounded transition-colors relative"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        // You could add logic here to open a timeframe menu if needed, 
-                                        // but for now let's just make it visible and ensure click doesn't hit chart
+                                        setShowTimeframeMenu(!showTimeframeMenu);
+                                        setShowIndMenu(false);
+                                        setShowToolMenu(false);
                                     }}>
                                     <span className="text-[11px] font-black text-white">{symbol}</span>
-                                    <span className="text-[9px] font-bold text-gray-400 bg-white/5 px-1 rounded">{chartInterval.toUpperCase()}</span>
+                                    <span className="text-[9px] font-bold text-gray-400 bg-white/5 px-1 rounded flex items-center gap-0.5">
+                                        {chartInterval.toUpperCase()} <ChevronDown size={8} />
+                                    </span>
+
+                                    {/* Timeframe Menu */}
+                                    {showTimeframeMenu && (
+                                        <div className={`absolute top-full mt-1 left-0 w-24 rounded-lg shadow-2xl border overflow-hidden ${theme.border} z-[350]`}
+                                            style={{ background: isDarkMode ? '#1f2937' : '#fff' }}
+                                            onClick={e => e.stopPropagation()}
+                                            onTouchStart={e => e.stopPropagation()}
+                                        >
+                                            <div className="max-h-48 overflow-y-auto overscroll-contain">
+                                                {(marketSource === 'crypto' ? INTERVALS : YAHOO_INTERVALS).map(i => (
+                                                    <button key={i}
+                                                        onClick={() => {
+                                                            setChartInterval(i);
+                                                            loadData(symbol, i, marketSource);
+                                                            setShowTimeframeMenu(false);
+                                                        }}
+                                                        className={`w-full px-2 py-1.5 text-xs text-left transition-colors
+                                                            ${chartInterval === i ? 'bg-blue-600 text-white font-bold' : `${theme.text} hover:bg-blue-500/10`}`}>
+                                                        {i.toUpperCase()}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 {historicalData.length > 0 && (
                                     <div className="flex items-center gap-2">
