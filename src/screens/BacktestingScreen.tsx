@@ -752,7 +752,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         {/* Modal Top Bar */}
                         <div className="flex items-center justify-between gap-1 px-2 py-1 border-b border-white/10 shrink-0 bg-gray-900/90 backdrop-blur-sm">
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 cursor-pointer hover:bg-white/5 px-1 rounded transition-colors"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        // You could add logic here to open a timeframe menu if needed, 
+                                        // but for now let's just make it visible and ensure click doesn't hit chart
+                                    }}>
                                     <span className="text-[11px] font-black text-white">{symbol}</span>
                                     <span className="text-[9px] font-bold text-gray-400 bg-white/5 px-1 rounded">{chartInterval.toUpperCase()}</span>
                                 </div>
@@ -764,15 +769,15 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                                     </div>
                                 )}
 
-                                <div className="hidden sm:flex items-center gap-2 ml-2 border-l border-white/10 pl-4">
+                                <div className="flex items-center gap-2 ml-2 border-l border-white/10 pl-4">
                                     <button
-                                        onClick={() => setShowIndMenu(!showIndMenu)}
+                                        onClick={(e) => { e.stopPropagation(); setShowIndMenu(!showIndMenu); }}
                                         className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold transition-all
                                             ${showIndMenu ? 'bg-blue-600 text-white' : 'text-blue-400 hover:bg-blue-500/10'}`}>
                                         <TrendingUp size={10} /> Indicators
                                     </button>
                                     <button
-                                        onClick={() => setShowToolMenu(!showToolMenu)}
+                                        onClick={(e) => { e.stopPropagation(); setShowToolMenu(!showToolMenu); }}
                                         className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold transition-all
                                             ${showToolMenu ? 'bg-purple-600 text-white' : 'text-purple-400 hover:bg-purple-500/10'}`}>
                                         <Pencil size={10} /> Tools
@@ -799,20 +804,22 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                             </div>
 
                             <div className="flex items-center gap-1">
-                                <button className="p-1 text-gray-400 hover:text-white transition-colors"><RefreshCw size={12} /></button>
+                                <button className="p-1 text-gray-400 hover:text-white transition-colors" onClick={(e) => e.stopPropagation()}><RefreshCw size={12} /></button>
                                 <button
-                                    onClick={() => setChartModalOpen(false)}
+                                    onClick={(e) => { e.stopPropagation(); setChartModalOpen(false); }}
                                     className="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all">
                                     <X size={18} />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Menus Overlay (Inside modal) */}
                         {showIndMenu && (
-                            <div className={`absolute top-10 left-2 w-56 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[210]`}
-                                style={{ background: isDarkMode ? '#1f2937' : '#fff' }} onClick={e => e.stopPropagation()}>
-                                <div className="max-h-60 overflow-y-auto p-2 space-y-2">
+                            <div className={`absolute top-10 left-2 w-56 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[300]`}
+                                style={{ background: isDarkMode ? '#1f2937' : '#fff' }}
+                                onClick={e => e.stopPropagation()}
+                                onTouchStart={e => e.stopPropagation()}
+                            >
+                                <div className="max-h-60 overflow-y-auto p-2 space-y-2 overscroll-contain">
                                     {INDICATOR_GROUPS.map(group => (
                                         <div key={group.label}>
                                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-1 mb-1">{group.label}</p>
@@ -832,9 +839,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         )}
 
                         {showToolMenu && (
-                            <div className={`absolute top-10 left-2 w-44 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[210]`}
-                                style={{ background: isDarkMode ? '#1f2937' : '#fff' }} onClick={e => e.stopPropagation()}>
-                                <div className="max-h-60 overflow-y-auto">
+                            <div className={`absolute top-10 left-2 w-44 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[300]`}
+                                style={{ background: isDarkMode ? '#1f2937' : '#fff' }}
+                                onClick={e => e.stopPropagation()}
+                                onTouchStart={e => e.stopPropagation()}
+                            >
+                                <div className="max-h-60 overflow-y-auto overscroll-contain">
                                     {DRAWING_TOOLS.map(tool => (
                                         <button key={tool.name} onClick={() => selectTool(tool.name)}
                                             className={`w-full px-2 py-1.5 text-[10px] text-left flex items-center gap-2 transition-colors
