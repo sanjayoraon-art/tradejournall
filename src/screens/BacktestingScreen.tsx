@@ -323,22 +323,51 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
     // ── Modal chart (fullscreen mirror) ───────────────────────────────────────
     const modalChartRef = useRef<Chart | null>(null);
+    const fullscreenWrapperRef = useRef<HTMLDivElement>(null);
 
     // Orientation lock for mobile
     useEffect(() => {
-        if (chartModalOpen) {
-            if (screen.orientation && (screen.orientation as any).lock) {
-                try {
-                    (screen.orientation as any).lock('landscape').catch(() => {
-                        console.warn('Orientation lock failed. User interaction might be required or browser does not support it.');
-                    });
-                } catch (e) { }
+        const handleFullscreenChange = () => {
+            if (!document.fullscreenElement) {
+                // If user leaves fullscreen via system gesture (e.g. back button)
+                setChartModalOpen(false);
             }
+        };
+
+        if (chartModalOpen) {
+            // Try to enter true fullscreen first
+            const wrapper = fullscreenWrapperRef.current;
+            if (wrapper && wrapper.requestFullscreen) {
+                wrapper.requestFullscreen().then(() => {
+                    // Lock orientation AFTER fullscreen is granted
+                    if (screen.orientation && (screen.orientation as any).lock) {
+                        (screen.orientation as any).lock('landscape').catch(() => {
+                            console.warn('Orientation lock failed inside fullscreen.');
+                        });
+                    }
+                }).catch(e => {
+                    console.warn('Fullscreen entry failed:', e);
+                    // Fallback to orientation lock if fullscreen fails
+                    if (screen.orientation && (screen.orientation as any).lock) {
+                        (screen.orientation as any).lock('landscape').catch(() => { });
+                    }
+                });
+            }
+
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
         } else {
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => { });
+            }
             if (screen.orientation && screen.orientation.unlock) {
                 try { screen.orientation.unlock(); } catch (e) { }
             }
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
         }
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
     }, [chartModalOpen]);
 
     useEffect(() => {
@@ -350,6 +379,13 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
             }
             return;
         }
+
+        const handleResize = () => {
+            if (modalChartRef.current) {
+                modalChartRef.current.resize();
+            }
+        };
+
         // Wait for the DOM to be ready
         const timer = setTimeout(() => {
             if (!modalContainerRef.current) return;
@@ -361,9 +397,18 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                 const slice = historicalData.slice(0, currentIndex + 1);
                 mc.applyNewData(slice.map(d => ({ timestamp: d.timestamp, open: d.open, high: d.high, low: d.low, close: d.close, volume: d.volume })));
             }
+            mc.resize(); // Ensure initial fit
             modalChartRef.current = mc;
-        }, 100);
-        return () => clearTimeout(timer);
+
+            window.addEventListener('resize', handleResize);
+            window.addEventListener('orientationchange', handleResize);
+        }, 150); // Slightly longer delay to allow orientation lock to settle
+
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
+        };
     }, [chartModalOpen]);
 
     // Sync modal chart during replay
@@ -688,7 +733,11 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
 
             {/* ══ CHART FULLSCREEN MODAL ════════════════════════════════════════ */}
             {chartModalOpen && (
-                <div className="fixed inset-0 z-[200] flex animate-in fade-in duration-300" style={{ background: isDarkMode ? '#111827' : '#0f172a' }}>
+                <div
+                    ref={fullscreenWrapperRef}
+                    className="fixed inset-0 z-[200] flex animate-in fade-in duration-300 overflow-hidden"
+                    style={{ background: isDarkMode ? '#111827' : '#0f172a' }}
+                >
                     {/* LEFT SIDE: TOOLBAR/DRAWING TOOLS (Subtle icons) */}
                     <div className="hidden sm:flex flex-col items-center gap-4 py-4 w-12 border-right border-white/5 bg-black/20 shrink-0">
                         <button className="p-2 text-gray-500 hover:text-white transition-colors"><MousePointer size={18} /></button>
@@ -701,77 +750,77 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                     {/* CENTER: CHART + TOP/BOTTOM BARS */}
                     <div className="flex-1 flex flex-col relative">
                         {/* Modal Top Bar */}
-                        <div className="flex items-center justify-between gap-2 px-3 py-1.5 border-b border-white/10 shrink-0 bg-gray-800/95 backdrop-blur">
+                        <div className="flex items-center justify-between gap-1 px-2 py-1 border-b border-white/10 shrink-0 bg-gray-900/90 backdrop-blur-sm">
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="text-sm font-black text-white">{symbol}</span>
-                                    <span className="text-[10px] font-bold text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">{chartInterval.toUpperCase()}</span>
+                                    <span className="text-[11px] font-black text-white">{symbol}</span>
+                                    <span className="text-[9px] font-bold text-gray-400 bg-white/5 px-1 rounded">{chartInterval.toUpperCase()}</span>
                                 </div>
                                 {historicalData.length > 0 && (
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-sm font-mono font-bold ${price > (historicalData[currentIndex > 0 ? currentIndex - 1 : 0]?.close ?? price) ? 'text-green-400' : 'text-red-400'}`}>
+                                        <span className={`text-[11px] font-mono font-bold ${price > (historicalData[currentIndex > 0 ? currentIndex - 1 : 0]?.close ?? price) ? 'text-green-400' : 'text-red-400'}`}>
                                             {price.toFixed(priceDecimals)}
                                         </span>
                                     </div>
                                 )}
 
-                                <div className="hidden md:flex items-center gap-2 ml-2 border-l border-white/10 pl-4">
+                                <div className="hidden sm:flex items-center gap-2 ml-2 border-l border-white/10 pl-4">
                                     <button
                                         onClick={() => setShowIndMenu(!showIndMenu)}
-                                        className={`flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold transition-all
+                                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold transition-all
                                             ${showIndMenu ? 'bg-blue-600 text-white' : 'text-blue-400 hover:bg-blue-500/10'}`}>
-                                        <TrendingUp size={12} /> Indicators
+                                        <TrendingUp size={10} /> Indicators
                                     </button>
                                     <button
                                         onClick={() => setShowToolMenu(!showToolMenu)}
-                                        className={`flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold transition-all
+                                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold transition-all
                                             ${showToolMenu ? 'bg-purple-600 text-white' : 'text-purple-400 hover:bg-purple-500/10'}`}>
-                                        <Pencil size={12} /> Tools
+                                        <Pencil size={10} /> Tools
                                     </button>
                                 </div>
                             </div>
 
                             {/* Center Playback (Integrated into top bar for more chart space) */}
-                            <div className="flex items-center gap-1 sm:gap-4 bg-black/20 rounded-full px-2 py-0.5 border border-white/5">
+                            <div className="flex items-center gap-2 bg-black/40 rounded-full px-2 py-0.5 border border-white/10 scale-90 sm:scale-100">
                                 <button
                                     onClick={() => historicalData.length > 0 && setIndex(p => Math.max(INITIAL_VISIBLE, p - 1))}
                                     disabled={isPlaying}
-                                    className="p-1 text-gray-500 hover:text-white disabled:opacity-20"><SkipForward size={14} className="rotate-180" /></button>
+                                    className="p-0.5 text-gray-500 hover:text-white disabled:opacity-20"><SkipForward size={12} className="rotate-180" /></button>
                                 <button
                                     onClick={() => setPlaying(p => !p)}
-                                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
-                                        ${isPlaying ? 'text-amber-400 hover:bg-amber-400/10' : 'text-green-400 hover:bg-green-400/10'}`}>
-                                    {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" />}
+                                    className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider
+                                        ${isPlaying ? 'text-amber-400' : 'text-green-400'}`}>
+                                    {isPlaying ? <Pause size={10} fill="currentColor" /> : <Play size={10} fill="currentColor" />}
                                 </button>
                                 <button
                                     onClick={() => historicalData.length > 0 && currentIndex < historicalData.length - 1 && setIndex(p => p + 1)}
                                     disabled={isPlaying}
-                                    className="p-1 text-gray-500 hover:text-white disabled:opacity-20"><SkipForward size={14} /></button>
+                                    className="p-0.5 text-gray-500 hover:text-white disabled:opacity-20"><SkipForward size={12} /></button>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <button className="p-1.5 text-gray-400 hover:text-white transition-colors"><RefreshCw size={14} /></button>
+                            <div className="flex items-center gap-1">
+                                <button className="p-1 text-gray-400 hover:text-white transition-colors"><RefreshCw size={12} /></button>
                                 <button
                                     onClick={() => setChartModalOpen(false)}
-                                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all">
-                                    <X size={20} />
+                                    className="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all">
+                                    <X size={18} />
                                 </button>
                             </div>
                         </div>
 
                         {/* Menus Overlay (Inside modal) */}
                         {showIndMenu && (
-                            <div className={`absolute top-12 left-4 w-64 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[210]`}
+                            <div className={`absolute top-10 left-2 w-56 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[210]`}
                                 style={{ background: isDarkMode ? '#1f2937' : '#fff' }} onClick={e => e.stopPropagation()}>
-                                <div className="max-h-80 overflow-y-auto p-2 space-y-3">
+                                <div className="max-h-60 overflow-y-auto p-2 space-y-2">
                                     {INDICATOR_GROUPS.map(group => (
                                         <div key={group.label}>
                                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-1 mb-1">{group.label}</p>
                                             <div className="flex flex-wrap gap-1">
                                                 {group.items.map(name => (
                                                     <button key={name} onClick={() => toggleIndicator(name)}
-                                                        className={`px-2 py-1 text-xs rounded-lg font-semibold transition-all
-                                                            ${activeIndicators.has(name) ? 'bg-blue-600 text-white' : `${theme.text} bg-gray-800/50 hover:bg-blue-500/20`}`}>
+                                                        className={`px-1.5 py-0.5 text-[10px] rounded font-semibold transition-all
+                                                            ${activeIndicators.has(name) ? 'bg-blue-600 text-white' : `${theme.text} bg-gray-800/50 hover:bg-blue-500/10`}`}>
                                                         {name}
                                                     </button>
                                                 ))}
@@ -783,12 +832,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         )}
 
                         {showToolMenu && (
-                            <div className={`absolute top-12 left-4 w-48 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[210]`}
+                            <div className={`absolute top-10 left-2 w-44 rounded-xl shadow-2xl border overflow-hidden ${theme.border} z-[210]`}
                                 style={{ background: isDarkMode ? '#1f2937' : '#fff' }} onClick={e => e.stopPropagation()}>
                                 <div className="max-h-60 overflow-y-auto">
                                     {DRAWING_TOOLS.map(tool => (
                                         <button key={tool.name} onClick={() => selectTool(tool.name)}
-                                            className={`w-full px-3 py-2 text-xs text-left flex items-center gap-2.5 transition-colors
+                                            className={`w-full px-2 py-1.5 text-[10px] text-left flex items-center gap-2 transition-colors
                                                 ${activeTool === tool.name ? 'bg-purple-600 text-white font-bold' : `${theme.text} hover:bg-purple-500/10`}`}>
                                             <span className="font-mono w-4 text-center">{tool.icon}</span>
                                             {tool.label}
@@ -801,52 +850,47 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         {/* Chart Area */}
                         <div className="flex-1 relative w-full overflow-hidden" ref={modalContainerRef} style={{ touchAction: 'none' }} />
 
-                        {/* Modal Bottom Bar */}
-                        <div className="px-4 py-1.5 border-t border-white/5 flex items-center justify-between shrink-0 bg-gray-800/90">
+                        {/* Modal Bottom Bar - Slimmer */}
+                        <div className="px-3 py-1 border-t border-white/5 flex items-center justify-between shrink-0 bg-gray-900/90 backdrop-blur-sm">
                             <div className="flex items-center gap-4">
-                                <span className="text-[10px] font-bold text-gray-500 font-mono">
+                                <span className="text-[9px] font-bold text-gray-500 font-mono">
                                     {currentBar ? new Date(currentBar.timestamp).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '--'}
                                 </span>
-                                <div className="hidden sm:flex items-center gap-3">
-                                    {['1d', '7d', '1m', '3m', '1y'].map(int => (
-                                        <button key={int} className="text-[10px] font-bold text-gray-500 hover:text-blue-400 uppercase">{int}</button>
-                                    ))}
-                                </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1.5">
-                                    <BarChart2 size={12} className="text-blue-400" />
-                                    <span className="text-[10px] font-bold text-gray-500 uppercase">log</span>
-                                    <span className="text-[10px] font-bold text-blue-400 uppercase">auto</span>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-1.5 grayscale opacity-50 contrast-125">
+                                    <BarChart2 size={10} className="text-blue-400" />
+                                    <span className="text-[8px] font-bold text-gray-500 uppercase">log</span>
+                                    <span className="text-[8px] font-bold text-blue-400 uppercase">auto</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Buy/Sell Buttons Overlay (Floating on the right - like the image) */}
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
+                        {/* Buy/Sell Buttons Overlay (Floating on the right) */}
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50">
                             <button
                                 onClick={() => activeTrade ? closeTrade() : openTrade('Long')}
-                                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-2xl active:scale-90 border-2
+                                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all shadow-xl active:scale-90 border-2
                                     ${activeTrade?.type === 'Long'
                                         ? 'bg-blue-600 border-blue-400 animate-pulse'
-                                        : 'bg-green-600 border-green-400/50 hover:bg-green-500 hover:border-green-300'}`}>
-                                <span className="text-xl font-black text-white">{activeTrade?.type === 'Long' ? 'X' : 'B'}</span>
+                                        : 'bg-green-600 border-green-400/50 hover:bg-green-500'}`}>
+                                <span className="text-sm font-black text-white">{activeTrade?.type === 'Long' ? 'X' : 'B'}</span>
                             </button>
                             <button
                                 onClick={() => activeTrade ? closeTrade() : openTrade('Short')}
-                                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-2xl active:scale-90 border-2
+                                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all shadow-xl active:scale-90 border-2
                                     ${activeTrade?.type === 'Short'
                                         ? 'bg-blue-600 border-blue-400 animate-pulse'
-                                        : 'bg-red-600 border-red-400/50 hover:bg-red-500 hover:border-red-300'}`}>
-                                <span className="text-xl font-black text-white">{activeTrade?.type === 'Short' ? 'X' : 'S'}</span>
+                                        : 'bg-red-600 border-red-400/50 hover:bg-red-500'}`}>
+                                <span className="text-sm font-black text-white">{activeTrade?.type === 'Short' ? 'X' : 'S'}</span>
                             </button>
 
                             {/* Floating P&L Indicator when trade is active */}
                             {activeTrade && (
-                                <div className={`mt-2 px-3 py-1.5 rounded-xl border backdrop-blur shadow-2xl transition-all scale-110
-                                    ${pnlPositive ? 'bg-green-500/20 border-green-500/50 text-green-400' : 'bg-red-500/20 border-red-500/50 text-red-400'}`}>
-                                    <p className="text-[10px] font-black uppercase text-center opacity-70">{activeTrade.type}</p>
-                                    <p className="text-xs font-black whitespace-nowrap">${unrealizedPnl.toFixed(2)}</p>
+                                <div className={`px-2 py-1 rounded-lg border backdrop-blur-md shadow-xl transition-all
+                                    ${pnlPositive ? 'bg-green-500/20 border-green-500/40 text-green-400' : 'bg-red-500/20 border-red-500/40 text-red-400'}`}>
+                                    <p className="text-[8px] font-black uppercase text-center opacity-70">{activeTrade.type}</p>
+                                    <p className="text-[10px] font-bold whitespace-nowrap">${unrealizedPnl.toFixed(2)}</p>
                                 </div>
                             )}
                         </div>
