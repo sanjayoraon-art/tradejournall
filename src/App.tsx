@@ -651,7 +651,6 @@ const App = () => {
                         <NavButton icon={<Home size={20} />} label="Home" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
                         <NavButton icon={<TrendingUp size={20} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
                         <NavButton icon={<BarChart3 size={20} />} label="Backtest" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
-                        <NavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                         <NavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
                         <NavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
                     </div>
