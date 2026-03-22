@@ -818,7 +818,7 @@ const App = () => {
                     )}
 
                     {currentScreen === 'profile' && (
-                        <ProfileScreen theme={theme} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCurrentScreen={setCurrentScreen} />
+                        <ProfileScreen theme={theme} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCurrentScreen={setCurrentScreen} setIsChatOpen={(open) => { if (open) setCurrentScreen('ai-coach'); }} />
                     )}
 
                     {currentScreen === 'stats' && (

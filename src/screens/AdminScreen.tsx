@@ -23,7 +23,11 @@ import {
     Image as ImageIcon,
     Upload,
     Clipboard,
-    Brain
+    Brain,
+    FileText,
+    Pencil,
+    Eye,
+    Loader2
 } from 'lucide-react';
 import { db, appId, storage, firebaseConfig } from '../utils/firebase';
 import { collection, query, getDocs, limit, orderBy, addDoc, deleteDoc, doc, serverTimestamp, setDoc, onSnapshot } from 'firebase/firestore';
@@ -36,7 +40,7 @@ interface AdminScreenProps {
 }
 
 export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkMode }) => {
-    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'ads' | 'messages' | 'products' | 'settings' | 'ai_logs'>(() =>
+    const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'ads' | 'messages' | 'products' | 'settings' | 'ai_logs' | 'blog'>(() =>
         (localStorage.getItem('adminActiveTab') as any) || 'overview'
     );
 
@@ -71,6 +75,25 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         active: 0
     });
     const [usersList, setUsersList] = useState<any[]>([]);
+
+    // Blog State
+    const [blogPosts, setBlogPosts] = useState<any[]>([]);
+    const [isAddingPost, setIsAddingPost] = useState(false);
+    const [editingPost, setEditingPost] = useState<any>(null);
+    const [newPost, setNewPost] = useState({
+        title: '',
+        slug: '',
+        excerpt: '',
+        content: '',
+        featuredImage: '',
+        metaTitle: '',
+        metaDescription: '',
+        keywords: '',
+        author: 'Admin',
+        isActive: true
+    });
+    const [blogImagePreview, setBlogImagePreview] = useState('');
+    const [contentImages, setContentImages] = useState<string[]>([]);
 
     const fetchFirebaseData = async () => {
         if (!db) {
@@ -144,6 +167,16 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             }
         }
     }, []);
+
+    // Blog Real-time Listener
+    useEffect(() => {
+        if (!db || activeTab !== 'blog') return;
+        const q = query(collection(db, 'artifacts', appId, 'blog'), orderBy('date', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            setBlogPosts(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+        });
+        return () => unsubscribe();
+    }, [activeTab]);
 
 
     // Cache products whenever they update
@@ -387,6 +420,66 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         }
     };
 
+    // Blog Handlers
+    const handleAddBlogPost = async () => {
+        if (!newPost.title || !newPost.slug || !newPost.content) {
+            alert("Title, Slug, and Content are required.");
+            return;
+        }
+        setIsAddingPost(true);
+        try {
+            const postData = {
+                ...newPost,
+                date: serverTimestamp(),
+                lastUpdated: serverTimestamp()
+            };
+            if (editingPost) {
+                await setDoc(doc(db!, 'artifacts', appId, 'blog', editingPost.id), postData, { merge: true });
+                alert("Post updated successfully!");
+            } else {
+                await addDoc(collection(db!, 'artifacts', appId, 'blog'), postData);
+                alert("Post published successfully!");
+            }
+            // Reset
+            setNewPost({
+                title: '', slug: '', excerpt: '', content: '', featuredImage: '',
+                metaTitle: '', metaDescription: '', keywords: '', author: 'Admin', isActive: true
+            });
+            setEditingPost(null);
+            setBlogImagePreview('');
+        } catch (error) {
+            console.error("Error saving post:", error);
+            alert("Failed to save post.");
+        } finally {
+            setIsAddingPost(false);
+        }
+    };
+
+    const handleBlogImageUpload = async (file: File, isContentImage = false) => {
+        if (!storage) return;
+        setIsUploading(true);
+        try {
+            const path = `blog/${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, path);
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+            if (isContentImage) {
+                setContentImages(prev => [...prev, url]);
+            } else {
+                setNewPost(prev => ({ ...prev, featuredImage: url }));
+                setBlogImagePreview(url);
+            }
+        } catch (error) {
+            console.error("Upload error:", error);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const generateSlug = (title: string) => {
+        return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    };
+
     const mockUsers: any[] = [];
 
     const adminStats = [
@@ -448,6 +541,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                     { id: 'messages', label: 'Messages', icon: <MessageSquare size={16} /> },
                     { id: 'products', label: 'Products', icon: <ShoppingBag size={16} /> },
                     { id: 'ai_logs', label: 'AI Chats', icon: <Brain size={16} /> },
+                    { id: 'blog', label: 'Blog', icon: <FileText size={16} /> },
                     { id: 'settings', label: 'Settings', icon: <Settings size={16} /> },
                 ].map(tab => (
                     <button
@@ -765,7 +859,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                         {[
                             { label: 'Platform Name', value: 'Trade Journal Pro', icon: <Activity size={18} /> },
                             { label: 'Project ID', value: (firebaseConfig as any)?.projectId || 'Not Configured', icon: <Link size={18} /> },
-                            { label: 'App ID (Identifier)', value: appId, icon: <ShieldCheck size={18} /> },
+                            { label: 'App ID Identifier)', value: appId, icon: <ShieldCheck size={18} /> },
                             { label: 'Database Status', value: firebaseStatus === 'connected' ? 'Connected' : 'Disconnected', icon: <Activity size={18} />, status: firebaseStatus === 'connected' ? 'Online' : 'Offline' },
                         ].map((item, idx) => (
                             <div key={idx} className={`p-4 flex items-center justify-between ${idx !== 3 ? `border-b ${theme.border}` : ''} hover:bg-gray-700/20 transition-colors`}>
@@ -800,15 +894,15 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                             {log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString() : 'Just now'}
                                         </span>
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider">User Asked:</p>
-                                        <p className="text-sm font-medium leading-relaxed">{log.question}</p>
-                                    </div>
-                                    <div className="pl-3 border-l-2 border-green-500/30 space-y-1">
-                                        <p className="text-xs font-bold text-green-500 uppercase tracking-wider">AI Answered:</p>
-                                        <p className="text-xs text-gray-400 leading-relaxed line-clamp-3 hover:line-clamp-none transition-all cursor-pointer">
-                                            {log.response}
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-bold text-gray-300 bg-gray-900/50 p-3 rounded-lg border border-gray-700/50">
+                                            <span className="text-indigo-400 block mb-1">Q:</span>
+                                            {log.question}
                                         </p>
+                                        <div className="text-xs text-gray-400 p-3 bg-indigo-500/5 rounded-lg border border-indigo-500/10">
+                                            <span className="text-green-500 block mb-1">A:</span>
+                                            <p className="whitespace-pre-wrap">{log.response}</p>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -818,6 +912,207 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                     <p>No AI interactions recorded yet.</p>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'blog' && (
+                    <div className="space-y-6">
+                        {/* Blog Form */}
+                        <div className={`${theme.card} p-6 rounded-2xl border ${theme.border}`}>
+                            <h3 className="font-black text-lg mb-4">{editingPost ? 'Edit Post' : 'Create New Article'}</h3>
+                            <div className="space-y-6">
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Title</label>
+                                        <input
+                                            value={newPost.title}
+                                            onChange={(e) => {
+                                                const title = e.target.value;
+                                                setNewPost({ ...newPost, title, slug: generateSlug(title) });
+                                            }}
+                                            className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 font-bold`}
+                                            placeholder="Catchy headline..."
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Slug (URL)</label>
+                                        <input
+                                            value={newPost.slug}
+                                            onChange={(e) => setNewPost({ ...newPost, slug: e.target.value })}
+                                            className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 font-mono text-xs text-gray-400`}
+                                            placeholder="url-friendly-slug"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Excerpt (Short Summary for SEO)</label>
+                                    <textarea
+                                        value={newPost.excerpt}
+                                        onChange={(e) => setNewPost({ ...newPost, excerpt: e.target.value })}
+                                        className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 h-20 resize-none text-sm`}
+                                        placeholder="Small summary that appears in lists and Google search results..."
+                                    />
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Featured Image</label>
+                                        <div 
+                                            onClick={() => document.getElementById('blog-img-upload')?.click()}
+                                            className={`w-full aspect-video rounded-xl border-2 border-dashed ${theme.border} flex flex-col items-center justify-center cursor-pointer relative group overflow-hidden`}
+                                        >
+                                            <input 
+                                                id="blog-img-upload" 
+                                                type="file" 
+                                                className="hidden" 
+                                                onChange={(e) => e.target.files?.[0] && handleBlogImageUpload(e.target.files[0])}
+                                            />
+                                            {blogImagePreview || newPost.featuredImage ? (
+                                                <img src={blogImagePreview || newPost.featuredImage} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-2 text-gray-500">
+                                                    <Upload size={24} />
+                                                    <span className="text-xs font-bold">Upload Banner</span>
+                                                </div>
+                                            )}
+                                            {isUploading && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><Loader2 className="animate-spin text-white" /></div>}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Meta Title</label>
+                                            <input
+                                                value={newPost.metaTitle}
+                                                onChange={(e) => setNewPost({ ...newPost, metaTitle: e.target.value })}
+                                                className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 text-sm`}
+                                                placeholder="Custom title for Google"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Keywords</label>
+                                            <input
+                                                value={newPost.keywords}
+                                                onChange={(e) => setNewPost({ ...newPost, keywords: e.target.value })}
+                                                className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 text-sm`}
+                                                placeholder="trading, nifty, analysis, etc"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <label className="text-[10px] font-black uppercase text-gray-500">Content (Markdown)</label>
+                                        <button 
+                                            onClick={() => document.getElementById('content-img-upload')?.click()}
+                                            type="button"
+                                            className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                                        >
+                                            <ImageIcon size={12} /> ADD IMAGE TO BODY
+                                        </button>
+                                        <input 
+                                            id="content-img-upload" 
+                                            type="file" 
+                                            className="hidden" 
+                                            onChange={(e) => e.target.files?.[0] && handleBlogImageUpload(e.target.files[0], true)}
+                                        />
+                                    </div>
+                                    
+                                    {contentImages.length > 0 && (
+                                        <div className="flex gap-2 overflow-x-auto pb-4 pt-2">
+                                            {contentImages.map((url, i) => (
+                                                <div key={i} className="relative w-20 h-20 shrink-0 rounded-lg border border-gray-700 overflow-hidden group">
+                                                    <img src={url} className="w-full h-full object-cover" />
+                                                    <button 
+                                                        onClick={() => {
+                                                            const md = `![Alt text](${url})`;
+                                                            navigator.clipboard.writeText(md);
+                                                            alert("Markdown copied! Paste it in your content.");
+                                                        }}
+                                                        className="absolute inset-0 bg-indigo-600/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-black text-[10px] transition-opacity"
+                                                    >
+                                                        COPY MD
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <textarea
+                                        value={newPost.content}
+                                        onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                                        className={`w-full p-4 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 h-96 resize-y font-mono text-sm leading-relaxed`}
+                                        placeholder="Markdown supported. Use # for headers, ** for bold, etc."
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={handleAddBlogPost}
+                                        disabled={isAddingPost}
+                                        className={`flex-1 py-4 ${editingPost ? 'bg-indigo-600' : 'bg-green-600'} hover:opacity-90 text-white font-black rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2`}
+                                    >
+                                        {isAddingPost ? <Loader2 className="animate-spin" /> : (editingPost ? <Pencil size={18} /> : <Plus size={18} />)}
+                                        {editingPost ? 'UPDATE ARTICLE' : 'PUBLISH ARTICLE'}
+                                    </button>
+                                    {editingPost && (
+                                        <button 
+                                            onClick={() => {
+                                                setEditingPost(null);
+                                                setNewPost({ title: '', slug: '', excerpt: '', content: '', featuredImage: '', metaTitle: '', metaDescription: '', keywords: '', author: 'Admin', isActive: true });
+                                                setBlogImagePreview('');
+                                            }}
+                                            className="px-6 py-4 bg-gray-800 text-gray-400 font-bold rounded-xl hover:bg-gray-700 transition-all"
+                                        >
+                                            CANCEL
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recent Posts List */}
+                        <div className="space-y-4">
+                            <h3 className="font-black text-sm uppercase tracking-widest text-gray-400">Published Articles ({blogPosts.length})</h3>
+                            <div className="grid gap-3">
+                                {blogPosts.map(post => (
+                                    <div key={post.id} className={`${theme.card} p-4 rounded-xl border ${theme.border} flex items-center gap-4`}>
+                                        <div className="w-12 h-12 bg-gray-800 rounded-lg overflow-hidden shrink-0">
+                                            {post.featuredImage && <img src={post.featuredImage} className="w-full h-full object-cover" />}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-bold truncate text-sm">{post.title}</h4>
+                                            <p className="text-[10px] text-gray-500 font-mono">/{post.slug}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button 
+                                                onClick={() => {
+                                                    setEditingPost(post);
+                                                    setNewPost({ ...post });
+                                                    setBlogImagePreview(post.featuredImage);
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                }}
+                                                className="p-2 hover:bg-indigo-500/10 text-indigo-400 rounded-lg"
+                                            >
+                                                <Pencil size={18} />
+                                            </button>
+                                            <button 
+                                                onClick={async () => {
+                                                    if (window.confirm('Delete this article?')) {
+                                                        await deleteDoc(doc(db!, 'artifacts', appId, 'blog', post.id));
+                                                    }
+                                                }}
+                                                className="p-2 hover:bg-red-500/10 text-red-400 rounded-lg"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}

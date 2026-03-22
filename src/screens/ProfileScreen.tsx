@@ -44,6 +44,7 @@ interface ProfileScreenProps {
     isDarkMode: boolean;
     setIsDarkMode: (val: boolean) => void;
     setCurrentScreen: (screen: string) => void;
+    setIsChatOpen: (isOpen: boolean) => void;
 }
 
 const InfoModal: React.FC<{
@@ -72,7 +73,7 @@ const InfoModal: React.FC<{
     );
 };
 
-export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode, setIsDarkMode, setCurrentScreen }) => {
+export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode, setIsDarkMode, setCurrentScreen, setIsChatOpen }) => {
     const [userName, setUserName] = useState('Alpha Trader');
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -242,10 +243,18 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                     <div className={`${isDarkMode ? 'bg-[#1e2230]' : 'bg-white'} rounded-[24px] border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} overflow-hidden shadow-xl divide-y ${isDarkMode ? 'divide-gray-800' : 'divide-gray-50'}`}>
                         <ProfileAction
                             icon={Brain}
-                            label="AI Coach Configuration"
-                            sub="Manage API Keys"
+                            label="AI Coach"
+                            sub="Chat with your AI Mentor"
                             isDarkMode={isDarkMode}
                             iconColor="text-green-500"
+                            onClick={() => setIsChatOpen(true)}
+                        />
+                        <ProfileAction
+                            icon={Key}
+                            label="AI Configuration"
+                            sub="Manage API Keys"
+                            isDarkMode={isDarkMode}
+                            iconColor="text-gray-400"
                             onClick={() => setShowApiModal(true)}
                         />
                     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, BarChart, User, TrendingUp, Brain } from 'lucide-react';
+import { Home, BarChart, User, TrendingUp } from 'lucide-react';
 
 interface BottomNavProps {
     theme: any;
@@ -13,7 +13,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ theme, currentScreen, setC
     const navItems = [
         { name: 'Home', icon: Home, screen: 'Dashboard', type: 'screen' },
         { name: 'Trades', icon: BarChart, screen: 'TradeList', type: 'screen' },
-        { name: 'AI Coach', icon: Brain, screen: 'AICoach', type: 'ai' },
         { name: 'Stats', icon: TrendingUp, screen: 'PerformanceMetrics', type: 'screen' },
         { name: 'Profile', icon: User, screen: 'Profile', type: 'screen' }
     ];
