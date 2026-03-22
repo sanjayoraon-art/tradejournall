@@ -27,10 +27,13 @@ import {
     FileText,
     Pencil,
     Eye,
-    Loader2
+    Loader2,
+    Search,
+    Globe
 } from 'lucide-react';
 import { db, appId, storage, firebaseConfig } from '../utils/firebase';
-import { collection, query, getDocs, limit, orderBy, addDoc, deleteDoc, doc, serverTimestamp, setDoc, onSnapshot } from 'firebase/firestore';
+import { collection, query, getDocs, limit, orderBy, addDoc, deleteDoc, doc, serverTimestamp, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
+import { RichTextToolbar } from '../components/RichTextToolbar';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface AdminScreenProps {
@@ -420,6 +423,30 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         }
     };
 
+    // Sitemap updater — saves all published slugs to Firestore config doc
+    const updateSitemapData = async () => {
+        if (!db) return;
+        try {
+            const q = query(collection(db, 'artifacts', appId, 'blog'), orderBy('date', 'desc'));
+            const snap = await getDocs(q);
+            const posts = snap.docs
+                .filter(d => d.data().isActive)
+                .map(d => ({
+                    slug: d.data().slug,
+                    lastmod: d.data().lastUpdated?.toDate
+                        ? d.data().lastUpdated.toDate().toISOString().split('T')[0]
+                        : new Date().toISOString().split('T')[0]
+                }));
+            await setDoc(
+                doc(db, 'artifacts', appId, 'config', 'sitemap_data'),
+                { posts, updatedAt: serverTimestamp() }
+            );
+            console.log('[Sitemap] Updated with', posts.length, 'posts');
+        } catch (err) {
+            console.error('[Sitemap] Failed to update:', err);
+        }
+    };
+
     // Blog Handlers
     const handleAddBlogPost = async () => {
         if (!newPost.title || !newPost.slug || !newPost.content) {
@@ -440,6 +467,8 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                 await addDoc(collection(db!, 'artifacts', appId, 'blog'), postData);
                 alert("Post published successfully!");
             }
+            // Auto-update sitemap
+            await updateSitemapData();
             // Reset
             setNewPost({
                 title: '', slug: '', excerpt: '', content: '', featuredImage: '',
@@ -447,6 +476,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             });
             setEditingPost(null);
             setBlogImagePreview('');
+            setContentImages([]);
         } catch (error) {
             console.error("Error saving post:", error);
             alert("Failed to save post.");
@@ -959,14 +989,14 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Featured Image</label>
-                                        <div 
+                                        <div
                                             onClick={() => document.getElementById('blog-img-upload')?.click()}
                                             className={`w-full aspect-video rounded-xl border-2 border-dashed ${theme.border} flex flex-col items-center justify-center cursor-pointer relative group overflow-hidden`}
                                         >
-                                            <input 
-                                                id="blog-img-upload" 
-                                                type="file" 
-                                                className="hidden" 
+                                            <input
+                                                id="blog-img-upload"
+                                                type="file"
+                                                className="hidden"
                                                 onChange={(e) => e.target.files?.[0] && handleBlogImageUpload(e.target.files[0])}
                                             />
                                             {blogImagePreview || newPost.featuredImage ? (
@@ -981,15 +1011,32 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
+                                    <div className="space-y-3">
                                         <div>
-                                            <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Meta Title</label>
+                                            <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">SEO Title <span className="normal-case text-gray-600">(Google mein dikhega)</span></label>
                                             <input
                                                 value={newPost.metaTitle}
                                                 onChange={(e) => setNewPost({ ...newPost, metaTitle: e.target.value })}
                                                 className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 text-sm`}
-                                                placeholder="Custom title for Google"
+                                                placeholder="Custom title for Google (60 chars ideal)"
+                                                maxLength={70}
                                             />
+                                            <p className={`text-[10px] mt-1 text-right ${(newPost.metaTitle || newPost.title).length > 60 ? 'text-amber-400' : 'text-gray-600'}`}>
+                                                {(newPost.metaTitle || newPost.title).length}/60
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Meta Description <span className="normal-case text-gray-600">(search result mein dikhega)</span></label>
+                                            <textarea
+                                                value={newPost.metaDescription}
+                                                onChange={(e) => setNewPost({ ...newPost, metaDescription: e.target.value })}
+                                                className={`w-full p-3 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 h-24 resize-none text-sm`}
+                                                placeholder="160 characters mein article ka summary — Google yahi dikhata hai search results mein"
+                                                maxLength={165}
+                                            />
+                                            <p className={`text-[10px] mt-1 text-right ${newPost.metaDescription.length > 160 ? 'text-red-400' : newPost.metaDescription.length > 130 ? 'text-green-400' : 'text-gray-600'}`}>
+                                                {newPost.metaDescription.length}/160
+                                            </p>
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Keywords</label>
@@ -1003,30 +1050,45 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                     </div>
                                 </div>
 
+                                {/* SERP Preview */}
+                                {(newPost.metaTitle || newPost.title) && (
+                                    <div className={`p-4 rounded-xl border ${theme.border} bg-white/5`}>
+                                        <p className="text-[10px] font-black uppercase text-gray-500 mb-3 flex items-center gap-2">
+                                            <Search size={11} /> Google Search Preview
+                                        </p>
+                                        <div className="space-y-0.5">
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <Globe size={12} className="text-gray-500" />
+                                                <span className="text-[11px] text-gray-500">tradejournall.com › blog › {newPost.slug || 'article-slug'}</span>
+                                            </div>
+                                            <p className="text-[17px] text-blue-400 font-medium leading-tight hover:underline cursor-pointer truncate">
+                                                {newPost.metaTitle || newPost.title}
+                                            </p>
+                                            <p className="text-[13px] text-gray-400 leading-relaxed line-clamp-2">
+                                                {newPost.metaDescription || newPost.excerpt || 'Meta description yahan dikhegi — aap upar wale field mein fill karein.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Content Editor */}
                                 <div>
-                                    <div className="flex items-center justify-between mb-1">
+                                    <div className="flex items-center justify-between mb-2">
                                         <label className="text-[10px] font-black uppercase text-gray-500">Content (Markdown)</label>
-                                        <button 
-                                            onClick={() => document.getElementById('content-img-upload')?.click()}
-                                            type="button"
-                                            className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
-                                        >
-                                            <ImageIcon size={12} /> ADD IMAGE TO BODY
-                                        </button>
-                                        <input 
-                                            id="content-img-upload" 
-                                            type="file" 
-                                            className="hidden" 
+                                        <input
+                                            id="content-img-upload"
+                                            type="file"
+                                            className="hidden"
                                             onChange={(e) => e.target.files?.[0] && handleBlogImageUpload(e.target.files[0], true)}
                                         />
                                     </div>
-                                    
+
                                     {contentImages.length > 0 && (
                                         <div className="flex gap-2 overflow-x-auto pb-4 pt-2">
                                             {contentImages.map((url, i) => (
                                                 <div key={i} className="relative w-20 h-20 shrink-0 rounded-lg border border-gray-700 overflow-hidden group">
                                                     <img src={url} className="w-full h-full object-cover" />
-                                                    <button 
+                                                    <button
                                                         onClick={() => {
                                                             const md = `![Alt text](${url})`;
                                                             navigator.clipboard.writeText(md);
@@ -1041,11 +1103,11 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         </div>
                                     )}
 
-                                    <textarea
+                                    <RichTextToolbar
                                         value={newPost.content}
-                                        onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                                        className={`w-full p-4 rounded-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 h-96 resize-y font-mono text-sm leading-relaxed`}
-                                        placeholder="Markdown supported. Use # for headers, ** for bold, etc."
+                                        onChange={(val) => setNewPost({ ...newPost, content: val })}
+                                        theme={theme}
+                                        onImageInsert={() => document.getElementById('content-img-upload')?.click()}
                                     />
                                 </div>
 
@@ -1059,7 +1121,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         {editingPost ? 'UPDATE ARTICLE' : 'PUBLISH ARTICLE'}
                                     </button>
                                     {editingPost && (
-                                        <button 
+                                        <button
                                             onClick={() => {
                                                 setEditingPost(null);
                                                 setNewPost({ title: '', slug: '', excerpt: '', content: '', featuredImage: '', metaTitle: '', metaDescription: '', keywords: '', author: 'Admin', isActive: true });
@@ -1088,7 +1150,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                             <p className="text-[10px] text-gray-500 font-mono">/{post.slug}</p>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => {
                                                     setEditingPost(post);
                                                     setNewPost({ ...post });
@@ -1099,7 +1161,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                             >
                                                 <Pencil size={18} />
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={async () => {
                                                     if (window.confirm('Delete this article?')) {
                                                         await deleteDoc(doc(db!, 'artifacts', appId, 'blog', post.id));
