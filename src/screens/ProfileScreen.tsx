@@ -249,14 +249,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                             iconColor="text-green-500"
                             onClick={() => setIsChatOpen(true)}
                         />
-                        <ProfileAction
-                            icon={Key}
-                            label="AI Configuration"
-                            sub="Manage API Keys"
-                            isDarkMode={isDarkMode}
-                            iconColor="text-gray-400"
-                            onClick={() => setShowApiModal(true)}
-                        />
+
                     </div>
                 </div>
 
