@@ -12,6 +12,7 @@ interface RichTextToolbarProps {
     onChange: (val: string) => void;
     theme: any;
     onImageInsert?: () => void;
+    onImagePaste?: (file: File) => void;
 }
 
 type ToolbarAction = {
@@ -20,9 +21,63 @@ type ToolbarAction = {
     action: (text: string, selStart: number, selEnd: number) => { newText: string; newCursor: number };
 };
 
-export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChange, theme, onImageInsert }) => {
+export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChange, theme, onImageInsert, onImagePaste }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [showPreview, setShowPreview] = useState(false);
+
+    const handlePaste = (e: React.ClipboardEvent) => {
+        // Handle image paste
+        if (onImagePaste) {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        e.preventDefault();
+                        onImagePaste(file);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Handle HTML formatting paste
+        const html = e.clipboardData.getData('text/html');
+        if (html) {
+            e.preventDefault();
+            // Basic HTML to Markdown converter
+            let parsed = html
+                .replace(/<br\s*[\/]?>/gi, '\n')
+                .replace(/<\/p>/gi, '\n\n')
+                .replace(/<(b|strong)[^>]*>(.*?)<\/\1>/gi, '**$2**')
+                .replace(/<(i|em)[^>]*>(.*?)<\/\1>/gi, '*$2*')
+                .replace(/<h([1-6])[^>]*>(.*?)<\/h\1>/gi, (match, level, content) => {
+                    return '\n\n' + '#'.repeat(parseInt(level)) + ' ' + content + '\n\n';
+                })
+                .replace(/<[^>]+>/g, '') // Strip remaining tags
+                // Clean up html entities
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&');
+
+            // Clean up extra spaces/newlines
+            parsed = parsed.replace(/\n{3,}/g, '\n\n').trim();
+
+            const el = textareaRef.current;
+            if (el) {
+                const start = el.selectionStart;
+                const end = el.selectionEnd;
+                const before = value.substring(0, start);
+                const after = value.substring(end);
+                onChange(before + parsed + after);
+                requestAnimationFrame(() => {
+                    el.focus();
+                    el.setSelectionRange(start + parsed.length, start + parsed.length);
+                });
+            }
+        }
+    };
 
     const applyFormat = (
         prefix: string,
@@ -182,6 +237,7 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
                     ref={textareaRef}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
+                    onPaste={handlePaste}
                     className={`w-full p-4 rounded-b-xl bg-transparent border ${theme.border} outline-none focus:border-indigo-500 min-h-96 resize-y font-mono text-sm leading-relaxed transition-colors`}
                     placeholder={`# Article Title\n\n## Introduction\n\nWrite your content here using Markdown...\n\n## Section 2\n\n- Bullet point 1\n- Bullet point 2\n\n**Bold text**, *italic text*`}
                     spellCheck

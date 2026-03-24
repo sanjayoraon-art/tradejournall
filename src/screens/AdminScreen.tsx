@@ -274,7 +274,10 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     const uploadFile = async (file: File) => {
-        if (!storage) return;
+        if (!storage) {
+            alert('Firebase Storage is not connected/configured. Image upload failed.');
+            return;
+        }
         setIsUploading(true);
         try {
             const path = `products/${Date.now()}_${file.name}`;
@@ -282,9 +285,9 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(storageRef);
             setNewProduct(prev => ({ ...prev, imageUrl: downloadURL }));
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error uploading file:", error);
-            alert("Failed to upload image. Please try again.");
+            alert(`Failed to upload image: ${error?.message || "Please try again."}`);
         } finally {
             setIsUploading(false);
         }
@@ -486,7 +489,10 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
     };
 
     const handleBlogImageUpload = async (file: File, isContentImage = false) => {
-        if (!storage) return;
+        if (!storage) {
+            alert('Firebase Storage is not connected/configured. Image upload failed.');
+            return;
+        }
         setIsUploading(true);
         try {
             const path = `blog/${Date.now()}_${file.name}`;
@@ -499,8 +505,9 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                 setNewPost(prev => ({ ...prev, featuredImage: url }));
                 setBlogImagePreview(url);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Upload error:", error);
+            alert(`Image Upload Error: ${error?.message || "Something went wrong"}`);
         } finally {
             setIsUploading(false);
         }
@@ -1120,6 +1127,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         onChange={(val) => setNewPost({ ...newPost, content: val })}
                                         theme={theme}
                                         onImageInsert={() => document.getElementById('content-img-upload')?.click()}
+                                        onImagePaste={(file) => handleBlogImageUpload(file, true)}
                                     />
                                 </div>
 
