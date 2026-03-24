@@ -273,9 +273,23 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+    const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = error => reject(error);
+        });
+    };
+
     const uploadFile = async (file: File) => {
         if (!storage) {
-            alert('Firebase Storage is not connected/configured. Image upload failed.');
+            try {
+                const b64 = await fileToBase64(file);
+                setNewProduct(prev => ({ ...prev, imageUrl: b64 }));
+            } catch (e) {
+                alert('Firebase Storage is not connected and base64 fallback failed.');
+            }
             return;
         }
         setIsUploading(true);
@@ -286,8 +300,13 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             const downloadURL = await getDownloadURL(storageRef);
             setNewProduct(prev => ({ ...prev, imageUrl: downloadURL }));
         } catch (error: any) {
-            console.error("Error uploading file:", error);
-            alert(`Failed to upload image: ${error?.message || "Please try again."}`);
+            console.warn("Storage upload failed, falling back to Base64:", error);
+            try {
+                const b64 = await fileToBase64(file);
+                setNewProduct(prev => ({ ...prev, imageUrl: b64 }));
+            } catch (fallbackErr) {
+                alert(`Failed to upload image: ${error?.message || "Please try again."}`);
+            }
         } finally {
             setIsUploading(false);
         }
@@ -489,8 +508,22 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
     };
 
     const handleBlogImageUpload = async (file: File, isContentImage = false) => {
+        const applyUrl = (url: string) => {
+            if (isContentImage) {
+                setContentImages(prev => [...prev, url]);
+            } else {
+                setNewPost(prev => ({ ...prev, featuredImage: url }));
+                setBlogImagePreview(url);
+            }
+        };
+
         if (!storage) {
-            alert('Firebase Storage is not connected/configured. Image upload failed.');
+            try {
+                const b64 = await fileToBase64(file);
+                applyUrl(b64);
+            } catch (e) {
+                alert('Firebase Storage is not connected and base64 fallback failed.');
+            }
             return;
         }
         setIsUploading(true);
@@ -499,15 +532,15 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             const storageRef = ref(storage, path);
             await uploadBytes(storageRef, file);
             const url = await getDownloadURL(storageRef);
-            if (isContentImage) {
-                setContentImages(prev => [...prev, url]);
-            } else {
-                setNewPost(prev => ({ ...prev, featuredImage: url }));
-                setBlogImagePreview(url);
-            }
+            applyUrl(url);
         } catch (error: any) {
-            console.error("Upload error:", error);
-            alert(`Image Upload Error: ${error?.message || "Something went wrong"}`);
+            console.warn("Upload error, falling back to base64:", error);
+            try {
+                const b64 = await fileToBase64(file);
+                applyUrl(b64);
+            } catch (fallbackErr) {
+                alert(`Image Upload Error: ${error?.message || "Something went wrong"}`);
+            }
         } finally {
             setIsUploading(false);
         }
