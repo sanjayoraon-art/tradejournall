@@ -12,7 +12,7 @@ interface RichTextToolbarProps {
     onChange: (val: string) => void;
     theme: any;
     onImageInsert?: () => void;
-    onImagePaste?: (file: File) => void;
+    onImagePaste?: (file: File) => Promise<string | undefined>;
 }
 
 type ToolbarAction = {
@@ -25,7 +25,7 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [showPreview, setShowPreview] = useState(false);
 
-    const handlePaste = (e: React.ClipboardEvent) => {
+    const handlePaste = async (e: React.ClipboardEvent) => {
         // Handle image paste
         if (onImagePaste) {
             const items = e.clipboardData.items;
@@ -34,7 +34,29 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
                     const file = items[i].getAsFile();
                     if (file) {
                         e.preventDefault();
-                        onImagePaste(file);
+                        
+                        const el = textareaRef.current;
+                        if (!el) return;
+
+                        const start = el.selectionStart;
+                        const end = el.selectionEnd;
+                        const before = value.substring(0, start);
+                        const after = value.substring(end);
+                        const loadingStr = `\n![Uploading image...]()\n`;
+                        onChange(before + loadingStr + after);
+
+                        const url = await onImagePaste(file);
+                        
+                        // Replace placeholder with final result
+                        setTimeout(() => {
+                            const currentVal = textareaRef.current?.value || '';
+                            if (url) {
+                                onChange(currentVal.replace(loadingStr, `\n![Image](${url})\n`));
+                            } else {
+                                onChange(currentVal.replace(loadingStr, ''));
+                            }
+                        }, 50);
+
                         return;
                     }
                 }
