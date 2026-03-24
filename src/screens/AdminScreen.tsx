@@ -283,7 +283,8 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
     };
 
     const uploadFile = async (file: File) => {
-        if (!storage) {
+        const isDummy = firebaseConfig?.apiKey === 'dummy';
+        if (!storage || isDummy) {
             try {
                 const b64 = await fileToBase64(file);
                 setNewProduct(prev => ({ ...prev, imageUrl: b64 }));
@@ -517,7 +518,8 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             }
         };
 
-        if (!storage) {
+        const isDummy = firebaseConfig?.apiKey === 'dummy';
+        if (!storage || isDummy) {
             try {
                 const b64 = await fileToBase64(file);
                 applyUrl(b64);
