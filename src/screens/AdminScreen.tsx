@@ -797,20 +797,22 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                     </div>
 
                                     {/* Upload Area */}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={(e) => {
+                                            handleFileSelect(e);
+                                            e.target.value = '';
+                                        }}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
                                     <div
                                         onClick={() => fileInputRef.current?.click()}
                                         onPaste={handlePaste}
                                         className={`w-full p-4 rounded-xl bg-transparent border-2 border-dashed ${theme.border} hover:border-indigo-500 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer outline-none focus:border-indigo-500 relative overflow-hidden`}
                                         tabIndex={0}
                                     >
-                                        <input
-                                            type="file"
-                                            ref={fileInputRef}
-                                            onChange={handleFileSelect}
-                                            className="hidden"
-                                            accept="image/*"
-                                        />
-
                                         {isUploading ? (
                                             <div className="animate-spin text-indigo-500"><RefreshCcw size={24} /></div>
                                         ) : newProduct.imageUrl ? (
@@ -989,16 +991,21 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="text-[10px] font-black uppercase text-gray-500 block mb-1">Featured Image</label>
+                                        <input
+                                            id="blog-img-upload"
+                                            type="file"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    handleBlogImageUpload(e.target.files[0]);
+                                                }
+                                                e.target.value = '';
+                                            }}
+                                        />
                                         <div
                                             onClick={() => document.getElementById('blog-img-upload')?.click()}
                                             className={`w-full aspect-video rounded-xl border-2 border-dashed ${theme.border} flex flex-col items-center justify-center cursor-pointer relative group overflow-hidden`}
                                         >
-                                            <input
-                                                id="blog-img-upload"
-                                                type="file"
-                                                className="hidden"
-                                                onChange={(e) => e.target.files?.[0] && handleBlogImageUpload(e.target.files[0])}
-                                            />
                                             {blogImagePreview || newPost.featuredImage ? (
                                                 <img src={blogImagePreview || newPost.featuredImage} className="w-full h-full object-cover" />
                                             ) : (
@@ -1079,7 +1086,12 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                             id="content-img-upload"
                                             type="file"
                                             className="hidden"
-                                            onChange={(e) => e.target.files?.[0] && handleBlogImageUpload(e.target.files[0], true)}
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    handleBlogImageUpload(e.target.files[0], true);
+                                                }
+                                                e.target.value = '';
+                                            }}
                                         />
                                     </div>
 
