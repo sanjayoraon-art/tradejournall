@@ -297,11 +297,20 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         try {
             const path = `products/${Date.now()}_${file.name}`;
             const storageRef = ref(storage, path);
-            await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(storageRef);
+            
+            const uploadTask = async () => {
+                await uploadBytes(storageRef, file);
+                return await getDownloadURL(storageRef);
+            };
+            
+            const timeoutPromise = new Promise<string>((_, reject) => 
+                setTimeout(() => reject(new Error("Storage timeout")), 5000)
+            );
+
+            const downloadURL = await Promise.race([uploadTask(), timeoutPromise]);
             setNewProduct(prev => ({ ...prev, imageUrl: downloadURL }));
         } catch (error: any) {
-            console.warn("Storage upload failed, falling back to Base64:", error);
+            console.warn("Storage upload failed or timed out, falling back to Base64:", error);
             try {
                 const b64 = await fileToBase64(file);
                 setNewProduct(prev => ({ ...prev, imageUrl: b64 }));
@@ -533,12 +542,21 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         try {
             const path = `blog/${Date.now()}_${file.name}`;
             const storageRef = ref(storage, path);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
+            
+            const uploadTask = async () => {
+                await uploadBytes(storageRef, file);
+                return await getDownloadURL(storageRef);
+            };
+            
+            const timeoutPromise = new Promise<string>((_, reject) => {
+                setTimeout(() => reject(new Error("Storage timeout")), 5000);
+            });
+
+            const url = await Promise.race([uploadTask(), timeoutPromise]);
             applyUrl(url);
             return url;
         } catch (error: any) {
-            console.warn("Upload error, falling back to base64:", error);
+            console.warn("Upload error or timeout, falling back to base64:", error);
             try {
                 const b64 = await fileToBase64(file);
                 applyUrl(b64);
