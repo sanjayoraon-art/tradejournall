@@ -51,11 +51,17 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
                         setTimeout(() => {
                             const currentVal = textareaRef.current?.value || '';
                             if (url) {
-                                onChange(currentVal.replace(loadingStr, `\n![Image](${url})\n`));
+                                if (url.startsWith('data:')) {
+                                    const refId = `img_${Date.now().toString(36)}`;
+                                    const cleanedText = currentVal.replace(loadingStr, `\n![Image][${refId}]\n`);
+                                    onChange(cleanedText + `\n\n[${refId}]: ${url}\n`);
+                                } else {
+                                    onChange(currentVal.replace(loadingStr, `\n![Image](${url})\n`));
+                                }
                             } else {
                                 onChange(currentVal.replace(loadingStr, ''));
                             }
-                        }, 50);
+                        }, 100);
 
                         return;
                     }

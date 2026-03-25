@@ -1187,11 +1187,19 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                                     <img src={url} className="w-full h-full object-cover" />
                                                     <button
                                                         onClick={() => {
-                                                            const md = `![Alt text](${url})`;
-                                                            navigator.clipboard.writeText(md);
-                                                            alert("Markdown copied! Paste it in your content.");
+                                                            if (url.startsWith('data:')) {
+                                                                const refId = `img_copy_${Date.now().toString(36)}`;
+                                                                const newContent = newPost.content + `\n\n[${refId}]: ${url}\n`;
+                                                                setNewPost({ ...newPost, content: newContent });
+                                                                navigator.clipboard.writeText(`![Image][${refId}]`);
+                                                                alert(`Reference ![Image][${refId}] copied to clipboard!\nThe large internal code was automatically saved to the bottom of the editor. Paste this short tag wherever you want the image.`);
+                                                            } else {
+                                                                const md = `![Image](${url})`;
+                                                                navigator.clipboard.writeText(md);
+                                                                alert("Markdown copied! Paste it in your content.");
+                                                            }
                                                         }}
-                                                        className="absolute inset-0 bg-indigo-600/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-black text-[10px] transition-opacity"
+                                                        className="absolute inset-0 bg-indigo-600/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-black text-[10px] transition-opacity text-center p-2"
                                                     >
                                                         COPY MD
                                                     </button>
