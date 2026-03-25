@@ -190,6 +190,46 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
         },
     ];
 
+    const headingComponents = {
+        h1: ({ node, children, ...props }: any) => {
+            const text = String(children).replace(/\s+/g, ' ').trim();
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            return <h2 id={id} className="text-3xl font-black mt-12 mb-6 text-white scroll-mt-24" {...props}>{children}</h2>;
+        },
+        h2: ({ node, children, ...props }: any) => {
+            const text = String(children).replace(/\s+/g, ' ').trim();
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            return <h2 id={id} className="text-2xl font-black mt-10 mb-5 text-white scroll-mt-24" {...props}>{children}</h2>;
+        },
+        h3: ({ node, children, ...props }: any) => {
+            const text = String(children).replace(/\s+/g, ' ').trim();
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            return <h3 id={id} className="text-xl font-bold mt-8 mb-4 text-white scroll-mt-24" {...props}>{children}</h3>;
+        },
+        p: ({ node, ...props }: any) => <p className="mb-6 leading-8 text-lg" {...props} />,
+        ul: ({ node, ...props }: any) => <ul className="list-disc pl-6 mb-8 space-y-3" {...props} />,
+        ol: ({ node, ...props }: any) => <ol className="list-decimal pl-6 mb-8 space-y-3" {...props} />,
+        li: ({ node, ...props }: any) => <li className="text-gray-300" {...props} />,
+        blockquote: ({ node, ...props }: any) => (
+            <blockquote className="border-l-4 border-green-500 bg-green-500/5 p-6 rounded-r-2xl italic mb-8 mt-4" {...props} />
+        ),
+        img: ({ node, ...props }: any) => (
+            <div className="my-10 overflow-hidden">
+                <img className="rounded-2xl border border-gray-800 shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
+                {props.alt && <p className="text-center text-sm text-gray-500 mt-3 italic font-medium">{props.alt}</p>}
+            </div>
+        ),
+        code: ({ node, inline, className, children, ...props }: any) => {
+            return inline ? (
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-pink-400 font-mono text-sm" {...props}>{children}</code>
+            ) : (
+                <pre className="bg-gray-900 border border-gray-800 p-5 rounded-2xl overflow-x-auto my-8">
+                    <code className="text-green-400 font-mono text-sm" {...props}>{children}</code>
+                </pre>
+            );
+        }
+    };
+
     return (
         <div className="flex flex-col gap-0">
             {/* Toolbar */}
@@ -246,13 +286,16 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
             {/* Editor / Preview Area */}
             {showPreview ? (
                 <div
-                    className={`w-full min-h-96 p-5 rounded-b-xl border ${theme.border} bg-gray-900/40 overflow-auto`}
+                    className={`w-full h-[600px] p-8 rounded-b-xl border ${theme.border} bg-gray-900 overflow-y-auto`}
                 >
-                    <div className="prose prose-invert prose-green max-w-none text-sm leading-relaxed">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <article className="prose prose-invert prose-green max-w-none text-gray-300 leading-relaxed font-sans">
+                        <ReactMarkdown 
+                            remarkPlugins={[remarkGfm]}
+                            components={headingComponents}
+                        >
                             {value || '*Start typing to preview...*'}
                         </ReactMarkdown>
-                    </div>
+                    </article>
                 </div>
             ) : (
                 <textarea

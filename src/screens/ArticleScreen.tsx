@@ -172,8 +172,8 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
             <blockquote className="border-l-4 border-green-500 bg-green-500/5 p-6 rounded-r-2xl italic mb-8 mt-4" {...props} />
         ),
         img: ({ node, ...props }: any) => (
-            <div className="my-10">
-                <img className="rounded-2xl border border-gray-800 shadow-xl w-full mx-auto" {...props} />
+            <div className="my-10 overflow-hidden">
+                <img className="rounded-2xl border border-gray-800 shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
                 {props.alt && <p className="text-center text-sm text-gray-500 mt-3 italic font-medium">{props.alt}</p>}
             </div>
         ),
