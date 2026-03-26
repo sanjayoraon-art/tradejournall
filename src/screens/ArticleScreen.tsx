@@ -172,8 +172,8 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
             <blockquote className="border-l-4 border-green-500 bg-green-500/5 p-6 rounded-r-2xl italic mb-8 mt-4" {...props} />
         ),
         img: ({ node, ...props }: any) => (
-            <div className="my-10 overflow-hidden">
-                <img className="rounded-2xl border border-gray-800 shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
+            <div className="my-10 overflow-hidden flex justify-center bg-black/20 rounded-2xl p-2">
+                <img className="rounded-xl shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
                 {props.alt && <p className="text-center text-sm text-gray-500 mt-3 italic font-medium">{props.alt}</p>}
             </div>
         ),
@@ -323,11 +323,11 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
                 )}
 
                 {article.featuredImage && (
-                    <div className="rounded-3xl overflow-hidden border border-gray-800 shadow-2xl mb-12 aspect-[21/9]">
+                    <div className="rounded-3xl overflow-hidden shadow-2xl mb-12 flex justify-center bg-black/20 p-2">
                         <img
                             src={article.featuredImage}
                             alt={article.title}
-                            className="w-full h-full object-cover"
+                            className="w-full max-h-[600px] object-contain rounded-2xl"
                         />
                     </div>
                 )}

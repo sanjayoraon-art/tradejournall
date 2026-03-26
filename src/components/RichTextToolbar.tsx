@@ -23,7 +23,46 @@ type ToolbarAction = {
 
 export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChange, theme, onImageInsert, onImagePaste }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [showPreview, setShowPreview] = useState(false);
+
+    const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0] && onImagePaste) {
+            const file = e.target.files[0];
+            const el = textareaRef.current;
+            if (!el) return;
+
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            const before = value.substring(0, start);
+            const after = value.substring(end);
+            const loadingStr = `\n![Uploading image...]()\n`;
+            onChange(before + loadingStr + after);
+
+            const url = await onImagePaste(file);
+            
+            // Replace placeholder with final result
+            setTimeout(() => {
+                const currentVal = textareaRef.current?.value || '';
+                if (url) {
+                    if (url.startsWith('data:')) {
+                        const refId = `img_${Date.now().toString(36)}`;
+                        const cleanedText = currentVal.replace(loadingStr, `\n![Image][${refId}]\n`);
+                        onChange(cleanedText + `\n\n[${refId}]: ${url}\n`);
+                    } else {
+                        onChange(currentVal.replace(loadingStr, `\n![Image](${url})\n`));
+                    }
+                } else {
+                    onChange(currentVal.replace(loadingStr, ''));
+                }
+            }, 100);
+            
+            // Clear input
+            e.target.value = '';
+        } else if (onImageInsert) {
+             onImageInsert();
+        }
+    };
 
     const handlePaste = async (e: React.ClipboardEvent) => {
         // Handle image paste
@@ -220,8 +259,8 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
             <blockquote className="border-l-4 border-green-500 bg-green-500/5 p-6 rounded-r-2xl italic mb-8 mt-4" {...props} />
         ),
         img: ({ node, ...props }: any) => (
-            <div className="my-10 overflow-hidden">
-                <img className="rounded-2xl border border-gray-800 shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
+            <div className="my-10 overflow-hidden flex justify-center bg-black/20 rounded-2xl p-2">
+                <img className="rounded-xl shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
                 {props.alt && <p className="text-center text-sm text-gray-500 mt-3 italic font-medium">{props.alt}</p>}
             </div>
         ),
@@ -261,15 +300,24 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
                 <div className="w-px h-5 bg-gray-700 mx-1" />
 
                 {/* Image Insert */}
-                {onImageInsert && (
-                    <button
-                        type="button"
-                        onClick={onImageInsert}
-                        title="Insert Image"
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all active:scale-90"
-                    >
-                        <ImageIcon size={16} />
-                    </button>
+                {(onImageInsert || onImagePaste) && (
+                    <>
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            onChange={handleFileInput} 
+                            className="hidden" 
+                            accept="image/*" 
+                        />
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current ? fileInputRef.current.click() : onImageInsert?.()}
+                            title="Insert Image"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all active:scale-90"
+                        >
+                            <ImageIcon size={16} />
+                        </button>
+                    </>
                 )}
 
                 {/* Spacer */}

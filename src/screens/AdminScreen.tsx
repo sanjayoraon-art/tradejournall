@@ -1270,7 +1270,15 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                             <button
                                                 onClick={async () => {
                                                     if (window.confirm('Delete this article?')) {
-                                                        await deleteDoc(doc(db!, 'artifacts', appId, 'blog', post.id));
+                                                        try {
+                                                            const deleteTask = deleteDoc(doc(db!, 'artifacts', appId, 'blog', post.id));
+                                                            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 5000));
+                                                            await Promise.race([deleteTask, timeoutPromise]);
+                                                            updateSitemapData(); // Update sitemap after delete
+                                                        } catch (error) {
+                                                            console.error("Delete failed:", error);
+                                                            alert("Warning: Delete operation timed out or failed. It may only be removed from local cache.");
+                                                        }
                                                     }
                                                 }}
                                                 className="p-2 hover:bg-red-500/10 text-red-400 rounded-lg"
