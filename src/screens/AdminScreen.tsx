@@ -304,7 +304,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             };
             
             const timeoutPromise = new Promise<string>((_, reject) => 
-                setTimeout(() => reject(new Error("Storage timeout")), 5000)
+                setTimeout(() => reject(new Error("Storage timeout")), 30000)
             );
 
             const downloadURL = await Promise.race([uploadTask(), timeoutPromise]);
@@ -410,7 +410,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                 timeoutId = setTimeout(() => {
                     console.error("[DEBUG] Product addition timed out");
                     reject(new Error("Operation timed out"));
-                }, 10000);
+                }, 30000);
             });
 
             const addProductPromise = (async () => {
@@ -503,7 +503,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             };
 
             const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error("Database timeout")), 5000)
+                setTimeout(() => reject(new Error("Database timeout")), 30000)
             );
 
             await Promise.race([publishTask(), timeoutPromise]);
@@ -521,9 +521,8 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         } catch (error: any) {
             console.error("Error saving post:", error);
             
-            // If it times out because of dummy config, we can forcefully reset the UI so the user isn't stuck.
-            // In a real app we'd throw, but since we rely on local caching with dummy keys often, we just alert.
-            alert("Warning: Cloud sync timed out. Data may only be saved locally in cache.");
+            // If it times out because of a slow network or misconfigured Firebase rules
+            alert("Warning: Cloud sync timed out. Data may only be saved locally in cache. Please ensure your Firestore Database is created and permissions are correct.");
             
             // Force reset anyway so they aren't stuck seeing the spinner forever
             setNewPost({
@@ -570,7 +569,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             };
             
             const timeoutPromise = new Promise<string>((_, reject) => {
-                setTimeout(() => reject(new Error("Storage timeout")), 5000);
+                setTimeout(() => reject(new Error("Storage timeout")), 30000);
             });
 
             const url = await Promise.race([uploadTask(), timeoutPromise]);
