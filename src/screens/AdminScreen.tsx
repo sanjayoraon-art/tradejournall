@@ -1271,12 +1271,12 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                                     if (window.confirm('Delete this article?')) {
                                                         try {
                                                             const deleteTask = deleteDoc(doc(db!, 'artifacts', appId, 'blog', post.id));
-                                                            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 5000));
+                                                            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 30000));
                                                             await Promise.race([deleteTask, timeoutPromise]);
                                                             updateSitemapData(); // Update sitemap after delete
                                                         } catch (error) {
                                                             console.error("Delete failed:", error);
-                                                            alert("Warning: Delete operation timed out or failed. It may only be removed from local cache.");
+                                                            alert("Warning: Delete operation timed out or failed. It may only be removed from local cache. Please check your Firestore rules.");
                                                         }
                                                     }
                                                 }}
