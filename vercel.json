@@ -7,6 +7,10 @@
     ],
     "rewrites": [
         {
+            "source": "/blog/:slug",
+            "destination": "/api/render-blog?slug=$slug"
+        },
+        {
             "source": "/((?!api/).*)",
             "destination": "/index.html"
         }
