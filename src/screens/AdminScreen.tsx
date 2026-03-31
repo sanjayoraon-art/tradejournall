@@ -523,8 +523,8 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         } catch (error: any) {
             console.error("Error saving post:", error);
             
-            // If it times out because of a slow network or misconfigured Firebase rules
-            alert("Warning: Cloud sync timed out. Data may only be saved locally in cache. Please ensure your Firestore Database is created and permissions are correct.");
+            // Show the exact error message so we know if it's a permission denied or local timeout
+            alert(`Error Publishing: ${error.message || "Unknown Error"}`);
             
             // Force reset anyway so they aren't stuck seeing the spinner forever
             setNewPost({
