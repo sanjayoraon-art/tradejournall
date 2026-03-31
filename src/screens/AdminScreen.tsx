@@ -97,6 +97,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
     });
     const [blogImagePreview, setBlogImagePreview] = useState('');
     const [contentImages, setContentImages] = useState<string[]>([]);
+    const [publishedLink, setPublishedLink] = useState('');
 
     const fetchFirebaseData = async () => {
         if (!db) {
@@ -503,12 +504,13 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
             };
 
             const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error("Database timeout")), 30000)
+                setTimeout(() => reject(new Error("Database timeout")), 10000)
             );
 
             await Promise.race([publishTask(), timeoutPromise]);
 
-            alert(editingPost ? "Post updated successfully (or cached locally)!" : "Post published successfully (or cached locally)!");
+            // Set the published link so the UI shows it instead of just an alert
+            setPublishedLink(`https://tradejournall.com/blog/${newPost.slug}`);
             
             // Reset
             setNewPost({
@@ -1034,7 +1036,27 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
 
                 {activeTab === 'blog' && (
                     <div className="space-y-6">
+                        {publishedLink && (
+                            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-2xl text-center flex flex-col items-center animate-in fade-in slide-in-from-bottom-2">
+                                <CheckCircle2 size={40} className="text-green-500 mb-3" />
+                                <h3 className="text-2xl font-black text-green-400 mb-2">Article Published!</h3>
+                                <p className="text-gray-400 text-sm mb-6 max-w-md">Your article is now live. Google <span className="text-white font-bold">SEO injection is active</span> and it is ready to rank.</p>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <a href={publishedLink} target="_blank" rel="noreferrer" className="px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-black rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-green-900/20 active:scale-95">
+                                        <Globe size={18} /> View Live Article
+                                    </a>
+                                    <button onClick={() => { navigator.clipboard.writeText(publishedLink); alert('Link Copied!'); }} className={`px-6 py-3 ${theme.card} border ${theme.border} hover:bg-gray-800 font-bold rounded-xl flex items-center gap-2 transition-all active:scale-95`}>
+                                        <Link size={18} /> Copy URL
+                                    </button>
+                                </div>
+                                <button onClick={() => setPublishedLink('')} className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                                    Write another article
+                                </button>
+                            </div>
+                        )}
+
                         {/* Blog Form */}
+                        {!publishedLink && (
                         <div className={`${theme.card} p-6 rounded-2xl border ${theme.border}`}>
                             <h3 className="font-black text-lg mb-4">{editingPost ? 'Edit Post' : 'Create New Article'}</h3>
                             <div className="space-y-6">
@@ -1240,6 +1262,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         {/* Recent Posts List */}
                         <div className="space-y-4">
