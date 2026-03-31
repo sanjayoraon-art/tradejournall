@@ -171,9 +171,11 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
         blockquote: ({ node, ...props }: any) => (
             <blockquote className="border-l-4 border-green-500 bg-green-500/5 p-6 rounded-r-2xl italic mb-8 mt-4" {...props} />
         ),
+        strong: ({ node, ...props }: any) => <strong className="font-black text-white px-0.5" {...props} />,
+        em: ({ node, ...props }: any) => <em className="italic text-gray-300" {...props} />,
         img: ({ node, ...props }: any) => (
             <div className="my-10 overflow-hidden flex justify-center bg-black/20 rounded-2xl p-2">
-                <img className="rounded-xl shadow-xl max-w-full mx-auto object-contain" style={{ maxHeight: '600px' }} {...props} />
+                <img className="rounded-xl shadow-xl mx-auto object-contain" style={{ width: 'auto', maxWidth: '100%', maxHeight: '600px' }} {...props} />
                 {props.alt && <p className="text-center text-sm text-gray-500 mt-3 italic font-medium">{props.alt}</p>}
             </div>
         ),
@@ -327,7 +329,8 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
                         <img
                             src={article.featuredImage}
                             alt={article.title}
-                            className="w-full max-h-[600px] object-contain rounded-2xl"
+                            className="object-contain rounded-2xl mx-auto"
+                            style={{ width: 'auto', maxWidth: '100%', maxHeight: '600px' }}
                         />
                     </div>
                 )}
