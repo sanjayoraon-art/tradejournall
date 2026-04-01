@@ -206,6 +206,32 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
         });
     };
 
+    const insertImageUrl = () => {
+        const el = textareaRef.current;
+        if (!el) return;
+        const url = window.prompt("Enter image URL:", "https://");
+        if (!url) return;
+        
+        const start = el.selectionStart;
+        const end = el.selectionEnd;
+        const selected = value.slice(start, end) || 'Image Description';
+        const before = value.slice(0, start);
+        const after = value.slice(end);
+        
+        const linePrefix = before.length > 0 && !before.endsWith('\n') ? '\n' : '';
+        const lineSuffix = after.length > 0 && !after.startsWith('\n') ? '\n' : '';
+        
+        const insertion = `${linePrefix}![${selected}](${url})${lineSuffix}`;
+        const newText = before + insertion + after;
+        
+        onChange(newText);
+        requestAnimationFrame(() => {
+            el.focus();
+            const cursorStart = start + linePrefix.length + 2;
+            el.setSelectionRange(cursorStart, cursorStart + selected.length);
+        });
+    };
+
     const toolbarButtons = [
         {
             group: 'Headings',
@@ -221,6 +247,7 @@ export const RichTextToolbar: React.FC<RichTextToolbarProps> = ({ value, onChang
                 { icon: <Bold size={16} />, label: 'Bold', action: () => applyFormat('**', '**') },
                 { icon: <Italic size={16} />, label: 'Italic', action: () => applyFormat('*', '*') },
                 { icon: <LinkIcon size={16} />, label: 'Link', action: insertLink },
+                { icon: <ImageIcon size={16} />, label: 'Image URL', action: insertImageUrl },
             ]
         },
         {
