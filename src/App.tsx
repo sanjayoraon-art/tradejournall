@@ -10,6 +10,7 @@ import { AdminScreen } from './screens/AdminScreen';
 import { NotificationsScreen } from './screens/NotificationsScreen';
 import { InformationScreen } from './screens/InformationScreen';
 import { BacktestingScreen } from './screens/BacktestingScreen';
+import { ArticleScreen } from './screens/ArticleScreen';
 import { exponentialBackoffFetch, API_URL, analyzeTradeScreenshot } from './utils/api';
 import { db, auth, appId } from './utils/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -34,7 +35,15 @@ interface Trade {
     isBacktest?: boolean;
 }
 
+// Helper to get blog slug from URL path like /blog/my-article
+function getBlogSlugFromUrl(): string | null {
+    const path = window.location.pathname;
+    const match = path.match(/^\/blog\/([^/]+)/);
+    return match ? match[1] : null;
+}
+
 const App = () => {
+    const [blogSlugFromUrl] = useState<string | null>(getBlogSlugFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => localStorage.getItem('currentScreen') || 'dashboard');
 
     useEffect(() => {
@@ -545,6 +554,25 @@ const App = () => {
                     >
                         Retry Connection
                     </button>
+                </div>
+            </div>
+        );
+    }
+
+    // ✅ BLOG URL ROUTING: If URL is /blog/:slug, show article directly (no login required)
+    if (blogSlugFromUrl) {
+        return (
+            <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+                <div className="max-w-4xl mx-auto px-4 py-12">
+                    <ArticleScreen
+                        slug={blogSlugFromUrl}
+                        theme={theme}
+                        onBack={() => {
+                            // Navigate to homepage when "Back" is clicked
+                            window.history.pushState({}, '', '/');
+                            window.location.reload();
+                        }}
+                    />
                 </div>
             </div>
         );
