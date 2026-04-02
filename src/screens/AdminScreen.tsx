@@ -36,6 +36,8 @@ import { collection, query, getDocs, limit, orderBy, addDoc, deleteDoc, doc, ser
 import { RichTextToolbar } from '../components/RichTextToolbar';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+import { isCurrentUserAdmin } from '../utils/admin';
+
 interface AdminScreenProps {
     theme: any;
     onBack: () => void;
@@ -43,6 +45,22 @@ interface AdminScreenProps {
 }
 
 export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkMode }) => {
+    // 🔒 SECURITY GUARD — Only admin can access this panel
+    if (!isCurrentUserAdmin()) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+                <div className="text-6xl mb-4">🚫</div>
+                <h2 className="text-2xl font-black text-red-500 mb-2">Access Denied</h2>
+                <p className="text-gray-400 mb-6">You do not have permission to access the Admin Panel.</p>
+                <button
+                    onClick={onBack}
+                    className="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold text-white transition-all"
+                >
+                    Go Back
+                </button>
+            </div>
+        );
+    }
     const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'ads' | 'messages' | 'products' | 'settings' | 'ai_logs' | 'blog'>(() =>
         (localStorage.getItem('adminActiveTab') as any) || 'overview'
     );

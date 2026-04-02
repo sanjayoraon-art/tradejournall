@@ -853,7 +853,9 @@ const App = () => {
                     )}
 
                     {currentScreen === 'admin' && (
-                        <AdminScreen theme={theme} isDarkMode={isDarkMode} onBack={() => setCurrentScreen('profile')} />
+                        isAdmin(user?.email)
+                            ? <AdminScreen theme={theme} isDarkMode={isDarkMode} onBack={() => setCurrentScreen('profile')} />
+                            : (() => { setCurrentScreen('dashboard'); return null; })()
                     )}
 
                     {currentScreen === 'notifications' && (

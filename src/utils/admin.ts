@@ -1,6 +1,6 @@
 import { auth } from './firebase';
 
-export const ADMIN_EMAILS = ["trader@example.com", "tradergoal1b@gmail.com"];
+export const ADMIN_EMAILS = ["tradergoal1b@gmail.com"];
 
 export const isAdmin = (email: string | null | undefined): boolean => {
     if (!email) return false;
