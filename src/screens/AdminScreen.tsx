@@ -1208,26 +1208,44 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                                     <img src={url} className="w-full h-full object-cover" />
                                                     <button
                                                         onClick={() => {
-                                                            if (url.startsWith('data:')) {
-                                                                const refId = `img_copy_${Date.now().toString(36)}`;
-                                                                const newContent = newPost.content + `\n\n[${refId}]: ${url}\n`;
-                                                                setNewPost({ ...newPost, content: newContent });
-                                                                navigator.clipboard.writeText(`![Image][${refId}]`);
-                                                                alert(`Reference ![Image][${refId}] copied to clipboard!\nThe large internal code was automatically saved to the bottom of the editor. Paste this short tag wherever you want the image.`);
-                                                            } else {
-                                                                const md = `![Image](${url})`;
-                                                                navigator.clipboard.writeText(md);
-                                                                alert("Markdown copied! Paste it in your content.");
-                                                            }
+                                                            // Always use standard inline markdown — works for both URLs and Base64
+                                                            const md = `\n\n![Image](${url})\n\n`;
+                                                            setNewPost(prev => ({ ...prev, content: prev.content + md }));
+                                                            navigator.clipboard.writeText(`![Image](${url})`);
+                                                            alert("✅ Image markdown inserted at end of content! Paste it anywhere you want.");
                                                         }}
                                                         className="absolute inset-0 bg-indigo-600/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-black text-[10px] transition-opacity text-center p-2"
                                                     >
-                                                        COPY MD
+                                                        INSERT
                                                     </button>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
+
+                                    {/* Quick URL Image Insert */}
+                                    <div className={`flex gap-2 mb-2 p-3 rounded-xl border border-dashed ${theme.border} bg-gray-900/30`}>
+                                        <input
+                                            id="quick-img-url-input"
+                                            type="url"
+                                            className={`flex-1 p-2 rounded-lg bg-transparent border ${theme.border} outline-none focus:border-indigo-500 text-xs font-mono text-gray-300 placeholder-gray-600`}
+                                            placeholder="Image URL paste karo (https://...) phir Insert dabao"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const input = document.getElementById('quick-img-url-input') as HTMLInputElement;
+                                                const url = input?.value?.trim();
+                                                if (!url) { alert('Pehle image URL enter karo.'); return; }
+                                                const md = `\n\n![Image](${url})\n\n`;
+                                                setNewPost(prev => ({ ...prev, content: prev.content + md }));
+                                                input.value = '';
+                                            }}
+                                            className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-black whitespace-nowrap transition-all active:scale-95"
+                                        >
+                                            📷 Insert
+                                        </button>
+                                    </div>
 
                                     <RichTextToolbar
                                         value={newPost.content}
