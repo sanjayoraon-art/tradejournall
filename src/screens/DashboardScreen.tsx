@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, TrendingUp, TrendingDown, Clock, Scale, Calculator, ChevronRight } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Clock, Scale, Calculator, ChevronRight, Zap, ExternalLink } from 'lucide-react';
 import { PerformanceStats, Trade } from '../types';
 import { formatNumber, getCurrencySymbol } from '../utils/helpers';
 import { CandlestickChart } from '../components/Charts';
@@ -45,7 +45,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ performanceSta
                 </div>
             </div>
 
-            <div onClick={() => setCurrentScreen('RiskReward')} className={`${theme.card} p-5 rounded-2xl border ${theme.border} shadow-lg mb-6 flex items-center justify-between cursor-pointer active:scale-95 transition-all`}>
+            <div onClick={() => setCurrentScreen('RiskReward')} className={`${theme.card} p-5 rounded-2xl border ${theme.border} shadow-lg mb-4 flex items-center justify-between cursor-pointer active:scale-95 transition-all`}>
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-600 rounded-xl">
                         <Calculator size={24} className="text-white" />
@@ -57,6 +57,23 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ performanceSta
                 </div>
                 <ChevronRight className="text-gray-600" />
             </div>
+
+            <a
+                href="/game-page.html"
+                className={`${theme.card} p-5 rounded-2xl border border-green-500/40 shadow-[0_0_18px_rgba(34,197,94,0.15)] mb-6 flex items-center justify-between active:scale-95 transition-all`}
+                style={{ textDecoration: 'none', display: 'flex' }}
+            >
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-green-600 rounded-xl">
+                        <Zap size={24} className="text-white" />
+                    </div>
+                    <div>
+                        <h3 className={`text-base font-bold ${theme.text}`}>Buy The Dip 🎮</h3>
+                        <p className="text-xs text-green-500 font-semibold">Play free — no sign in needed!</p>
+                    </div>
+                </div>
+                <ExternalLink className="text-gray-500" size={20} />
+            </a>
 
             <h3 className={`text-lg font-semibold ${theme.text} mb-3`}>Recent Trades</h3>
             <div className={`${theme.card} rounded-xl shadow-lg border ${theme.border} divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>

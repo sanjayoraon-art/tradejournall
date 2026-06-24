@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play Buy The Dip — a fast-paced 10-second trading game on Trade Journal. Test your market instincts against the Bull & Bear!">
+    <title>Buy The Dip Game | Trade Journal</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/YB1SSnMm/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #07080a;
+            --card: #0d1017;
+            --border: rgba(255,255,255,0.08);
+            --green: #00ff66;
+            --cyan: #00f0ff;
+            --text: #ffffff;
+            --subtext: #7f8fa4;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOP NAV BAR ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: rgba(13,16,23,0.95);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .navbar-logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: transparent;
+        }
+
+        .navbar-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+
+        .navbar-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 14px;
+            color: var(--subtext);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-back:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+        }
+
+        .navbar-back svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            text-align: center;
+            padding: 28px 20px 16px;
+            background: linear-gradient(180deg, rgba(0,255,102,0.04) 0%, transparent 100%);
+        }
+
+        .game-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,255,102,0.1);
+            border: 1px solid rgba(0,255,102,0.25);
+            border-radius: 999px;
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .game-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .page-header h1 {
+            font-size: clamp(28px, 6vw, 42px);
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 40%, var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--subtext);
+            font-size: 14px;
+            font-weight: 500;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* ── GAME CONTAINER ── */
+        .game-wrapper {
+            flex: 1;
+            padding: 12px 16px 32px;
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .game-frame-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,255,102,0.06), 0 0 0 1px rgba(0,255,102,0.05);
+        }
+
+        .game-frame-card iframe {
+            display: block;
+            width: 100%;
+            height: 580px;
+            border: none;
+        }
+
+        /* ── HOW TO PLAY ── */
+        .how-to-play {
+            max-width: 480px;
+            width: 100%;
+            margin: 20px auto 0;
+            padding: 0 16px 40px;
+        }
+
+        .how-to-play h2 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--subtext);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .step {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .step-icon {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .step-text strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .step-text span {
+            font-size: 11px;
+            color: var(--subtext);
+            line-height: 1.4;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--subtext);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 400px) {
+            .steps { grid-template-columns: 1fr; }
+            .game-frame-card iframe { height: 520px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav class="navbar">
+        <a href="/" class="navbar-logo">
+            <img src="https://i.ibb.co/YB1SSnMm/logo.png" alt="Trade Journal Logo" onerror="this.style.display='none'">
+            <span>Trade Journal</span>
+        </a>
+        <a href="/" class="navbar-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+            Back to App
+        </a>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="game-badge">Live Game</div>
+        <h1>Buy The Dip ⚡</h1>
+        <p>10-second Bull vs Bear challenge. Read the chart, time the trade, beat the market.</p>
+    </div>
+
+    <!-- GAME IFRAME -->
+    <div class="game-wrapper">
+        <div class="game-frame-card">
+            <iframe
+                src="/buy-the-dip.html"
+                title="Buy The Dip Trading Game"
+                scrolling="no"
+                loading="eager"
+                allow="autoplay"
+            ></iframe>
+        </div>
+    </div>
+
+    <!-- HOW TO PLAY -->
+    <div class="how-to-play">
+        <h2>How to Play</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-icon">📊</div>
+                <div class="step-text">
+                    <strong>Read the Chart</strong>
+                    <span>A 10-candle chart appears. Spot the trend fast.</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-icon">⏱️</div>
+                <div class="step-text">
+                    <strong>10 Seconds</strong>
+                    <span>You have only 10s to decide your move.</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-icon">🐂</div>
+                <div class="step-text">
+                    <strong>Bull or Bear?</strong>
+                    <span>Tap BUY if bullish, SELL if bearish.</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-icon">🏆</div>
+                <div class="step-text">
+                    <strong>Score Points</strong>
+                    <span>Correct call = +1 point. Build your streak!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Made with ❤️ by <a href="/">tradejournall.com</a> — Track smarter, trade better.</p>
+    </footer>
+
+</body>
+</html>
