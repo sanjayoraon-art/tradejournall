@@ -11,8 +11,8 @@
             "destination": "/api/render-blog?slug=$slug"
         },
         {
-            "source": "/((?!api/).*)",
+            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html).*)",
             "destination": "/index.html"
         }
     ]
-}
+}
