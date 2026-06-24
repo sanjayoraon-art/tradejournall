@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell } from 'lucide-react';
+import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell, Zap, ExternalLink } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -715,6 +715,23 @@ const App = () => {
                             <button onClick={() => setShowAddTrade(true)} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-green-900/20 mb-4">
                                 <Plus size={24} /> Add New Trade
                             </button>
+
+                            <a
+                                href="/game-page.html"
+                                className={`${theme.card} p-5 rounded-2xl border border-green-500/40 shadow-[0_0_18px_rgba(34,197,94,0.15)] mb-6 flex items-center justify-between active:scale-95 transition-all`}
+                                style={{ textDecoration: 'none', display: 'flex' }}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-green-600 rounded-xl">
+                                        <Zap size={24} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-base font-bold ${theme.text}`}>Buy The Dip 🎮</h3>
+                                        <p className="text-xs text-green-500 font-semibold">Play free — no sign in needed!</p>
+                                    </div>
+                                </div>
+                                <ExternalLink className="text-gray-500" size={20} />
+                            </a>
 
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
