@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Play Buy The Dip — a fast-paced 10-second trading game on Trade Journal. Test your market instincts against the Bull & Bear!">
     <title>Buy The Dip Game | Trade Journal</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Play Buy The Dip — a fast-paced 10-second trading game on Trade Journal. Test your market instincts against the Bull & Bear! Play free without signing in.">
+    <meta name="keywords" content="trading game, buy the dip, crypto game, stock market simulator, trade journal game, bull vs bear, day trading game">
+    <meta name="author" content="Trade Journal">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tradejournall.com/game-page.html">
+    <meta property="og:title" content="Buy The Dip Trading Game | Trade Journal">
+    <meta property="og:description" content="A 10-second trading challenge. Read the chart, make your call, beat the market. Free to play!">
+    <meta property="og:image" content="https://tradejournall.com/logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tradejournall.com/game-page.html">
+    <meta property="twitter:title" content="Buy The Dip Trading Game">
+    <meta property="twitter:description" content="A 10-second trading challenge. Read the chart, make your call, beat the market. Free to play!">
+    <meta property="twitter:image" content="https://tradejournall.com/logo.png">
+
     <link rel="icon" type="image/png" href="https://i.ibb.co/YB1SSnMm/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,7 +166,7 @@
             color: var(--subtext);
             font-size: 14px;
             font-weight: 500;
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto;
             line-height: 1.5;
         }
@@ -156,7 +175,7 @@
         .game-wrapper {
             flex: 1;
             padding: 12px 16px 32px;
-            max-width: 480px;
+            max-width: 800px; /* Increased for desktop */
             width: 100%;
             margin: 0 auto;
         }
@@ -167,18 +186,23 @@
             border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 0 40px rgba(0,255,102,0.06), 0 0 0 1px rgba(0,255,102,0.05);
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         .game-frame-card iframe {
             display: block;
             width: 100%;
-            height: 580px;
+            max-width: 600px; /* Ensure game content doesn't stretch too wide */
+            height: 650px; /* Increased height */
             border: none;
+            margin: 0 auto;
         }
 
         /* ── HOW TO PLAY ── */
         .how-to-play {
-            max-width: 480px;
+            max-width: 800px; /* Matched wrapper */
             width: 100%;
             margin: 20px auto 0;
             padding: 0 16px 40px;
@@ -191,51 +215,52 @@
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 12px;
+            text-align: center;
         }
 
         .steps {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
         }
 
         .step {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 14px;
+            padding: 16px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: flex-start;
         }
 
         .step-icon {
-            font-size: 22px;
+            font-size: 24px;
             line-height: 1;
             flex-shrink: 0;
         }
 
         .step-text strong {
             display: block;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--text);
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .step-text span {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--subtext);
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         /* ── FOOTER ── */
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 24px;
             border-top: 1px solid var(--border);
             color: var(--subtext);
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .footer a {
@@ -246,9 +271,9 @@
 
         .footer a:hover { text-decoration: underline; }
 
-        @media (max-width: 400px) {
+        @media (max-width: 480px) {
+            .game-frame-card iframe { height: 580px; }
             .steps { grid-template-columns: 1fr; }
-            .game-frame-card iframe { height: 520px; }
         }
     </style>
 </head>

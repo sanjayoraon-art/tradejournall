@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { TrendingUp, BarChart3, ShieldCheck, Brain, ArrowRight } from 'lucide-react';
+import { TrendingUp, BarChart3, ShieldCheck, Brain, ArrowRight, Zap } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
 
@@ -74,6 +74,14 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                 Start Journaling Now
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                             </button>
+                            <a
+                                href="/game-page.html"
+                                className="group px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-2xl transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] border border-gray-700 hover:border-green-500/50 flex items-center justify-center gap-2 text-lg active:scale-95"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <Zap size={20} className="text-green-500" />
+                                Play Buy The Dip
+                            </a>
                         </div>
 
                         <div className="flex items-center gap-4 pt-4 mt-2">
