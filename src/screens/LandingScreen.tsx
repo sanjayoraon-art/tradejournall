@@ -13,7 +13,7 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenInfo, theme, isDarkMode }) => {
     // Add page-specific SEO tags when the landing page mounts
     useEffect(() => {
-        document.title = "TradeJournall | Best Free Online Trading Journal for Stock Market";
+        document.title = "Free Crypto Trading Journal | Binance, WazirX, CoinDCX Tracker";
 
         // Optional: Add more specific meta tags dynamically if needed
         // The generic ones in index.html already cover most cases well
@@ -59,11 +59,11 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         </div>
 
                         <h1 className="text-5xl lg:text-5xl xl:text-7xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
-                            Master Your Trades with the Ultimate Free Online Trading Journal
+                            Free Crypto Trading Journal for Binance, WazirX, CoinDCX &amp; Bybit Traders
                         </h1>
 
                         <p className="text-xl text-gray-400 leading-relaxed max-w-xl pr-4 mt-6">
-                            <strong className="text-gray-200">Built for Indian Traders:</strong> Track Nifty, BankNifty, Equity (NSE/BSE), and Crypto in one centralized place.
+                            <strong className="text-gray-200">Built for Crypto Traders:</strong> Track every trade from Binance, WazirX, CoinDCX, or Bybit — auto P&amp;L, risk-reward &amp; psychology tracking, completely free.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-2">
@@ -94,7 +94,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             </div>
                             <div className="text-sm font-medium text-gray-400 flex flex-col items-start leading-tight">
                                 <span className="text-white font-bold">Trusted by 5,000+ Traders</span>
-                                <span>across Nifty, Forex & Crypto</span>
+                                <span>across Binance, WazirX &amp; Crypto</span>
                             </div>
                         </div>
                     </div>
@@ -126,26 +126,26 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             <section id="features" className="py-16 bg-gray-900 border-t border-gray-800">
                 <div className="max-w-6xl mx-auto px-4">
                     <h2 className="text-3xl md:text-5xl font-black text-center text-white mb-12 leading-tight">
-                        Everything You Need in a <span className="text-green-500">Free Online Trading Journal</span>
+                        Why Crypto Traders Use <span className="text-green-500">TradeJournall</span>
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="p-8 border border-gray-700 bg-gray-800/50 rounded-3xl hover:border-blue-500 transition-colors shadow-lg">
                             <div className="text-blue-500 text-4xl mb-6">📊</div>
-                            <h3 className="text-xl font-bold mb-4 text-white">Automated Trade Analysis</h3>
-                            <p className="text-gray-400">Apne trades ko analyze karein aur dekhein ki aap kahan galti kar rahe hain. Stock market mein profit badhane ka sabse sahi tarika.</p>
+                            <h3 className="text-xl font-bold mb-4 text-white">Track Every Exchange in One Journal</h3>
+                            <p className="text-gray-400">Log trades from Binance, WazirX, CoinDCX, Bybit, and more — all in a single dashboard. Automatic P&amp;L calculation for every trade.</p>
                         </div>
 
                         <div className="p-8 border border-gray-700 bg-gray-800/50 rounded-3xl hover:border-purple-500 transition-colors shadow-lg">
                             <div className="text-purple-500 text-4xl mb-6">🧠</div>
-                            <h3 className="text-xl font-bold mb-4 text-white">Psychology Tracking</h3>
-                            <p className="text-gray-400">Trade lete waqt aapka mindset kya tha? FOMO ya Discipline? Hamara journal aapki trading psychology track karta hai.</p>
+                            <h3 className="text-xl font-bold mb-4 text-white">Spot Your Trading Mistakes</h3>
+                            <p className="text-gray-400">Tag emotional trades (FOMO, revenge trading, overtrading) aur dekhein exactly kitna cost kar raha hai. Crypto trading discipline banao.</p>
                         </div>
 
                         <div className="p-8 border border-gray-700 bg-gray-800/50 rounded-3xl hover:border-cyan-500 transition-colors shadow-lg">
                             <div className="text-cyan-500 text-4xl mb-6">⚡</div>
-                            <h3 className="text-xl font-bold mb-4 text-white">Built for Indian Markets</h3>
-                            <p className="text-gray-400">Special support for Nifty, BankNifty, and Equity. India ke traders ke liye banaya gaya best digital trade log.</p>
+                            <h3 className="text-xl font-bold mb-4 text-white">100% Free, No KYC Needed</h3>
+                            <p className="text-gray-400">Start journaling your crypto trades today — no hidden charges, no credit card required. Bitcoin, Ethereum, ya altcoins — sab track karo.</p>
                         </div>
                     </div>
                 </div>
@@ -447,7 +447,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
             <div className="w-full bg-gray-900 border-t border-gray-800/50 text-center py-10 px-4">
                 <div className="max-w-4xl mx-auto">
                     <p className="text-sm text-gray-500 leading-relaxed">
-                        TradeJournall is a professional-grade <strong className="text-gray-400">free online trading journal for stock market</strong> enthusiasts. Whether you are into <strong className="text-gray-400">Intraday trading</strong>, <strong className="text-gray-400">Options buying</strong>, or <strong className="text-gray-400">Crypto</strong>, our tool helps you maintain discipline and improve your Win-Rate. Stop using boring Excel sheets and start your digital journaling journey today.
+                        TradeJournall is a professional-grade <strong className="text-gray-400">free crypto trading journal</strong> for Binance, WazirX, CoinDCX, and Bybit traders. Whether you trade <strong className="text-gray-400">Bitcoin</strong>, <strong className="text-gray-400">Ethereum</strong>, or <strong className="text-gray-400">altcoins</strong>, our tool helps you track P&amp;L, avoid revenge trading, and build real crypto trading discipline — completely free.
                     </p>
                 </div>
             </div>
