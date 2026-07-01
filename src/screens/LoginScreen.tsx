@@ -55,8 +55,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ theme }) => {
         checkRedirect();
     }, []);
 
-    const handleEmailAuth = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleEmailAuth = async (e: React.FormEvent | React.MouseEvent) => {
+        if (e && 'preventDefault' in e) {
+            e.preventDefault();
+        }
         setError('');
         setLoading(true);
 
@@ -254,7 +256,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ theme }) => {
                     )}
 
                     <button
-                        type="submit"
+                        type="button"
+                        onClick={handleEmailAuth}
                         disabled={loading}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95"
                     >
