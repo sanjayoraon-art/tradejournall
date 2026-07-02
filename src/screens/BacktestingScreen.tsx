@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Play, Pause, SkipForward, RefreshCw, Search,
     TrendingUp, TrendingDown, Maximize2, Minimize2,
@@ -541,7 +541,13 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                             {(marketSource === 'crypto' ? INTERVALS : YAHOO_INTERVALS).map(i => <option key={i} value={i}>{i.toUpperCase()}</option>)}
                         </select>
                         <button
-                            onClick={e => { e.stopPropagation(); loadData(); }}
+                            onClick={e => { 
+                                e.stopPropagation(); 
+                                loadData();
+                                if (window.innerWidth < 640) {
+                                    setChartModalOpen(true);
+                                }
+                            }}
                             disabled={isLoading}
                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-all disabled:opacity-50"
                         >
@@ -906,19 +912,19 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50">
                             <button
                                 onClick={() => activeTrade ? closeTrade() : openTrade('Long')}
-                                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all shadow-xl active:scale-90 border-2
+                                className={`w-14 h-11 rounded-xl flex items-center justify-center transition-all shadow-xl active:scale-90 border-2
                                     ${activeTrade?.type === 'Long'
                                         ? 'bg-blue-600 border-blue-400 animate-pulse'
                                         : 'bg-green-600 border-green-400/50 hover:bg-green-500'}`}>
-                                <span className="text-sm font-black text-white">{activeTrade?.type === 'Long' ? 'X' : 'B'}</span>
+                                <span className="text-xs font-black text-white">{activeTrade?.type === 'Long' ? 'CLOSE' : 'BUY'}</span>
                             </button>
                             <button
                                 onClick={() => activeTrade ? closeTrade() : openTrade('Short')}
-                                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all shadow-xl active:scale-90 border-2
+                                className={`w-14 h-11 rounded-xl flex items-center justify-center transition-all shadow-xl active:scale-90 border-2
                                     ${activeTrade?.type === 'Short'
                                         ? 'bg-blue-600 border-blue-400 animate-pulse'
                                         : 'bg-red-600 border-red-400/50 hover:bg-red-500'}`}>
-                                <span className="text-sm font-black text-white">{activeTrade?.type === 'Short' ? 'X' : 'S'}</span>
+                                <span className="text-xs font-black text-white">{activeTrade?.type === 'Short' ? 'CLOSE' : 'SELL'}</span>
                             </button>
 
                             {/* Floating P&L Indicator when trade is active */}
@@ -945,7 +951,12 @@ export const BacktestingScreen: React.FC<BacktestingScreenProps> = ({
                         <SkipForward size={14} className="rotate-180" />
                     </button>
                     <button
-                        onClick={() => setPlaying(p => !p)}
+                        onClick={() => {
+                            if (!isPlaying && window.innerWidth < 640) {
+                                setChartModalOpen(true);
+                            }
+                            setPlaying(p => !p);
+                        }}
                         disabled={historicalData.length === 0 || currentIndex >= historicalData.length - 1}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-40
                             ${isPlaying ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>
