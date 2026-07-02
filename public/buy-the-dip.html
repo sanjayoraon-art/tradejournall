@@ -215,13 +215,12 @@
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
         }
 
-        /* Background gridlines */
         .chart-grid {
             position: absolute;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 5;
         }
 
         .grid-line {
@@ -264,6 +263,7 @@
             padding: 0 16px 0 110px; /* Leave space on the left for scale labels */
             position: relative;
             z-index: 2;
+            overflow-x: hidden;
         }
 
         /* Candlestick Layout */
@@ -939,8 +939,8 @@
                 combinedList.push(currentCandle);
             }
 
-            // Slice list to display last 17 candles to fit screen nicely
-            const maxVisible = 17;
+            // Slice list to display last 100 candles to fit screen nicely and allow scrolling
+            const maxVisible = 100;
             const startIdx = Math.max(0, combinedList.length - maxVisible);
             const visibleList = combinedList.slice(startIdx);
 
@@ -964,6 +964,7 @@
             });
 
             candlesView.innerHTML = htmlString;
+            candlesView.scrollLeft = candlesView.scrollWidth;
         }
 
         // Update UI dynamic colors, line positioning, price label
