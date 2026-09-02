@@ -1,5 +1,57 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+function cleanAndParseJSON(raw: string) {
+    if (!raw) throw new Error('Empty AI response');
+    
+    // 1. Strip markdown fences if present
+    let text = raw.trim();
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+
+    // 2. Try standard parse first
+    try {
+        return JSON.parse(text);
+    } catch (e1) {
+        // 3. Fix unescaped control characters inside JSON strings without breaking outside whitespace
+        let inString = false;
+        let escaped = false;
+        let out = '';
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            
+            if (escaped) {
+                out += char;
+                escaped = false;
+                continue;
+            }
+            
+            if (char === '\\') {
+                out += char;
+                escaped = true;
+                continue;
+            }
+            
+            if (char === '"') {
+                inString = !inString;
+                out += char;
+                continue;
+            }
+            
+            if (inString) {
+                if (char === '\n') out += '\\n';
+                else if (char === '\r') out += '\\r';
+                else if (char === '\t') out += '\\t';
+                else if (char.charCodeAt(0) < 32) {} // skip invalid control chars
+                else out += char;
+            } else {
+                out += char;
+            }
+        }
+        
+        return JSON.parse(out);
+    }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 1. Security Check
     const authHeader = req.headers.authorization;
@@ -15,15 +67,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const geminiApiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
         const groqApiKey = process.env.GROQ_API_KEY;
 
-        // Check if at least one API key exists
         if (!geminiApiKey && !groqApiKey) {
             return res.status(500).json({ 
-                error: 'No API keys found. Please add GEMINI_API_KEY or GROQ_API_KEY to Vercel Environment Variables.',
-                debug: {
-                    hasGemini: !!geminiApiKey,
-                    hasGroq: !!groqApiKey,
-                    allEnvKeys: Object.keys(process.env).filter(k => k.includes('GEMINI') || k.includes('GROQ') || k.includes('API'))
-                }
+                error: 'No API keys configured. Please add GEMINI_API_KEY or GROQ_API_KEY to Vercel Environment Variables.'
             });
         }
 
@@ -50,7 +96,7 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
   "imagePrompt": "A highly detailed visual prompt describing an abstract, modern 3d illustration representing the topic of this blog post (for an AI image generator). E.g. 'A glowing green candlestick chart rising over a dark modern city skyline, 3d render, cinematic lighting'."
 }`;
 
-        // Function to call Gemini
+        // Function to call Gemini (gemini-3.6-flash)
         const callGemini = async () => {
             if (!geminiApiKey) throw new Error('GEMINI_API_KEY not set');
             const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiApiKey}`, {
@@ -63,20 +109,21 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
             });
             if (!resp.ok) {
                 const errBody = await resp.text();
-                throw new Error(`Gemini HTTP ${resp.status}: ${errBody.substring(0, 300)}`);
+                throw new Error(`Gemini HTTP ${resp.status}: ${errBody.substring(0, 250)}`);
             }
             const data = await resp.json();
-            return JSON.parse(data.candidates[0].content.parts[0].text);
+            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            return cleanAndParseJSON(rawText);
         };
 
-        // Function to call Groq (Llama 3 70B)
+        // Function to call Groq (openai/gpt-oss-120b)
         const callGroq = async () => {
             if (!groqApiKey) throw new Error('GROQ_API_KEY not set');
             const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${groqApiKey}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: 'llama-3.1-8b-instant',
+                    model: 'openai/gpt-oss-120b',
                     messages: [{ role: 'user', content: prompt }],
                     temperature: 0.4,
                     response_format: { type: 'json_object' }
@@ -84,16 +131,16 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
             });
             if (!resp.ok) {
                 const errBody = await resp.text();
-                throw new Error(`Groq HTTP ${resp.status}: ${errBody.substring(0, 300)}`);
+                throw new Error(`Groq HTTP ${resp.status}: ${errBody.substring(0, 250)}`);
             }
             const data = await resp.json();
-            return JSON.parse(data.choices[0].message.content);
+            const rawContent = data.choices?.[0]?.message?.content;
+            return cleanAndParseJSON(rawContent);
         };
 
         // Run both APIs concurrently
         const results = await Promise.allSettled([callGroq(), callGemini()]);
         
-        // Collect error details for debugging
         results.forEach((r, i) => {
             const name = i === 0 ? 'Groq' : 'Gemini';
             if (r.status === 'rejected') {
@@ -108,24 +155,19 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
 
         if (validResults.length === 0) {
             return res.status(500).json({ 
-                error: 'Both AI providers failed.',
-                details: errors,
-                debug: {
-                    hasGemini: !!geminiApiKey,
-                    hasGroq: !!groqApiKey
-                }
+                error: 'Both AI providers failed to generate valid blog content.',
+                details: errors
             });
         }
 
-        // Pick the best result (longest content = deepest analysis)
-        validResults.sort((a, b) => b.content.length - a.content.length);
+        // Pick the best result based on depth (longest content)
+        validResults.sort((a, b) => (b.content?.length || 0) - (a.content?.length || 0));
         const blogPost = validResults[0];
 
         // Generate unique image
-        const imagePrompt = blogPost.imagePrompt || 'modern trading chart with green candles, 3d render, dark background';
+        const imagePrompt = blogPost.imagePrompt || 'modern trading financial candlestick chart, 3d render, dark background';
         const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?width=1200&height=630&nologo=true`;
 
-        // Remove temporary field
         delete blogPost.imagePrompt;
 
         // 3. Save to Firebase Firestore
