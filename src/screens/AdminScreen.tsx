@@ -1301,7 +1301,6 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         onImagePaste={(file) => handleBlogImageUpload(file, true)}
                                     />
                                 </div>
-                                </div>
 
                                 {/* Live SEO Score Calculator */}
                                 {(() => {
