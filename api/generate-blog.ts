@@ -53,7 +53,7 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         // Function to call Gemini
         const callGemini = async () => {
             if (!geminiApiKey) throw new Error('GEMINI_API_KEY not set');
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -76,7 +76,7 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${groqApiKey}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: 'llama3-70b-8192',
+                    model: 'llama-3.3-70b-versatile',
                     messages: [{ role: 'user', content: prompt }],
                     temperature: 0.4,
                     response_format: { type: 'json_object' }
