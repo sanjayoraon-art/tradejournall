@@ -14,7 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const firebaseConfigStr = process.env.VITE_FIREBASE_CONFIG;
         if (firebaseConfigStr) {
             const { initializeApp, getApps } = await import('firebase/app');
-            const { getFirestore, doc, getDoc } = await import('firebase/firestore');
+            const { getFirestore, collection, query, where, getDocs } = await import('firebase/firestore');
 
             const firebaseConfig = JSON.parse(firebaseConfigStr);
             const appId = process.env.VITE_APP_ID || 'tradejournall-app';
@@ -22,17 +22,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
             const db = getFirestore(app);
 
-            const sitemapRef = doc(db, 'artifacts', appId, 'config', 'sitemap_data');
-            const sitemapSnap = await getDoc(sitemapRef);
+            const q = query(
+                collection(db, 'artifacts', appId, 'blog'),
+                where('isActive', '==', true)
+            );
+            const querySnapshot = await getDocs(q);
 
-            if (sitemapSnap.exists()) {
-                const data = sitemapSnap.data();
-                blogEntries = (data.posts || []) as Array<{ slug: string; lastmod: string }>;
-            }
+            blogEntries = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                const lastmod = data.lastUpdated 
+                    ? (typeof data.lastUpdated === 'string' ? data.lastUpdated.split('T')[0] : '') 
+                    : '';
+                return {
+                    slug: data.slug,
+                    lastmod: lastmod
+                };
+            }).filter(e => Boolean(e.slug));
         }
     } catch (err) {
         console.error('[Sitemap] Failed to read from Firestore:', err);
-        // Graceful degradation: return homepage-only sitemap
     }
 
     const today = new Date().toISOString().split('T')[0];
