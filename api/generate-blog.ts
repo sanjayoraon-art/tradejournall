@@ -87,7 +87,7 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         const blogPost = validResults[0]; // The one with the most comprehensive content
 
         // Generate unique image using Pollinations AI based on the imagePrompt
-        const customImage = \`https://image.pollinations.ai/prompt/\${encodeURIComponent(blogPost.imagePrompt)}?width=1200&height=630&nologo=true\`;
+        const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(blogPost.imagePrompt)}?width=1200&height=630&nologo=true`;
 
         // 3. Save to Firebase Firestore
         const firebaseConfigStr = process.env.VITE_FIREBASE_CONFIG;
