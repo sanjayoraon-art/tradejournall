@@ -8,7 +8,9 @@ import { ArrowLeft, Calendar, User, Share2, Facebook, Twitter, Link as LinkIcon,
 
 interface ArticleScreenProps {
     slug: string;
-    onBack: () => void;
+    onBack?: () => void;
+    onHome?: () => void;
+    onBlog?: () => void;
     theme: any;
 }
 
@@ -42,13 +44,30 @@ function extractHeadings(content: string): Heading[] {
     return headings;
 }
 
-export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, theme }) => {
+export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, onHome, onBlog, theme }) => {
     const [article, setArticle] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [copySuccess, setCopySuccess] = useState(false);
     const [showToc, setShowToc] = useState(false);
     const [activeHeading, setActiveHeading] = useState('');
     const articleRef = useRef<HTMLDivElement>(null);
+
+    const handleGoHome = () => {
+        if (onHome) {
+            onHome();
+        } else {
+            localStorage.setItem('currentScreen', 'dashboard');
+            window.location.href = '/';
+        }
+    };
+
+    const handleGoBlog = () => {
+        if (onBlog) {
+            onBlog();
+        } else {
+            window.location.href = '/blog';
+        }
+    };
 
     useEffect(() => {
         const fetchArticle = async () => {
@@ -127,7 +146,7 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
             <div className="flex-1 flex flex-col items-center justify-center py-20 text-center">
                 <h3 className="text-2xl font-black mb-4 text-red-500">Article Not Found</h3>
                 <button
-                    onClick={onBack}
+                    onClick={handleGoBlog}
                     className="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold transition-all flex items-center gap-2 mx-auto"
                 >
                     <ArrowLeft size={18} /> Back to Blog
@@ -281,7 +300,7 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
 
             {/* Back Button */}
             <button
-                onClick={onBack}
+                onClick={handleGoBlog}
                 className={`mb-8 flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-green-500 transition-colors group`}
             >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
@@ -292,9 +311,9 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, them
             <header className="mb-10">
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-1.5 text-[11px] text-gray-600 mb-6 font-medium" aria-label="Breadcrumb">
-                    <button onClick={onBack} className="hover:text-gray-400 transition-colors">Home</button>
+                    <button onClick={handleGoHome} className="hover:text-gray-400 transition-colors">Home</button>
                     <ChevronRight size={12} />
-                    <button onClick={onBack} className="hover:text-gray-400 transition-colors">Blog</button>
+                    <button onClick={handleGoBlog} className="hover:text-gray-400 transition-colors">Blog</button>
                     <ChevronRight size={12} />
                     <span className="text-gray-500 truncate max-w-xs">{article.title}</span>
                 </nav>

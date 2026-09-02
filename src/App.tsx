@@ -11,6 +11,7 @@ import { NotificationsScreen } from './screens/NotificationsScreen';
 import { InformationScreen } from './screens/InformationScreen';
 import { BacktestingScreen } from './screens/BacktestingScreen';
 import { ArticleScreen } from './screens/ArticleScreen';
+import { BlogScreen } from './screens/BlogScreen';
 import { exponentialBackoffFetch, API_URL, analyzeTradeScreenshot } from './utils/api';
 import { db, auth, appId } from './utils/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -35,16 +36,27 @@ interface Trade {
     isBacktest?: boolean;
 }
 
-// Helper to get blog slug from URL path like /blog/my-article
-function getBlogSlugFromUrl(): string | null {
+// Helper to get blog routing from URL path (/blog or /blog/my-article)
+function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
+    if (path === '/blog' || path === '/blog/') {
+        return { isBlogList: true, articleSlug: null };
+    }
     const match = path.match(/^\/blog\/([^/]+)/);
-    return match ? match[1] : null;
+    if (match) {
+        return { isBlogList: false, articleSlug: match[1] };
+    }
+    return { isBlogList: false, articleSlug: null };
 }
 
 const App = () => {
-    const [blogSlugFromUrl] = useState<string | null>(getBlogSlugFromUrl);
-    const [currentScreen, setCurrentScreen] = useState(() => localStorage.getItem('currentScreen') || 'dashboard');
+    const [blogRoute] = useState(getBlogRouteFromUrl);
+    const [currentScreen, setCurrentScreen] = useState(() => {
+        const saved = localStorage.getItem('currentScreen');
+        // Security & UX: Never auto-open admin screen on fresh reload or navigation from external links
+        if (saved === 'admin') return 'dashboard';
+        return saved || 'dashboard';
+    });
 
     useEffect(() => {
         localStorage.setItem('currentScreen', currentScreen);
@@ -559,18 +571,40 @@ const App = () => {
         );
     }
 
-    // ✅ BLOG URL ROUTING: If URL is /blog/:slug, show article directly (no login required)
-    if (blogSlugFromUrl) {
+    // ✅ BLOG ARTICLE ROUTING: If URL is /blog/:slug, show article directly (no login required)
+    if (blogRoute.articleSlug) {
         return (
             <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
                 <div className="max-w-4xl mx-auto px-4 py-12">
                     <ArticleScreen
-                        slug={blogSlugFromUrl}
+                        slug={blogRoute.articleSlug}
+                        theme={theme}
+                        onHome={() => {
+                            localStorage.setItem('currentScreen', 'dashboard');
+                            window.location.href = '/';
+                        }}
+                        onBlog={() => {
+                            window.location.href = '/blog';
+                        }}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    // ✅ BLOG DIRECTORY ROUTING: If URL is /blog, show full trading blog listing (no login required)
+    if (blogRoute.isBlogList) {
+        return (
+            <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+                <div className="max-w-6xl mx-auto px-4 py-12">
+                    <BlogScreen
                         theme={theme}
                         onBack={() => {
-                            // Navigate to homepage when "Back" is clicked
-                            window.history.pushState({}, '', '/');
-                            window.location.reload();
+                            localStorage.setItem('currentScreen', 'dashboard');
+                            window.location.href = '/';
+                        }}
+                        onArticleClick={(slug) => {
+                            window.location.href = `/blog/${slug}`;
                         }}
                     />
                 </div>
