@@ -1,4 +1,10 @@
 {
+    "crons": [
+        {
+            "path": "/api/generate-blog",
+            "schedule": "30 0 * * *"
+        }
+    ],
     "routes": [
         {
             "src": "/sitemap.xml",

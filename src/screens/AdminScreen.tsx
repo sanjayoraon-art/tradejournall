@@ -1054,6 +1054,34 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
 
                 {activeTab === 'blog' && (
                     <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-black text-sm uppercase tracking-widest text-gray-400">Blog Management</h3>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        setIsAddingPost(true);
+                                        const res = await fetch('/api/generate-blog', { 
+                                            method: 'POST', 
+                                            headers: { 'Content-Type': 'application/json' }, 
+                                            body: JSON.stringify({ adminToken: process.env.VITE_CRON_SECRET || 'test' }) // Use an env var or a known token
+                                        });
+                                        if (!res.ok) throw new Error(await res.text());
+                                        const data = await res.json();
+                                        alert('AI Blog Generated Successfully!');
+                                        setPublishedLink(`https://tradejournall.com/blog/${data.post.slug}`);
+                                    } catch (err: any) {
+                                        alert('Error generating AI blog: ' + err.message);
+                                    } finally {
+                                        setIsAddingPost(false);
+                                    }
+                                }}
+                                disabled={isAddingPost}
+                                className={`flex items-center gap-2 text-[10px] font-black bg-indigo-600/20 text-indigo-400 px-3 py-1.5 rounded-lg border border-indigo-500/30 ${isAddingPost ? 'opacity-50' : 'hover:bg-indigo-600/30'}`}
+                            >
+                                {isAddingPost ? <Loader2 size={14} className="animate-spin" /> : <Brain size={14} />}
+                                TRIGGER AI AUTO-BLOG
+                            </button>
+                        </div>
                         {publishedLink && (
                             <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-2xl text-center flex flex-col items-center animate-in fade-in slide-in-from-bottom-2">
                                 <CheckCircle2 size={40} className="text-green-500 mb-3" />
@@ -1273,6 +1301,44 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         onImagePaste={(file) => handleBlogImageUpload(file, true)}
                                     />
                                 </div>
+                                </div>
+
+                                {/* Live SEO Score Calculator */}
+                                {(() => {
+                                    let score = 0;
+                                    let checks = [];
+                                    
+                                    if (newPost.title.length >= 30 && newPost.title.length <= 65) { score += 20; checks.push('✅ Good Title Length'); }
+                                    else { checks.push('❌ Title too short/long'); }
+                                    
+                                    if (newPost.excerpt.length >= 100 && newPost.excerpt.length <= 160) { score += 20; checks.push('✅ Meta Description OK'); }
+                                    else { checks.push('❌ Excerpt needs 100-160 chars'); }
+                                    
+                                    if (newPost.content.split(' ').length > 300) { score += 30; checks.push('✅ Good Word Count'); }
+                                    else { checks.push('❌ Content too short (<300 words)'); }
+                                    
+                                    if (newPost.keywords.trim().length > 0) { score += 10; checks.push('✅ Keywords present'); }
+                                    else { checks.push('❌ Missing Keywords'); }
+                                    
+                                    if (newPost.featuredImage || blogImagePreview) { score += 20; checks.push('✅ Image present'); }
+                                    else { checks.push('❌ Missing Cover Image'); }
+
+                                    let color = score >= 80 ? 'text-green-500 bg-green-500/10 border-green-500/20' : score >= 50 ? 'text-amber-500 bg-amber-500/10 border-amber-500/20' : 'text-red-500 bg-red-500/10 border-red-500/20';
+
+                                    return (
+                                        <div className={`p-4 rounded-xl border ${theme.border} mb-4`}>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <h4 className="font-black text-sm uppercase tracking-widest text-gray-400">Live SEO Score</h4>
+                                                <div className={`px-3 py-1 rounded-full border text-xs font-black ${color}`}>
+                                                    {score} / 100
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 text-[10px] text-gray-400">
+                                                {checks.map((chk, i) => <span key={i} className="px-2 py-1 bg-gray-800 rounded-md">{chk}</span>)}
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
 
                                 <div className="flex items-center gap-3">
                                     <button
