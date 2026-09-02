@@ -1,26 +1,38 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    // 1. Security Check: Only allow if Cron Secret matches or it's an admin request
+    // 1. Security Check
     const authHeader = req.headers.authorization;
     const cronSecret = process.env.CRON_SECRET;
     
-    // Allow either the cron secret or a manual admin token passed from the frontend
     if (cronSecret && authHeader !== `Bearer ${cronSecret}` && req.body?.adminToken !== cronSecret) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const errors: string[] = [];
+
     try {
-        // 2. Generate Blog Content using Gemini API
         const geminiApiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
         const groqApiKey = process.env.GROQ_API_KEY;
+
+        // Check if at least one API key exists
+        if (!geminiApiKey && !groqApiKey) {
+            return res.status(500).json({ 
+                error: 'No API keys found. Please add GEMINI_API_KEY or GROQ_API_KEY to Vercel Environment Variables.',
+                debug: {
+                    hasGemini: !!geminiApiKey,
+                    hasGroq: !!groqApiKey,
+                    allEnvKeys: Object.keys(process.env).filter(k => k.includes('GEMINI') || k.includes('GROQ') || k.includes('API'))
+                }
+            });
+        }
 
         const prompt = `You are a highly sought-after Wall Street quantitative analyst and an elite proprietary trader. 
 Write a master-level, deeply informative, and highly actionable trading blog post about a specific, current trending topic in the stock market, crypto, or forex.
 
 CRITICAL INSTRUCTIONS TO ELIMINATE AI SPAM:
 1. Write in clear, sharp, and conversational professional English. 
-2. ABSOLUTELY PROHIBITED PHRASES: Do NOT use "In today's fast-paced digital world", "Delving into", "It's important to remember", "In conclusion", "Navigating the complexities", "A testament to", "Let's dive in", or any other cliché AI filler.
+2. ABSOLUTELY PROHIBITED PHRASES: Do NOT use "In today's fast-paced digital world", "Delving into", "It's important to remember", "In conclusion", "Navigating the complexities", "A testament to", "Let's dive in", or any other cliche AI filler.
 3. TONE & STYLE: Write like a real human hedge fund manager talking to serious traders. Use varied sentence lengths (high burstiness). Be direct, factual, and analytical. 
 4. DEPTH: Do not give generic advice (like "buy low, sell high"). Provide deep market mechanics, historical data comparisons, specific risk management math, or psychological insights. The information MUST be verified and highly valuable.
 5. FORMATTING: Use H2/H3 tags, bullet points, and bold text for readability. 
@@ -40,7 +52,8 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
 
         // Function to call Gemini
         const callGemini = async () => {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${geminiApiKey}`, {
+            if (!geminiApiKey) throw new Error('GEMINI_API_KEY not set');
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -48,14 +61,18 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
                     generationConfig: { temperature: 0.4, responseMimeType: "application/json" }
                 })
             });
-            if (!res.ok) throw new Error(await res.text());
-            const data = await res.json();
+            if (!resp.ok) {
+                const errBody = await resp.text();
+                throw new Error(`Gemini HTTP ${resp.status}: ${errBody.substring(0, 300)}`);
+            }
+            const data = await resp.json();
             return JSON.parse(data.candidates[0].content.parts[0].text);
         };
 
         // Function to call Groq (Llama 3 70B)
         const callGroq = async () => {
-            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            if (!groqApiKey) throw new Error('GROQ_API_KEY not set');
+            const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${groqApiKey}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -65,34 +82,56 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
                     response_format: { type: 'json_object' }
                 })
             });
-            if (!res.ok) throw new Error(await res.text());
-            const data = await res.json();
+            if (!resp.ok) {
+                const errBody = await resp.text();
+                throw new Error(`Groq HTTP ${resp.status}: ${errBody.substring(0, 300)}`);
+            }
+            const data = await resp.json();
             return JSON.parse(data.choices[0].message.content);
         };
 
-        // Run both APIs concurrently to see which one performs better/faster
+        // Run both APIs concurrently
         const results = await Promise.allSettled([callGroq(), callGemini()]);
         
+        // Collect error details for debugging
+        results.forEach((r, i) => {
+            const name = i === 0 ? 'Groq' : 'Gemini';
+            if (r.status === 'rejected') {
+                errors.push(`${name}: ${r.reason?.message || r.reason}`);
+            }
+        });
+
         const validResults = results
             .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled')
             .map(r => r.value)
-            .filter(blog => blog.title && blog.content && blog.imagePrompt); // Basic validation
+            .filter(blog => blog && blog.title && blog.content);
 
         if (validResults.length === 0) {
-            throw new Error('Both AI providers failed to generate valid blog content.');
+            return res.status(500).json({ 
+                error: 'Both AI providers failed.',
+                details: errors,
+                debug: {
+                    hasGemini: !!geminiApiKey,
+                    hasGroq: !!groqApiKey
+                }
+            });
         }
 
-        // Pick the best result based on the length of the content (deeper analysis = better)
+        // Pick the best result (longest content = deepest analysis)
         validResults.sort((a, b) => b.content.length - a.content.length);
-        const blogPost = validResults[0]; // The one with the most comprehensive content
+        const blogPost = validResults[0];
 
-        // Generate unique image using Pollinations AI based on the imagePrompt
-        const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(blogPost.imagePrompt)}?width=1200&height=630&nologo=true`;
+        // Generate unique image
+        const imagePrompt = blogPost.imagePrompt || 'modern trading chart with green candles, 3d render, dark background';
+        const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?width=1200&height=630&nologo=true`;
+
+        // Remove temporary field
+        delete blogPost.imagePrompt;
 
         // 3. Save to Firebase Firestore
         const firebaseConfigStr = process.env.VITE_FIREBASE_CONFIG;
         if (!firebaseConfigStr) {
-            throw new Error('Firebase config not found in environment.');
+            throw new Error('Firebase config (VITE_FIREBASE_CONFIG) not found in environment.');
         }
 
         const { initializeApp, getApps } = await import('firebase/app');
@@ -103,9 +142,6 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
 
         const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
         const db = getFirestore(app);
-
-        // Remove the temporary imagePrompt field before saving to DB
-        delete blogPost.imagePrompt;
 
         const newPost = {
             ...blogPost,
@@ -121,6 +157,9 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         return res.status(200).json({ success: true, id: docRef.id, post: newPost });
     } catch (error: any) {
         console.error("AI Blog Generation Error:", error);
-        return res.status(500).json({ error: error.message || 'Internal Server Error' });
+        return res.status(500).json({ 
+            error: error.message || 'Internal Server Error',
+            details: errors
+        });
     }
 }
