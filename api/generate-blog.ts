@@ -166,16 +166,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
         }
 
-        const prompt = `You are a highly sought-after Wall Street quantitative analyst and an elite proprietary trader. 
-Write a master-level, deeply informative, and highly actionable trading blog post about a specific, current trending topic in the stock market, crypto, or forex.
+        const postType = (req.query.type as string) || req.body?.type || (new Date().getUTCHours() >= 2 ? 'evergreen' : 'trending');
 
-CRITICAL INSTRUCTIONS TO ELIMINATE AI SPAM & DELIVER MASTER-CLASS VALUE:
-1. Write in clear, sharp, and conversational professional English. 
-2. ABSOLUTELY PROHIBITED PHRASES: Do NOT use "In today's fast-paced digital world", "Delving into", "It's important to remember", "In conclusion", "Navigating the complexities", "A testament to", "Let's dive in", or any other cliche AI filler.
-3. TONE & STYLE: Write like a real human hedge fund manager talking to serious traders. Use varied sentence lengths (high burstiness). Be direct, factual, and analytical. 
-4. DEPTH: Do not give generic advice (like "buy low, sell high"). Provide deep market mechanics, historical data comparisons, specific risk management math, or psychological insights. The information MUST be verified and highly valuable.
-5. FORMATTING: Use H2/H3 tags, bullet points, and bold text for readability. 
-6. SEO: Naturally integrate long-tail keywords. The content must be comprehensive enough to rank on Google's first page.
+        const topicDirective = postType === 'evergreen'
+            ? `TOPIC TYPE: EVERGREEN MASTER-CLASS (TIMELESS TRADING FOUNDATIONS)
+Write an exhaustive, deeply researched, timeless master-class trading guide on an enduring high-value concept. Select a pillar such as:
+- Institutional Order Flow, Liquidity Sweeps, and Fair Value Gaps (Smart Money / ICT Concepts)
+- Wyckoff Accumulation/Distribution Schematics, Springs, and Phase Analysis
+- Mathematical Position Sizing, Kelly Criterion, and Capital Preservation Frameworks
+- Multi-Timeframe Volume Profile, Value Area High/Low, and Delta Divergence
+- The Quantitative Psychology of High-Stake Trading: Overcoming Fear of Loss, Revenge Trading, and Cognitive Biases
+REQUIREMENT: Provide exact step-by-step entry triggers, invalidation criteria, and risk-to-reward mathematics (1:2 to 1:3+). The content MUST remain authoritative and completely valid 5+ years from now.`
+            : `TOPIC TYPE: REAL-TIME TRENDING MARKET ANALYSIS (CURRENT BREAKOUTS & MACRO SHIFTS)
+Conduct a timely, deeply researched, quantitative market analysis of an active, high-impact CURRENT TRENDING topic in Crypto (e.g. Bitcoin ETF institutional absorption, halving supply dynamics), US Equities (e.g. Fed interest rate paths, bond yield curve steepening, big tech chip earnings momentum), or Global Forex.
+REQUIREMENT: Cite specific institutional metrics, on-chain flows, macro correlations, and verified structural market mechanics driving smart money vs retail liquidity.`;
+
+        const prompt = `You are a legendary Wall Street quantitative analyst and managing partner of a top-tier proprietary trading firm.
+${topicDirective}
+
+CRITICAL RESEARCH & INTEGRITY MANDATE:
+1. DEEP RESEARCH ONLY: Do NOT write surface-level or fabricated fluff. Every paragraph must contain verifiable market mechanics, mathematical rationale, or institutional data.
+2. ABSOLUTELY FORBIDDEN AI CLICHES: Do NOT use phrases like "In today's fast-paced digital world", "Delving into", "It's important to remember", "In conclusion", "Navigating the complexities", "A testament to", "Let's dive in", or any other generic AI filler.
+3. TONE & BURSTINESS: Authoritative, direct, conversational hedge fund insider tone. Use varied sentence lengths (high burstiness). Write like an elite human practitioner.
+4. FORMATTING & SEO: Professional H2 and H3 markdown headers, structured bullet points, bold key terms, and naturally integrated high-intent search keywords.
 
 MANDATORY 3 PHOTOREALISTIC & TOPIC-ACCURATE IMAGES:
 Every article MUST feature 3 completely distinct, realistic photographic scenes directly related to the subject:
@@ -341,6 +354,8 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         const newPost = {
             ...blogPost,
             author: 'Pro Analyst',
+            category: postType === 'evergreen' ? 'Masterclass' : 'Market Analysis',
+            type: postType,
             isActive: true,
             featuredImage: customImage,
             date: new Date().toISOString(),
