@@ -52,6 +52,85 @@ function cleanAndParseJSON(raw: string) {
     }
 }
 
+// Google Instant Indexing API integration
+async function notifyGoogleIndexing(articleUrl: string) {
+    let serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    let privateKey = process.env.GOOGLE_PRIVATE_KEY;
+
+    if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+        try {
+            const parsed = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+            serviceAccountEmail = parsed.client_email;
+            privateKey = parsed.private_key;
+        } catch (err: any) {
+            console.error('[Indexing API] Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON:', err.message);
+        }
+    }
+
+    if (!serviceAccountEmail || !privateKey) {
+        return { notified: false, reason: 'GOOGLE_SERVICE_ACCOUNT_JSON not configured' };
+    }
+
+    try {
+        privateKey = privateKey.replace(/\\n/g, '\n');
+        const crypto = await import('crypto');
+
+        const header = { alg: 'RS256', typ: 'JWT' };
+        const now = Math.floor(Date.now() / 1000);
+        const claimSet = {
+            iss: serviceAccountEmail,
+            scope: 'https://www.googleapis.com/auth/indexing',
+            aud: 'https://oauth2.googleapis.com/token',
+            exp: now + 3600,
+            iat: now
+        };
+
+        const b64Header = Buffer.from(JSON.stringify(header)).toString('base64url');
+        const b64Claims = Buffer.from(JSON.stringify(claimSet)).toString('base64url');
+        const signInput = `${b64Header}.${b64Claims}`;
+
+        const signer = crypto.createSign('RSA-SHA256');
+        signer.update(signInput);
+        const signature = signer.sign(privateKey, 'base64url');
+        const jwt = `${signInput}.${signature}`;
+
+        const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                assertion: jwt
+            })
+        });
+
+        if (!tokenResp.ok) {
+            const err = await tokenResp.text();
+            throw new Error(`OAuth failed: ${err.substring(0, 200)}`);
+        }
+
+        const tokenData = await tokenResp.json();
+        const accessToken = tokenData.access_token;
+
+        const indexResp = await fetch('https://indexing.googleapis.com/v3/urlNotifications:publish', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                url: articleUrl,
+                type: 'URL_UPDATED'
+            })
+        });
+
+        const indexData = await indexResp.json();
+        return { notified: indexResp.ok, status: indexResp.status, response: indexData };
+    } catch (e: any) {
+        console.error('[Indexing API] Failed to notify Google:', e.message);
+        return { notified: false, error: e.message };
+    }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 1. Security Check
     const authHeader = req.headers.authorization;
@@ -195,8 +274,18 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         };
 
         const docRef = await addDoc(collection(db, 'artifacts', appId, 'blog'), newPost);
+        const articleUrl = `https://tradejournall.com/blog/${newPost.slug}`;
 
-        return res.status(200).json({ success: true, id: docRef.id, post: newPost });
+        // 4. Submit to Google Instant Indexing API
+        const indexingResult = await notifyGoogleIndexing(articleUrl);
+
+        return res.status(200).json({ 
+            success: true, 
+            id: docRef.id, 
+            post: newPost,
+            url: articleUrl,
+            googleIndexing: indexingResult
+        });
     } catch (error: any) {
         console.error("AI Blog Generation Error:", error);
         return res.status(500).json({ 
