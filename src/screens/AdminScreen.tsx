@@ -1067,7 +1067,10 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         });
                                         if (!res.ok) throw new Error(await res.text());
                                         const data = await res.json();
-                                        alert('AI Blog Generated Successfully!');
+                                        const indexingMsg = data.googleIndexing?.notified 
+                                            ? '🚀 Submitted to Google Indexing API!' 
+                                            : 'ℹ️ Added to dynamic sitemap.xml';
+                                        alert(`AI Blog Generated Successfully!\nGoogle Status: ${indexingMsg}`);
                                         setPublishedLink(`https://tradejournall.com/blog/${data.post.slug}`);
                                     } catch (err: any) {
                                         alert('Error generating AI blog: ' + err.message);
