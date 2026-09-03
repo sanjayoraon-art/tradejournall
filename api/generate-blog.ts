@@ -56,19 +56,33 @@ function cleanAndParseJSON(raw: string) {
 async function notifyGoogleIndexing(articleUrl: string) {
     let serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     let privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    let parseError = '';
 
     if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
         try {
-            const parsed = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+            let rawJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON.trim();
+            if (!rawJson.startsWith('{') && !rawJson.startsWith('"')) {
+                try {
+                    rawJson = Buffer.from(rawJson, 'base64').toString('utf8').trim();
+                } catch (_) {}
+            }
+            if (rawJson.startsWith('"') && rawJson.endsWith('"')) {
+                rawJson = JSON.parse(rawJson);
+            }
+            const parsed = typeof rawJson === 'string' ? JSON.parse(rawJson) : rawJson;
             serviceAccountEmail = parsed.client_email;
             privateKey = parsed.private_key;
         } catch (err: any) {
+            parseError = err.message;
             console.error('[Indexing API] Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON:', err.message);
         }
     }
 
     if (!serviceAccountEmail || !privateKey) {
-        return { notified: false, reason: 'GOOGLE_SERVICE_ACCOUNT_JSON not configured' };
+        const reason = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
+            ? `JSON parsing issue: ${parseError || 'Missing client_email or private_key in JSON'}`
+            : 'GOOGLE_SERVICE_ACCOUNT_JSON not found in Vercel settings';
+        return { notified: false, reason };
     }
 
     try {
@@ -163,11 +177,16 @@ CRITICAL INSTRUCTIONS TO ELIMINATE AI SPAM & DELIVER MASTER-CLASS VALUE:
 5. FORMATTING: Use H2/H3 tags, bullet points, and bold text for readability. 
 6. SEO: Naturally integrate long-tail keywords. The content must be comprehensive enough to rank on Google's first page.
 
-MANDATORY 3 ACCURATE & DISTINCT IMAGE PROMPTS:
-Every article MUST feature 3 distinct, topic-accurate visual representations:
-- "featuredImagePrompt": The primary hero cover. It MUST feature the exact, accurate symbol of the asset. E.g. If about Bitcoin, describe a photorealistic, gleaming golden physical Bitcoin medallion with the engraved bold ₿ symbol on a modern trading desk with glowing candlestick charts, 8k, cinematic lighting. If about Ethereum, the crystal diamond Ethereum logo. If about Gold, Forex, or Nifty, explicitly use identifiable realistic gold bullion bars, stock exchange monitors, or currency symbols.
-- "chartImagePrompt": A realistic technical setup diagram. Describe a high-tech dark theme multi-monitor trading terminal displaying real candlestick price action, breakout patterns, support/resistance trendlines, and volume indicators for this asset.
-- "strategyImagePrompt": A complementary strategic visualization. Describe institutional algorithmic trading, order book depth, or dynamic bull vs bear 3d sculptures symbolizing risk management and execution psychology.
+MANDATORY 3 PHOTOREALISTIC & TOPIC-ACCURATE IMAGES:
+Every article MUST feature 3 completely distinct, realistic photographic scenes directly related to the subject:
+- "featuredImagePrompt": The primary hero close-up shot of the exact asset symbol. 
+  Example for Bitcoin: "A photorealistic, gleaming metallic golden Bitcoin medallion with the bold engraved ₿ symbol, resting on a sleek dark trading desk with glowing candlestick charts, 8k resolution, cinematic studio lighting, depth of field."
+  Example for Ethereum: "A photorealistic, multifaceted glowing crystal Ethereum diamond emblem resting on a luxury dark metallic trading surface, 8k."
+  Example for Stocks/Gold: "Photorealistic stacked 999.9 pure gold bullion bars or Wall Street stock exchange floor with vibrant green market ticker displays, 8k."
+- "chartImagePrompt": A realistic, atmospheric cinematic photograph of a professional trader's desk in action.
+  Describe: "Cinematic photograph of an elite trader's sleek multi-monitor trading workstation at night: glowing curved displays showing trading charts of the specific asset, mechanical keyboard, warm ambient lamp light, luxury modern office background, photorealistic, 8k, crisp focus." (IMPORTANT: NEVER ask for abstract squiggly lines or fake charts, always describe a real workstation desk photograph).
+- "strategyImagePrompt": A tangible, high-impact scene representing market victory and disciplined execution.
+  Describe: "A dramatic, photorealistic sculpture of a muscular bronze Wall Street Bull charging forward across a financial trading room with green laser light accents, cinematic shadows, 8k." or "A high-security crypto cold storage hardware vault with illuminated LED status indicators and physical coins, photorealistic."
 - In the "content" markdown, insert the placeholder [IMAGE_CHART] where technical setups/charts are discussed (around 35% into the article), and [IMAGE_STRATEGY] where execution strategy or risk management is discussed (around 70% into the article).
 
 Return ONLY a raw JSON object with the following structure (no markdown formatting around the JSON):
@@ -179,9 +198,9 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
   "metaTitle": "SEO meta title under 60 chars",
   "metaDescription": "SEO meta description under 160 chars",
   "keywords": "comma, separated, seo, long-tail, keywords",
-  "featuredImagePrompt": "Accurate hero prompt with authentic asset symbol (e.g. bold ₿ for Bitcoin)",
-  "chartImagePrompt": "Accurate technical candlestick chart setup diagram prompt",
-  "strategyImagePrompt": "Strategic execution or risk management 3d visualization prompt"
+  "featuredImagePrompt": "Photorealistic hero prompt with authentic asset symbol (e.g. bold ₿ for Bitcoin)",
+  "chartImagePrompt": "Cinematic photograph of professional trader multi-monitor desk at night showing this asset's charts, 8k",
+  "strategyImagePrompt": "Dramatic photorealistic bronze Wall Street bull or high-security crypto vault scene, 8k"
 }`;
 
         // Function to call Gemini (gemini-3.6-flash)
@@ -253,15 +272,15 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         const blogPost = validResults[0];
 
         // 1. Featured Cover Image (Exact asset symbol, 1200x630)
-        const featuredPrompt = blogPost.featuredImagePrompt || blogPost.imagePrompt || `${blogPost.title}, realistic 3d finance render, 8k`;
+        const featuredPrompt = blogPost.featuredImagePrompt || blogPost.imagePrompt || `photorealistic golden Bitcoin medallion with bold ₿ symbol on dark executive desk, 8k cinematic lighting`;
         const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(featuredPrompt)}?width=1200&height=630&nologo=true`;
 
-        // 2. Technical Chart Setup Image (1000x560)
-        const chartPrompt = blogPost.chartImagePrompt || `candlestick chart technical analysis for ${blogPost.title}, dark trading interface, realistic`;
+        // 2. Pro Trader Workstation (1000x560)
+        const chartPrompt = blogPost.chartImagePrompt || `cinematic photograph of elite trader workstation multi curved monitors glowing charts at night, dark aesthetic, mechanical keyboard, 8k photorealistic`;
         const chartImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(chartPrompt)}?width=1000&height=560&nologo=true`;
 
-        // 3. Strategy & Risk Execution Image (1000x560)
-        const strategyPrompt = blogPost.strategyImagePrompt || `market trading strategy and risk management visualization for ${blogPost.title}, 3d modern`;
+        // 3. Wall Street Bull / Institutional Execution (1000x560)
+        const strategyPrompt = blogPost.strategyImagePrompt || `dramatic photorealistic charging bronze Wall Street bull sculpture glowing green market lines cinematic lighting 8k`;
         const strategyImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(strategyPrompt)}?width=1000&height=560&nologo=true`;
 
         // Embed in-content images into markdown

@@ -1069,7 +1069,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                                         const data = await res.json();
                                         const indexingMsg = data.googleIndexing?.notified 
                                             ? '🚀 Submitted to Google Indexing API!' 
-                                            : 'ℹ️ Added to dynamic sitemap.xml';
+                                            : `ℹ️ Sitemap updated (${data.googleIndexing?.reason || 'Indexing API inactive'})`;
                                         alert(`AI Blog Generated Successfully!\nGoogle Status: ${indexingMsg}`);
                                         setPublishedLink(`https://tradejournall.com/blog/${data.post.slug}`);
                                     } catch (err: any) {
