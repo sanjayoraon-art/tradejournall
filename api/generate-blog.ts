@@ -155,7 +155,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const prompt = `You are a highly sought-after Wall Street quantitative analyst and an elite proprietary trader. 
 Write a master-level, deeply informative, and highly actionable trading blog post about a specific, current trending topic in the stock market, crypto, or forex.
 
-CRITICAL INSTRUCTIONS TO ELIMINATE AI SPAM:
+CRITICAL INSTRUCTIONS TO ELIMINATE AI SPAM & DELIVER MASTER-CLASS VALUE:
 1. Write in clear, sharp, and conversational professional English. 
 2. ABSOLUTELY PROHIBITED PHRASES: Do NOT use "In today's fast-paced digital world", "Delving into", "It's important to remember", "In conclusion", "Navigating the complexities", "A testament to", "Let's dive in", or any other cliche AI filler.
 3. TONE & STYLE: Write like a real human hedge fund manager talking to serious traders. Use varied sentence lengths (high burstiness). Be direct, factual, and analytical. 
@@ -163,16 +163,25 @@ CRITICAL INSTRUCTIONS TO ELIMINATE AI SPAM:
 5. FORMATTING: Use H2/H3 tags, bullet points, and bold text for readability. 
 6. SEO: Naturally integrate long-tail keywords. The content must be comprehensive enough to rank on Google's first page.
 
+MANDATORY 3 ACCURATE & DISTINCT IMAGE PROMPTS:
+Every article MUST feature 3 distinct, topic-accurate visual representations:
+- "featuredImagePrompt": The primary hero cover. It MUST feature the exact, accurate symbol of the asset. E.g. If about Bitcoin, describe a photorealistic, gleaming golden physical Bitcoin medallion with the engraved bold ₿ symbol on a modern trading desk with glowing candlestick charts, 8k, cinematic lighting. If about Ethereum, the crystal diamond Ethereum logo. If about Gold, Forex, or Nifty, explicitly use identifiable realistic gold bullion bars, stock exchange monitors, or currency symbols.
+- "chartImagePrompt": A realistic technical setup diagram. Describe a high-tech dark theme multi-monitor trading terminal displaying real candlestick price action, breakout patterns, support/resistance trendlines, and volume indicators for this asset.
+- "strategyImagePrompt": A complementary strategic visualization. Describe institutional algorithmic trading, order book depth, or dynamic bull vs bear 3d sculptures symbolizing risk management and execution psychology.
+- In the "content" markdown, insert the placeholder [IMAGE_CHART] where technical setups/charts are discussed (around 35% into the article), and [IMAGE_STRATEGY] where execution strategy or risk management is discussed (around 70% into the article).
+
 Return ONLY a raw JSON object with the following structure (no markdown formatting around the JSON):
 {
   "title": "A highly engaging, SEO-friendly title",
   "slug": "url-friendly-seo-slug",
   "excerpt": "A powerful 2-sentence hook and summary",
-  "content": "The full blog post in Markdown format.",
+  "content": "The full blog post in Markdown format with [IMAGE_CHART] and [IMAGE_STRATEGY] placeholders included.",
   "metaTitle": "SEO meta title under 60 chars",
   "metaDescription": "SEO meta description under 160 chars",
   "keywords": "comma, separated, seo, long-tail, keywords",
-  "imagePrompt": "A highly detailed visual prompt describing an abstract, modern 3d illustration representing the topic of this blog post (for an AI image generator). E.g. 'A glowing green candlestick chart rising over a dark modern city skyline, 3d render, cinematic lighting'."
+  "featuredImagePrompt": "Accurate hero prompt with authentic asset symbol (e.g. bold ₿ for Bitcoin)",
+  "chartImagePrompt": "Accurate technical candlestick chart setup diagram prompt",
+  "strategyImagePrompt": "Strategic execution or risk management 3d visualization prompt"
 }`;
 
         // Function to call Gemini (gemini-3.6-flash)
@@ -243,10 +252,56 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         validResults.sort((a, b) => (b.content?.length || 0) - (a.content?.length || 0));
         const blogPost = validResults[0];
 
-        // Generate unique image
-        const imagePrompt = blogPost.imagePrompt || 'modern trading financial candlestick chart, 3d render, dark background';
-        const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?width=1200&height=630&nologo=true`;
+        // 1. Featured Cover Image (Exact asset symbol, 1200x630)
+        const featuredPrompt = blogPost.featuredImagePrompt || blogPost.imagePrompt || `${blogPost.title}, realistic 3d finance render, 8k`;
+        const customImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(featuredPrompt)}?width=1200&height=630&nologo=true`;
 
+        // 2. Technical Chart Setup Image (1000x560)
+        const chartPrompt = blogPost.chartImagePrompt || `candlestick chart technical analysis for ${blogPost.title}, dark trading interface, realistic`;
+        const chartImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(chartPrompt)}?width=1000&height=560&nologo=true`;
+
+        // 3. Strategy & Risk Execution Image (1000x560)
+        const strategyPrompt = blogPost.strategyImagePrompt || `market trading strategy and risk management visualization for ${blogPost.title}, 3d modern`;
+        const strategyImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(strategyPrompt)}?width=1000&height=560&nologo=true`;
+
+        // Embed in-content images into markdown
+        let content = blogPost.content || '';
+        const chartMarkdown = `\n\n![Technical Chart Setup Analysis](${chartImage})\n\n`;
+        const strategyMarkdown = `\n\n![Trading Strategy & Risk Management](${strategyImage})\n\n`;
+
+        if (content.includes('[IMAGE_CHART]')) {
+            content = content.replace('[IMAGE_CHART]', chartMarkdown);
+        }
+        if (content.includes('[IMAGE_STRATEGY]')) {
+            content = content.replace('[IMAGE_STRATEGY]', strategyMarkdown);
+        }
+
+        // Robust Fallback: If AI omitted placeholders, inject after 2nd and 4th section headings
+        if (!content.includes(chartImage)) {
+            const parts = content.split('\n## ');
+            if (parts.length >= 3) {
+                parts[1] = `${parts[1]}${chartMarkdown}`;
+                content = parts.join('\n## ');
+            } else {
+                content = `${content}${chartMarkdown}`;
+            }
+        }
+        if (!content.includes(strategyImage)) {
+            const parts = content.split('\n## ');
+            if (parts.length >= 4) {
+                parts[parts.length - 2] = `${parts[parts.length - 2]}${strategyMarkdown}`;
+                content = parts.join('\n## ');
+            } else {
+                content = `${content}${strategyMarkdown}`;
+            }
+        }
+
+        blogPost.content = content;
+
+        // Clean up prompt fields before database save
+        delete blogPost.featuredImagePrompt;
+        delete blogPost.chartImagePrompt;
+        delete blogPost.strategyImagePrompt;
         delete blogPost.imagePrompt;
 
         // 3. Save to Firebase Firestore
