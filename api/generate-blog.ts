@@ -213,7 +213,10 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
   "keywords": "comma, separated, seo, long-tail, keywords",
   "featuredImagePrompt": "Photorealistic hero prompt with authentic asset symbol (e.g. bold ₿ for Bitcoin)",
   "chartImagePrompt": "Cinematic photograph of professional trader multi-monitor desk at night showing this asset's charts, 8k",
-  "strategyImagePrompt": "Dramatic photorealistic bronze Wall Street bull or high-security crypto vault scene, 8k"
+  "strategyImagePrompt": "Dramatic photorealistic bronze Wall Street bull or high-security crypto vault scene, 8k",
+  "pinterestTitle": "Catchy, viral hook title under 100 characters for Pinterest",
+  "pinterestDescription": "Engaging Pinterest pin description under 400 characters with 5-6 relevant hashtags (#CryptoTrading #Bitcoin #DayTrading #TradingJournal #RiskManagement)",
+  "pinterestImagePrompt": "Vertical 2:3 ratio cinematic photograph of professional cryptocurrency trading chart setup with glowing golden coins and luxury dark background, 8k"
 }`;
 
         // Function to call Gemini (gemini-3.6-flash)
@@ -328,22 +331,27 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
             }
         }
 
-        blogPost.content = content;
+        // 4. Pinterest Pin Asset Preparation (Vertical 2:3 ratio, 1000x1500)
+        const pinPrompt = blogPost.pinterestImagePrompt || blogPost.featuredImagePrompt || `photorealistic glowing trading chart and golden crypto medallion 8k`;
+        const pinterestImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(pinPrompt)}?width=1000&height=1500&nologo=true`;
+        const pinterestTitle = blogPost.pinterestTitle || blogPost.title;
+        const pinterestDescription = blogPost.pinterestDescription || `${blogPost.excerpt} Read the full breakdown on TradeJournall! #CryptoTrading #Bitcoin #DayTrading #TradingJournal`;
 
         // Clean up prompt fields before database save
         delete blogPost.featuredImagePrompt;
         delete blogPost.chartImagePrompt;
         delete blogPost.strategyImagePrompt;
         delete blogPost.imagePrompt;
+        delete blogPost.pinterestImagePrompt;
 
-        // 3. Save to Firebase Firestore
+        // 5. Save to Firebase Firestore
         const firebaseConfigStr = process.env.VITE_FIREBASE_CONFIG;
         if (!firebaseConfigStr) {
             throw new Error('Firebase config (VITE_FIREBASE_CONFIG) not found in environment.');
         }
 
         const { initializeApp, getApps } = await import('firebase/app');
-        const { getFirestore, collection, addDoc } = await import('firebase/firestore');
+        const { getFirestore, collection, addDoc, updateDoc } = await import('firebase/firestore');
 
         const firebaseConfig = JSON.parse(firebaseConfigStr);
         const appId = process.env.VITE_APP_ID || 'tradejournall-app';
@@ -358,6 +366,7 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
             type: postType,
             isActive: true,
             featuredImage: customImage,
+            pinterestImage: pinterestImageUrl,
             date: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         };
@@ -365,15 +374,38 @@ Return ONLY a raw JSON object with the following structure (no markdown formatti
         const docRef = await addDoc(collection(db, 'artifacts', appId, 'blog'), newPost);
         const articleUrl = `https://tradejournall.com/blog/${newPost.slug}`;
 
-        // 4. Submit to Google Instant Indexing API
+        // 6. Submit to Google Instant Indexing API
         const indexingResult = await notifyGoogleIndexing(articleUrl);
+
+        // 7. Auto-Publish Pin to Pinterest API
+        let pinterestResult: any = { success: false, reason: 'Not configured' };
+        try {
+            const { postPinToPinterest } = await import('./pinterest');
+            pinterestResult = await postPinToPinterest({
+                title: pinterestTitle,
+                description: pinterestDescription,
+                link: articleUrl,
+                imageUrl: pinterestImageUrl
+            });
+
+            if (pinterestResult && pinterestResult.success && pinterestResult.pinUrl) {
+                await updateDoc(docRef, {
+                    pinterestPinUrl: pinterestResult.pinUrl,
+                    pinterestPinId: pinterestResult.pinId
+                });
+            }
+        } catch (pErr: any) {
+            console.error('[Pinterest Auto-Pin Exception]', pErr);
+            pinterestResult = { success: false, reason: pErr.message };
+        }
 
         return res.status(200).json({ 
             success: true, 
             id: docRef.id, 
             post: newPost,
             url: articleUrl,
-            googleIndexing: indexingResult
+            googleIndexing: indexingResult,
+            pinterest: pinterestResult
         });
     } catch (error: any) {
         console.error("AI Blog Generation Error:", error);
