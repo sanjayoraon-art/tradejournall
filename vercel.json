@@ -17,11 +17,15 @@
     ],
     "rewrites": [
         {
+            "source": "/privacy",
+            "destination": "/privacy.html"
+        },
+        {
             "source": "/blog/:slug",
             "destination": "/api/render-blog?slug=$slug"
         },
         {
-            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html).*)",
+            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html|privacy\\.html).*)",
             "destination": "/index.html"
         }
     ]
