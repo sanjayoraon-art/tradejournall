@@ -13,6 +13,14 @@
         {
             "src": "/sitemap.xml",
             "dest": "/api/sitemap"
+        },
+        {
+            "src": "/rss.xml",
+            "dest": "/api/rss"
+        },
+        {
+            "src": "/feed.xml",
+            "dest": "/api/rss"
         }
     ],
     "rewrites": [
