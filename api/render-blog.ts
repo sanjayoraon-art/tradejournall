@@ -25,10 +25,9 @@ function markdownToHtml(md: string): string {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { slug } = req.query;
     
-    // Fetch the base HTML from the production environment (which contains the correct Vite asset hashes)
-    const protocol = req.headers['x-forwarded-proto'] || 'https';
-    const host = req.headers.host || 'tradejournall.com';
-    const baseUrl = `${protocol}://${host}`;
+    // Always fetch the base HTML from the production custom domain
+    // This prevents Vercel Preview Deployment Authentication (SSO Login) from being fetched
+    const baseUrl = 'https://tradejournall.com';
     
     let indexHtml = '';
     try {
