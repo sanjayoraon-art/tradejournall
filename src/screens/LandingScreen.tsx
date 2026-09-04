@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
-import { TrendingUp, BarChart3, ShieldCheck, Brain, ArrowRight, Zap } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { TrendingUp, BarChart3, ShieldCheck, Brain, ArrowRight, Zap, BookOpen, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
+import { BlogCard } from '../components/BlogCard';
+import { db, appId } from '../utils/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 interface LandingScreenProps {
     onSignIn: () => void;
@@ -11,15 +14,55 @@ interface LandingScreenProps {
 }
 
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenInfo, theme, isDarkMode }) => {
+    const [blogPosts, setBlogPosts] = useState<any[]>([]);
+    const [loadingBlogs, setLoadingBlogs] = useState(true);
+
+    // Fetch published blogs and sort by newest first
+    useEffect(() => {
+        const fetchBlogPosts = async () => {
+            if (!db) {
+                setLoadingBlogs(false);
+                return;
+            }
+            try {
+                const q = query(
+                    collection(db, 'artifacts', appId, 'blog'),
+                    where('isActive', '==', true)
+                );
+                const snap = await getDocs(q);
+                const posts = snap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // Sort descending: newest post first
+                posts.sort((a: any, b: any) => {
+                    const getTime = (p: any) => {
+                        const val = p.date || p.lastUpdated || p.createdAt;
+                        if (!val) return 0;
+                        if (typeof val === 'object' && val.seconds) return val.seconds * 1000;
+                        const ms = new Date(val).getTime();
+                        return isNaN(ms) ? 0 : ms;
+                    };
+                    return getTime(b) - getTime(a);
+                });
+
+                setBlogPosts(posts);
+            } catch (err) {
+                console.error("Error fetching landing blog posts:", err);
+            } finally {
+                setLoadingBlogs(false);
+            }
+        };
+
+        fetchBlogPosts();
+    }, []);
+
     // Add page-specific SEO tags when the landing page mounts
     useEffect(() => {
         document.title = "Free Crypto Trading Journal | Binance, WazirX, CoinDCX Tracker";
 
-        // Optional: Add more specific meta tags dynamically if needed
-        // The generic ones in index.html already cover most cases well
-
         return () => {
-            // Clean up if we navigate away (though resetting title is usually enough)
             document.title = "TradeJournall";
         };
     }, []);
@@ -32,11 +75,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                     <img src="/logo.png" alt="Trade Journal Logo" className="w-10 h-10 object-contain rounded-xl bg-white/10" />
                     <span className="text-xl font-black tracking-tight">Trade Journal</span>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                    <a
+                        href="/blog"
+                        className="px-3.5 py-2 text-sm font-bold text-gray-300 hover:text-white hover:bg-gray-800/80 rounded-full transition-all flex items-center gap-1.5 border border-gray-700/60 hover:border-green-500/40"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <BookOpen size={16} className="text-green-400" />
+                        <span>Blog</span>
+                    </a>
                     <LanguageSelector isDarkMode={isDarkMode} />
                     <button
                         onClick={onSignIn}
-                        className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-full transition-all border border-gray-700 hover:border-gray-500 shadow-[0_0_15px_rgba(0,0,0,0.2)]"
+                        className="px-5 sm:px-6 py-2 sm:py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-full transition-all border border-gray-700 hover:border-gray-500 shadow-[0_0_15px_rgba(0,0,0,0.2)] text-sm sm:text-base"
                     >
                         Sign In
                     </button>
@@ -440,6 +491,66 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                 </div>
             </main>
 
+            {/* Trading Blog & Educational Guides Section */}
+            <section id="trading-blog" className="w-full py-20 px-4 bg-gray-900/80 border-t border-gray-800/80 relative">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 font-bold text-xs uppercase tracking-wider mb-4">
+                                <BookOpen size={14} /> Master The Markets
+                            </div>
+                            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+                                Latest Trading Guides &amp; Insights
+                            </h2>
+                            <p className="text-gray-400 text-base sm:text-lg mt-3 max-w-2xl leading-relaxed">
+                                Professional analysis, risk management frameworks, and trading psychology guides to protect your capital and build consistency.
+                            </p>
+                        </div>
+                        <a
+                            href="/blog"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl border border-gray-700 hover:border-green-500/50 transition-all text-sm w-fit"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            View All Articles ({blogPosts.length})
+                            <ArrowRight size={16} className="text-green-400" />
+                        </a>
+                    </div>
+
+                    {loadingBlogs ? (
+                        <div className="py-20 flex flex-col items-center justify-center text-center">
+                            <Loader2 className="animate-spin text-green-500 mb-3" size={36} />
+                            <p className="text-gray-400 text-sm font-medium">Loading trading guides...</p>
+                        </div>
+                    ) : blogPosts.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {blogPosts.map(post => (
+                                <BlogCard
+                                    key={post.id}
+                                    post={post}
+                                    theme={{
+                                        card: 'bg-gray-800/70 backdrop-blur-sm',
+                                        border: 'border-gray-700/80',
+                                        text: 'text-white',
+                                        subtext: 'text-gray-400'
+                                    }}
+                                    onClick={(slug) => {
+                                        window.location.href = `/blog/${slug}`;
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="p-12 rounded-3xl bg-gray-800/30 border border-gray-700/50 text-center">
+                            <BookOpen size={40} className="mx-auto text-gray-600 mb-3" />
+                            <h3 className="text-xl font-bold text-gray-300 mb-1">Trading Guides Coming Soon</h3>
+                            <p className="text-gray-500 text-sm max-w-md mx-auto">
+                                Our institutional analysts are drafting comprehensive masterclasses on risk management, Binance trading strategies, and position sizing.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </section>
+
             {/* SEO Article Area */}
             <SeoArticle />
 
@@ -461,6 +572,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                     </div>
 
                     <div className="flex flex-wrap items-center justify-center gap-6 text-gray-500 font-medium">
+                        <a href="/blog" className="hover:text-white transition-colors text-green-400 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
+                            <BookOpen size={15} /> Trading Blog
+                        </a>
                         <button onClick={() => onOpenInfo('about')} className="hover:text-white transition-colors">About Us</button>
                         <button onClick={() => onOpenInfo('contact')} className="hover:text-white transition-colors">Contact Support</button>
                         <button onClick={() => onOpenInfo('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>

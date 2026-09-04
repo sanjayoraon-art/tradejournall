@@ -19,20 +19,33 @@ export const BlogScreen: React.FC<BlogScreenProps> = ({ onBack, onArticleClick, 
         const fetchPosts = async () => {
             if (!db) return;
             try {
+                // Query active posts and sort in memory to guarantee newest posts are always first
+                // without triggering Firestore missing composite index errors
                 const q = query(
                     collection(db, 'artifacts', appId, 'blog'),
-                    where('isActive', '==', true),
-                    orderBy('date', 'desc')
+                    where('isActive', '==', true)
                 );
                 const querySnapshot = await getDocs(q);
                 const fetchedPosts = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
+
+                // Sort descending: newest post first
+                fetchedPosts.sort((a: any, b: any) => {
+                    const getTime = (p: any) => {
+                        const val = p.date || p.lastUpdated || p.createdAt;
+                        if (!val) return 0;
+                        if (typeof val === 'object' && val.seconds) return val.seconds * 1000;
+                        const ms = new Date(val).getTime();
+                        return isNaN(ms) ? 0 : ms;
+                    };
+                    return getTime(b) - getTime(a);
+                });
+
                 setPosts(fetchedPosts);
             } catch (error) {
                 console.error("Error fetching blog posts:", error);
-                // Fallback or empty state
             } finally {
                 setLoading(false);
             }

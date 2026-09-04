@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell, Zap, ExternalLink } from 'lucide-react';
+import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell, Zap, ExternalLink, BookOpen } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -645,6 +645,14 @@ const App = () => {
                     <DeskNavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
                     <DeskNavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
+                    <a 
+                        href="/blog" 
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-400 hover:text-white hover:bg-gray-800"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <BookOpen size={20} className="text-green-400" />
+                        <span className="text-sm">Trading Blog</span>
+                    </a>
                 </nav>
             </aside>
 
