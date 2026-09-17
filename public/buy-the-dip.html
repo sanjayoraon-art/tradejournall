@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buy The Dip! (Bull vs Bear)</title>
-    <!-- Google Fonts for High-Tech / Crypto Aesthetic -->
+    <title>Buy The Dip! (Bull vs Bear Trading Simulator)</title>
+    <!-- Fonts for High-Tech / Crypto Aesthetic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
     <style>
         :root {
             --bg-color: #07080a;
-            --card-bg: rgba(13, 16, 23, 0.85);
+            --card-bg: rgba(13, 16, 23, 0.9);
             --card-border: rgba(255, 255, 255, 0.08);
             
             /* Neon Colors */
@@ -20,6 +20,7 @@
             --neon-green: #00ff66;
             --neon-red: #ff0055;
             --neon-yellow: #ffb700;
+            --neon-purple: #b537f2;
             
             /* Text colors */
             --text-main: #ffffff;
@@ -43,25 +44,25 @@
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 102, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(0, 255, 102, 0.06) 0%, transparent 45%),
                 linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
             font-family: 'Outfit', sans-serif;
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
+            padding: 10px;
             overflow-x: hidden;
         }
 
         /* Container & Card */
         .game-wrapper {
             width: 100%;
-            max-width: 600px;
+            max-width: 560px;
             perspective: 1000px;
         }
 
@@ -69,150 +70,229 @@
             background: var(--card-bg);
             border: 1.5px solid var(--card-border);
             border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            padding: 18px 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             text-align: center;
             position: relative;
-            overflow: visible;
+            overflow: hidden;
             transition: transform 0.1s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         /* Screen Shake effect on Crash/Loss */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
+            20%, 60% { transform: translateX(-6px) rotate(-0.5deg); }
+            40%, 80% { transform: translateX(6px) rotate(0.5deg); }
         }
 
         .game-card.shaking {
-            animation: shake 0.3s infinite;
+            animation: shake 0.25s infinite;
             border-color: var(--neon-red);
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.3);
+            box-shadow: 0 0 35px rgba(255, 0, 85, 0.4);
         }
 
-        /* Sound Controls */
+        /* Header Bar: Asset selector, Live Mode & Sound */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .asset-selector {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .asset-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 5px 9px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .asset-btn.active {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+        }
+
         .sound-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            width: 38px;
-            height: 38px;
+            border-radius: 10px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             color: var(--text-sub);
             transition: all 0.2s ease;
-            z-index: 10;
-            touch-action: manipulation;
         }
 
         .sound-btn:hover {
             color: var(--text-main);
             background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
         }
 
-        .sound-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Header Details */
-        .game-header {
-            margin-bottom: 20px;
-        }
-
-        .title-glow {
-            display: none !important;
-            font-family: 'Outfit', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--text-main);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            transition: text-shadow 0.3s ease, color 0.3s ease;
-            margin-bottom: 4px;
-        }
-
-        /* Dynamic Title Glows based on Game State */
-        .game-card.bull-run .title-glow {
-            color: var(--neon-green);
-            text-shadow: 0 0 15px rgba(0, 255, 102, 0.6);
-        }
-
-        .game-card.crash-mode .title-glow {
-            color: var(--neon-red);
-            text-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
-        }
-
-        .game-card.neutral-mode .title-glow {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
-        }
-
-        .subtitle {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            font-weight: 700;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-        }
-
-        /* Stats Panel */
-        .stats-panel {
+        /* Portfolio & Stats Dashboard */
+        .dashboard-panel {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
-        .stat-box {
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 12px;
+        .dash-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 8px 10px;
             text-align: left;
-            position: relative;
         }
 
-        .stat-label {
-            font-size: 0.65rem;
+        .dash-lbl {
+            font-size: 0.58rem;
             color: var(--text-sub);
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .stat-value {
+        .dash-val {
             font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            font-size: 1.4rem;
+            font-weight: 800;
+            font-size: 1.05rem;
             color: var(--text-main);
+            white-space: nowrap;
         }
 
-        .timer-glow {
-            color: var(--neon-yellow);
-            text-shadow: 0 0 10px rgba(255, 183, 0, 0.3);
+        .dash-val.pnl-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 102, 0.3); }
+        .dash-val.pnl-red { color: var(--neon-red); text-shadow: 0 0 8px rgba(255, 0, 85, 0.3); }
+        .dash-val.timer { color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255, 183, 0, 0.3); }
+
+        /* Leverage Selector */
+        .leverage-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 4px 10px;
+            margin-bottom: 10px;
+            font-size: 0.68rem;
         }
 
-        /* Chart Visualizer Area (Replaces Vertical Progress Cylinder) */
+        .leverage-lbl {
+            font-weight: 800;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .leverage-options {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lev-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-sub);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lev-btn.active {
+            background: var(--neon-yellow);
+            color: #000;
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 10px rgba(255, 183, 0, 0.4);
+        }
+
+        .lev-btn.active.degen {
+            background: var(--neon-red);
+            color: #fff;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        /* Live Market Event Ticker */
+        .event-banner {
+            background: linear-gradient(90deg, rgba(255, 0, 85, 0.15), rgba(0, 240, 255, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 6px 12px;
+            margin-bottom: 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .event-banner.whale {
+            background: rgba(255, 0, 85, 0.25);
+            border-color: var(--neon-red);
+            color: #ff3377;
+            animation: shake 0.2s 2;
+        }
+
+        .event-banner.elon {
+            background: rgba(0, 255, 102, 0.25);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .event-banner.squeeze {
+            background: rgba(0, 240, 255, 0.25);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        /* Candlestick Chart Area */
         .chart-container {
             position: relative;
-            height: min(350px, 45vh);
+            height: min(290px, 38vh);
             width: 100%;
-            margin: 20px 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.55);
             border: 1.5px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
         }
 
         .chart-grid {
@@ -220,7 +300,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 5;
+            z-index: 3;
         }
 
         .grid-line {
@@ -231,45 +311,48 @@
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--text-sub);
-            opacity: 0.5;
         }
 
         .grid-line span {
             background: rgba(13, 16, 23, 0.95);
-            padding: 2px 6px;
+            padding: 1px 6px;
             border-radius: 4px;
-            margin-left: 10px;
-            font-size: 0.55rem;
+            margin-left: 8px;
+            font-size: 0.52rem;
+            font-weight: 700;
+            color: var(--text-sub);
             letter-spacing: 0.5px;
         }
 
-        .grid-line.break-even-line {
-            border-bottom: 1.5px dashed rgba(255, 183, 0, 0.25);
-            color: var(--neon-yellow);
-            opacity: 0.85;
+        .grid-line.sniper-zone {
+            border-bottom: 1.5px dashed rgba(0, 240, 255, 0.35);
+        }
+        .grid-line.sniper-zone span {
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 240, 255, 0.3);
         }
 
-        /* Viewport where candles are rendered side-by-side */
+        .grid-line.break-even {
+            border-bottom: 1.5px dashed rgba(255, 183, 0, 0.25);
+        }
+
+        /* Candles container */
         .candles-view {
             display: flex;
             align-items: flex-end;
             justify-content: flex-start;
-            gap: 7px;
+            gap: 6px;
             width: 100%;
             height: 100%;
-            padding: 0 16px 0 110px; /* Leave space on the left for scale labels */
+            padding: 0 12px 0 110px;
             position: relative;
             z-index: 2;
             overflow-x: hidden;
         }
 
-        /* Candlestick Layout */
         .candle {
             position: relative;
-            width: 11px;
+            width: 10px;
             height: 100%;
             flex-shrink: 0;
             display: flex;
@@ -279,12 +362,12 @@
 
         .candle.green-candle {
             color: var(--neon-green);
-            filter: drop-shadow(0 0 5px rgba(0, 255, 102, 0.35));
+            filter: drop-shadow(0 0 5px rgba(0, 255, 102, 0.4));
         }
 
         .candle.red-candle {
             color: var(--neon-red);
-            filter: drop-shadow(0 0 5px rgba(255, 0, 85, 0.35));
+            filter: drop-shadow(0 0 5px rgba(255, 0, 85, 0.4));
         }
 
         .wick {
@@ -294,7 +377,7 @@
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            opacity: 0.6;
+            opacity: 0.65;
         }
 
         .body {
@@ -304,7 +387,7 @@
             border-radius: 2px;
         }
 
-        /* Live sweeping horizontal Price Line indicator */
+        /* Live Sweeping Price Indicator */
         .live-price-line-container {
             position: absolute;
             width: 100%;
@@ -320,116 +403,191 @@
             flex-grow: 1;
             border-top: 1.5px dotted currentColor;
             height: 0;
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
         .live-price-badge {
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 3px 8px;
+            border-radius: 7px;
             font-family: 'Orbitron', monospace;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 900;
             background: rgba(7, 8, 10, 0.95);
             border: 1.5px solid currentColor;
-            margin-right: 12px;
+            margin-right: 8px;
             white-space: nowrap;
             box-shadow: 0 0 10px currentColor;
-            transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        /* Action Button */
-        .action-button-container {
-            position: relative;
-            margin-top: 10px;
-        }
-
-        .action-btn {
+        /* Entry line indicator */
+        .entry-line {
+            position: absolute;
             width: 100%;
-            background: linear-gradient(135deg, #00b04c 0%, var(--neon-green) 100%);
-            border: none;
-            border-radius: 18px;
-            padding: 18px 24px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.35rem;
+            left: 0;
+            pointer-events: none;
+            border-top: 1.5px dashed var(--neon-cyan);
+            z-index: 8;
+            display: none;
+        }
+
+        .entry-badge {
+            position: absolute;
+            right: 8px;
+            top: -10px;
+            font-size: 0.55rem;
+            font-family: 'Orbitron', monospace;
+            background: rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        /* Floating Score / Multiplier Particles */
+        .floating-tag {
+            position: absolute;
+            font-family: 'Orbitron', monospace;
             font-weight: 900;
-            color: #000000;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 25;
+            animation: float-up 1s forwards ease-out;
+        }
+
+        @keyframes float-up {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.15); }
+            100% { opacity: 0; transform: translateY(-55px) scale(0.9); }
+        }
+
+        /* Power-ups Bar */
+        .powerups-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .powerup-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 8px 6px;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.72rem;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4), 0 8px 0 #008f3a;
-            position: relative;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            touch-action: manipulation; /* disables double-tap to zoom on element */
-            transition: transform 0.05s ease, box-shadow 0.2s ease;
+            transition: all 0.2s ease;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 2px;
+            touch-action: manipulation;
+        }
+
+        .powerup-btn span {
+            font-size: 0.58rem;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .powerup-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .powerup-btn.active-glow {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+            background: rgba(0, 255, 102, 0.15);
+        }
+
+        .powerup-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Dual Trading Action Buttons */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
             gap: 10px;
         }
 
-        /* Hover Pulse loop */
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 10px rgba(0, 255, 102, 0.3), 0 8px 0 #008f3a; }
-            50% { box-shadow: 0 0 25px rgba(0, 255, 102, 0.7), 0 8px 0 #008f3a; }
-            100% { box-shadow: 0 0 10px rgba(0, 255, 102, 0.3), 0 8px 0 #008f3a; }
-        }
-
-        .action-btn.pulsing {
-            animation: pulse-glow 1.5s infinite;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.6), 0 8px 0 #008f3a;
-        }
-
-        /* Tactile click press response */
-        .action-btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 0 5px rgba(0, 255, 102, 0.2), 0 2px 0 #008f3a;
-        }
-
-        .action-btn:disabled {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Dynamic flashing instructions */
-        .instruction-banner {
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--neon-cyan);
-            margin-top: 14px;
+        .trade-btn {
+            padding: 15px 12px;
+            border-radius: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            height: 16px;
-            animation: flash-text 1.2s infinite;
+            cursor: pointer;
+            border: none;
+            transition: all 0.1s ease;
+            touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
         }
 
-        @keyframes flash-text {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+        .trade-btn sub {
+            font-size: 0.62rem;
+            font-weight: 600;
+            opacity: 0.85;
+            letter-spacing: 0.3px;
         }
 
-        /* Result Overlay Screen */
+        .buy-btn {
+            background: linear-gradient(135deg, #00b04c 0%, var(--neon-green) 100%);
+            color: #032b12;
+            box-shadow: 0 8px 25px rgba(0, 255, 102, 0.35);
+        }
+
+        .buy-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 15px rgba(0, 255, 102, 0.5);
+        }
+
+        .sell-btn {
+            background: linear-gradient(135deg, #b0003a 0%, var(--neon-red) 100%);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(255, 0, 85, 0.3);
+        }
+
+        .sell-btn:active {
+            transform: scale(0.96);
+        }
+
+        .sell-btn:disabled {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-sub);
+            box-shadow: none;
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Result Overlay */
         .result-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(6, 8, 12, 0.96);
-            border-radius: 24px;
+            inset: 0;
+            background: rgba(7, 8, 10, 0.96);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             z-index: 100;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            padding: 24px 20px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
 
         .result-overlay.active {
@@ -438,114 +596,93 @@
         }
 
         .result-badge {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px currentColor;
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
         }
 
-        .result-overlay.win .result-badge {
-            background: rgba(0, 255, 102, 0.1);
-            color: var(--neon-green);
-            border: 2px solid var(--neon-green);
-        }
-
-        .result-overlay.lose .result-badge {
-            background: rgba(255, 0, 85, 0.1);
-            color: var(--neon-red);
-            border: 2px solid var(--neon-red);
+        .persona-tag {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
         }
 
         .result-title {
             font-family: 'Outfit', sans-serif;
             font-weight: 900;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .result-overlay.win .result-title {
-            color: var(--neon-green);
-            text-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
-        }
-
-        .result-overlay.lose .result-title {
-            color: var(--neon-red);
-            text-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
-        }
+        .result-overlay.win .result-title { color: var(--neon-green); text-shadow: 0 0 15px rgba(0, 255, 102, 0.4); }
+        .result-overlay.lose .result-title { color: var(--neon-red); text-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
 
         .result-desc {
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             color: var(--text-sub);
-            max-width: 280px;
-            line-height: 1.5;
-            margin-bottom: 24px;
+            max-width: 320px;
+            line-height: 1.4;
+            margin-bottom: 16px;
         }
 
-        .score-board {
+        .stats-breakdown {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
             width: 100%;
-            padding: 16px;
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-around;
+            padding: 12px;
+            margin-bottom: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
-        .score-entry {
+        .break-entry {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .score-lbl {
-            font-size: 0.65rem;
+        .break-lbl {
+            font-size: 0.6rem;
             color: var(--text-sub);
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .score-val {
+        .break-val {
             font-family: 'Orbitron', monospace;
             font-weight: 900;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--text-main);
-        }
-
-        .score-val.highlight-green {
-            color: var(--neon-green);
-        }
-
-        .score-val.highlight-yellow {
-            color: var(--neon-yellow);
         }
 
         .overlay-btns {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn-overlay {
             width: 100%;
-            padding: 15px;
-            border-radius: 14px;
+            padding: 13px;
+            border-radius: 12px;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             border: none;
             transition: all 0.2s ease;
             display: flex;
@@ -561,12 +698,6 @@
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25);
         }
 
-        .btn-whatsapp:hover {
-            background: #20ba59;
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-            transform: translateY(-2px);
-        }
-
         .btn-restart {
             background: transparent;
             border: 2px solid rgba(255, 255, 255, 0.15);
@@ -576,147 +707,175 @@
         .btn-restart:hover {
             border-color: var(--text-main);
             background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
         }
 
-        .btn-restart:active, .btn-whatsapp:active {
-            transform: translateY(1px);
-        }
+        .icon { fill: currentColor; width: 1.2em; height: 1.2em; display: inline-block; }
 
-        /* SVG Icons Inline overrides */
-        .icon {
-            fill: currentColor;
-            width: 1.2em;
-            height: 1.2em;
-            display: inline-block;
-        }
-
-        /* Confetti particle elements styles */
+        /* Confetti elements */
         .confetti {
             position: absolute;
             width: 8px;
             height: 8px;
-            background: var(--neon-green);
             top: -10px;
             z-index: 101;
-            opacity: 0.8;
+            opacity: 0.9;
             pointer-events: none;
         }
 
         @keyframes fall {
-            0% {
-                transform: translateY(0) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(450px) rotate(720deg) scale(0.6);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(480px) rotate(720deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
     <div class="game-wrapper">
-        <div class="game-card neutral-mode" id="game-card">
+        <div class="game-card" id="game-card">
             
-            <!-- Sound Toggle Button -->
-            <button class="sound-btn" id="sound-toggle" aria-label="Toggle Sound">
-                <!-- Sound ON SVG Icon (default) -->
-                <svg id="sound-on-icon" class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-                <!-- Sound OFF SVG Icon (hidden) -->
-                <svg id="sound-off-icon" class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <line x1="23" y1="9" x2="17" y2="15"></line>
-                    <line x1="17" y1="9" x2="23" y2="15"></line>
-                </svg>
-            </button>
+            <!-- Top Bar: Asset choice & Sound -->
+            <div class="top-bar">
+                <div class="asset-selector" id="asset-selector">
+                    <button class="asset-btn active" data-asset="BTC" data-price="60000">BTC/USD</button>
+                    <button class="asset-btn" data-asset="NIFTY" data-price="22000">NIFTY</button>
+                    <button class="asset-btn" data-asset="SOL" data-price="150">SOL DEGEN</button>
+                </div>
 
-            <!-- Game Header -->
-            <div class="game-header">
-                <h1 class="title-glow" id="header-title">BUY THE DIP</h1>
-                <div class="subtitle">Bull vs Bear</div>
+                <button class="sound-btn" id="sound-toggle" aria-label="Toggle Sound">
+                    <svg id="sound-on-icon" class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    <svg id="sound-off-icon" class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" style="display: none;">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                </button>
             </div>
 
-            <!-- Stats Bar -->
-            <div class="stats-panel">
-                <div class="stat-box">
-                    <div class="stat-label">Time Remaining</div>
-                    <div class="stat-value timer-glow" id="timer-label">10.0s</div>
+            <!-- Dashboard: Bank Balance, Active Trade PnL, Timer -->
+            <div class="dashboard-panel">
+                <div class="dash-box">
+                    <div class="dash-lbl">Portfolio Cash</div>
+                    <div class="dash-val" id="portfolio-label">$10,000</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-label">Clicks (Score)</div>
-                    <div class="stat-value" id="score-label">0</div>
+                <div class="dash-box">
+                    <div class="dash-lbl">Active Trade PnL</div>
+                    <div class="dash-val" id="pnl-label">$0.00</div>
+                </div>
+                <div class="dash-box">
+                    <div class="dash-lbl">Round Timer</div>
+                    <div class="dash-val timer" id="timer-label">15.0s</div>
                 </div>
             </div>
 
-            <!-- Central visual candlestick chart -->
+            <!-- Leverage Bar -->
+            <div class="leverage-bar">
+                <span class="leverage-lbl">⚡ Leverage</span>
+                <div class="leverage-options" id="leverage-group">
+                    <button class="lev-btn" data-lev="1">1x</button>
+                    <button class="lev-btn active" data-lev="10">10x</button>
+                    <button class="lev-btn" data-lev="25">25x</button>
+                    <button class="lev-btn" data-lev="50">50x</button>
+                    <button class="lev-btn degen" data-lev="100">100x 🔥</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Market Event Banner -->
+            <div class="event-banner" id="event-banner">
+                <span id="event-icon">⚡</span>
+                <span id="event-text">MARKET READY: BUY THE DIP & TIME YOUR EXIT!</span>
+            </div>
+
+            <!-- Candlestick Visual Chart -->
             <div class="chart-container" id="chart-container">
-                <!-- Background Grid scale -->
+                <!-- Background Grid Lines -->
                 <div class="chart-grid">
-                    <div class="grid-line" style="bottom: 90%;"><span>90% - BULL RUN 🚀</span></div>
-                    <div class="grid-line" style="bottom: 70%;"><span>70%</span></div>
-                    <div class="grid-line break-even-line" style="bottom: 50%;"><span>50% - BREAK EVEN ⚖️</span></div>
-                    <div class="grid-line" style="bottom: 30%;"><span>30%</span></div>
-                    <div class="grid-line" style="bottom: 10%;"><span>10% - CRASH 📉</span></div>
+                    <div class="grid-line" style="bottom: 85%;"><span>85% - MOON RUN 🚀</span></div>
+                    <div class="grid-line break-even" style="bottom: 50%;"><span>50% - FAIR VALUE ⚖️</span></div>
+                    <div class="grid-line sniper-zone" style="bottom: 25%;"><span>🎯 SNIPER DIP ZONE (+3X)</span></div>
+                    <div class="grid-line" style="bottom: 10%;"><span>10% - LIQUIDATION 💀</span></div>
                 </div>
 
-                <!-- Viewport containing the candles list -->
-                <div class="candles-view" id="candles-view">
-                    <!-- Loaded dynamically via JS -->
+                <!-- Candlestick elements -->
+                <div class="candles-view" id="candles-view"></div>
+
+                <!-- Entry Price Line -->
+                <div class="entry-line" id="entry-line">
+                    <div class="entry-badge" id="entry-badge">ENTRY: $50,000</div>
                 </div>
 
-                <!-- Real-time horizontal sweeping price line and label -->
+                <!-- Live Sweeping Price Indicator -->
                 <div class="live-price-line-container" id="live-price-line-container">
                     <div class="live-price-line"></div>
                     <div class="live-price-badge" id="live-price-badge">$50,000</div>
                 </div>
             </div>
 
-            <!-- Interaction Button -->
-            <div class="action-button-container">
-                <button class="action-btn pulsing" id="buy-btn">
-                    BUY THE DIP 📈
+            <!-- Power-ups Bar -->
+            <div class="powerups-bar">
+                <button class="powerup-btn" id="shield-btn">
+                    🛡️ Stop-Loss
+                    <span id="shield-status">Ready</span>
+                </button>
+                <button class="powerup-btn" id="whale-btn">
+                    🐋 Whale Pump
+                    <span id="whale-status">Ready</span>
+                </button>
+                <button class="powerup-btn" id="diamond-btn">
+                    💎 Diamond Hands
+                    <span id="diamond-status">Ready (2x)</span>
                 </button>
             </div>
 
-            <!-- Instruction Text -->
-            <div class="instruction-banner" id="instruction-label">
-                Click Button to Start Battle
+            <!-- Main Dual Trading Actions -->
+            <div class="actions-grid">
+                <button class="trade-btn buy-btn" id="buy-btn">
+                    BUY THE DIP 📈
+                    <sub id="buy-sub">TAP TO PUMP & RIDE</sub>
+                </button>
+                <button class="trade-btn sell-btn" id="sell-btn" disabled>
+                    SELL (TAKE PROFIT) 💰
+                    <sub id="sell-sub">LOCK IN CASH</sub>
+                </button>
             </div>
 
-            <!-- Fullscreen Result Overlay -->
+            <!-- Fullscreen Result Modal -->
             <div class="result-overlay" id="result-overlay">
                 <div class="result-badge" id="result-badge">🏆</div>
+                <div class="persona-tag" id="persona-tag">Chad Institutional Whale</div>
                 <h2 class="result-title" id="result-title">Victory!</h2>
-                <p class="result-desc" id="result-desc">Bull Run secured! You saved the dip.</p>
+                <p class="result-desc" id="result-desc">You timed the dips like an elite hedge fund trader!</p>
                 
-                <div class="score-board">
-                    <div class="score-entry">
-                        <div class="score-lbl">Your Score</div>
-                        <div class="score-val highlight-green" id="final-score">72</div>
+                <div class="stats-breakdown">
+                    <div class="break-entry">
+                        <div class="break-lbl">Final Balance</div>
+                        <div class="break-val" id="final-balance" style="color: var(--neon-green);">$24,500</div>
                     </div>
-                    <div class="score-entry">
-                        <div class="score-lbl">End Price</div>
-                        <div class="score-val highlight-yellow" id="final-price">$58,200</div>
+                    <div class="break-entry">
+                        <div class="break-lbl">Total Return</div>
+                        <div class="break-val" id="final-roi" style="color: var(--neon-yellow);">+145%</div>
+                    </div>
+                    <div class="break-entry">
+                        <div class="break-lbl">Profitable Trades</div>
+                        <div class="break-val" id="final-trades">3 / 4</div>
+                    </div>
+                    <div class="break-entry">
+                        <div class="break-lbl">Sniper Buys</div>
+                        <div class="break-val" id="final-snipers" style="color: var(--neon-cyan);">2 🎯</div>
                     </div>
                 </div>
 
                 <div class="overlay-btns">
-                    <!-- WhatsApp Share Link -->
                     <button class="btn-overlay btn-whatsapp" id="share-btn">
-                        <!-- WhatsApp Logo SVG -->
                         <svg class="icon" viewBox="0 0 448 512" style="fill: white;">
                             <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
                         </svg>
-                        Share to WhatsApp
+                        Brag on WhatsApp
                     </button>
-                    <!-- Restart Game -->
                     <button class="btn-overlay btn-restart" id="restart-btn">
-                        Play Again
+                        Trade Another Round 🔄
                     </button>
                 </div>
             </div>
@@ -725,310 +884,548 @@
     </div>
 
     <script>
-        // Custom Audio File URL Map (configured by user)
-        const SOUNDS = {
-            click: 'click-sound.mp3',
-            win: 'win-sound.mp3',
-            lose: 'lose-sound.mp3'
-        };
-
-        // Pre-game historical crash data structure to show the "dip" before start
-        const HISTORICAL_CANDLES = [
-            { open: 72, high: 75, low: 69, close: 74 },
-            { open: 74, high: 78, low: 72, close: 76 },
-            { open: 76, high: 77, low: 67, close: 69 },
-            { open: 69, high: 71, low: 63, close: 64 },
-            { open: 64, high: 70, low: 62, close: 68 },
-            { open: 68, high: 72, low: 66, close: 70 },
-            { open: 70, high: 71, low: 58, close: 60 },
-            { open: 60, high: 63, low: 55, close: 57 },
-            { open: 57, high: 59, low: 50, close: 52 },
-            { open: 52, high: 56, low: 51, close: 55 },
-            { open: 55, high: 57, low: 47, close: 49 },
-            { open: 49, high: 51, low: 44, close: 46 },
-            { open: 46, high: 50, low: 45, close: 48 },
-            { open: 48, high: 50, low: 43, close: 45 },
-            { open: 45, high: 51, low: 44, close: 50 }
-        ];
-
-        // Game Configuration & Math Tuning
-        const GAME_DURATION = 10000;      // 10.0 seconds in milliseconds
-        const TICK_INTERVAL = 50;         // Game loop ticks every 50ms
-        const CANDLE_PERIOD = 500;        // Open a new candle every 500ms
-        const TICKS_PER_CANDLE = CANDLE_PERIOD / TICK_INTERVAL; // 10 ticks per candle
-        
-        const USER_CLICK_INCREASE = 2.0;  // Click increases progress by 2.0%
-        const AI_DRAIN_PER_TICK = 0.6;    // AI drains 0.6% per 50ms (= 1.2% per 100ms)
-        // Break-even threshold: 6 clicks per second.
-        // Clicking > 6/s pumps the price up. Clicking < 6/s drops the price.
-
-        // Game State Variables
-        let state = 'ready'; // 'ready', 'playing', 'ended'
-        let startTime = 0;
-        let elapsed = 0;
-        let score = 0;
-        let marketPricePercent = 50.0; // Starts at 50%
-        let isMuted = false;
-        
-        // Rolling Candlestick List
-        let candles = [];
-        let currentCandle = null;
-
-        // Loop / Audio Refs
-        let gameLoopTimer = null;
-        let audioCtx = null;
-        let tickCounter = 0;
-
-        // DOM elements cache
-        const gameCard = document.getElementById('game-card');
-        const headerTitle = document.getElementById('header-title');
-        const timerLabel = document.getElementById('timer-label');
-        const scoreLabel = document.getElementById('score-label');
-        const candlesView = document.getElementById('candles-view');
-        const livePriceLineContainer = document.getElementById('live-price-line-container');
-        const livePriceBadge = document.getElementById('live-price-badge');
-        const buyBtn = document.getElementById('buy-btn');
-        const instructionLabel = document.getElementById('instruction-label');
-        const soundToggle = document.getElementById('sound-toggle');
-        const soundOnIcon = document.getElementById('sound-on-icon');
-        const soundOffIcon = document.getElementById('sound-off-icon');
-
-        // Result screen DOM
-        const resultOverlay = document.getElementById('result-overlay');
-        const resultBadge = document.getElementById('result-badge');
-        const resultTitle = document.getElementById('result-title');
-        const resultDesc = document.getElementById('result-desc');
-        const finalScore = document.getElementById('final-score');
-        const finalPrice = document.getElementById('final-price');
-        const shareBtn = document.getElementById('share-btn');
-        const restartBtn = document.getElementById('restart-btn');
-
         /* ===================================================================
-           SOUND ENGINE (Web Audio API Synthesizer with Custom File Fallback)
+           SOUND ENGINE (Web Audio API Synthesizer)
            =================================================================== */
+        let audioCtx = null;
+        let isMuted = false;
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-            if (audioCtx.state === 'suspended') {
+            if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
         }
 
-        // Web Audio Synthesizer (Instant, retro 8-bit sound effects)
-        function playSynthesizedSound(type) {
+        function playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.12) {
+            if (isMuted) return;
             initAudio();
-            if (!audioCtx || isMuted) return;
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(gainVal, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
+        function playSound(name) {
+            if (isMuted) return;
+            initAudio();
+            if (!audioCtx) return;
 
             const now = audioCtx.currentTime;
 
-            if (type === 'click') {
+            if (name === 'buy') {
+                playTone(600, 'triangle', 0.07, 0.1);
+            } 
+            else if (name === 'sniper') {
+                playTone(900, 'sine', 0.08, 0.15);
+                setTimeout(() => playTone(1400, 'sine', 0.12, 0.2), 70);
+            }
+            else if (name === 'profit') {
+                // Happy cash chime (C5 -> E5 -> G5 -> C6)
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((f, i) => {
+                    setTimeout(() => playTone(f, 'sine', 0.15, 0.15), i * 65);
+                });
+            }
+            else if (name === 'liquidated' || name === 'crash') {
+                // Heavy downward saw
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.08);
-                
-                gain.gain.setValueAtTime(0.12, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(260, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.5);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.start(now);
-                osc.stop(now + 0.08);
-            } 
-            else if (type === 'win') {
-                const scale = [523.25, 659.25, 783.99, 1046.50]; // C5 -> E5 -> G5 -> C6
-                scale.forEach((freq, index) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + index * 0.07);
-                    
-                    gain.gain.setValueAtTime(0, now + index * 0.07);
-                    gain.gain.linearRampToValueAtTime(0.1, now + index * 0.07 + 0.02);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.07 + 0.18);
-                    
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    
-                    osc.start(now + index * 0.07);
-                    osc.stop(now + index * 0.07 + 0.22);
-                });
-            } 
-            else if (type === 'lose') {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                const filter = audioCtx.createBiquadFilter();
-                
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(240, now);
-                osc.frequency.exponentialRampToValueAtTime(60, now + 0.65);
-                
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(320, now);
-                filter.frequency.exponentialRampToValueAtTime(100, now + 0.65);
-                
-                gain.gain.setValueAtTime(0.18, now);
-                gain.gain.linearRampToValueAtTime(0.12, now + 0.15);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
-                
-                osc.connect(filter);
-                filter.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.start(now);
-                osc.stop(now + 0.65);
+                osc.stop(now + 0.5);
+            }
+            else if (name === 'powerup') {
+                playTone(500, 'sine', 0.06, 0.12);
+                setTimeout(() => playTone(800, 'sine', 0.06, 0.15), 50);
+                setTimeout(() => playTone(1200, 'sine', 0.1, 0.18), 100);
             }
         }
 
-        // Custom MP3 Audio File Loader
-        function playAudioFile(url) {
-            try {
-                const audio = new Audio(url);
-                audio.volume = 0.45;
-                audio.play().catch(e => {
-                    console.log("Audio file loading blocked or failed. Using synth fallback.");
-                });
-            } catch (err) {
-                console.warn(err);
-            }
+        /* ===================================================================
+           GAME STATE & CONFIGURATION
+           =================================================================== */
+        const GAME_DURATION = 15000; // 15 seconds
+        const TICK_INTERVAL = 50;
+        const CANDLE_TICKS = 10;
+
+        let state = 'ready'; // 'ready', 'playing', 'ended'
+        let startTime = 0;
+        let elapsed = 0;
+        let gameLoopTimer = null;
+        let tickCounter = 0;
+
+        // Assets
+        let currentAsset = 'BTC';
+        let baseAssetPrice = 60000;
+
+        // Portfolio & Position State
+        const INITIAL_BALANCE = 10000;
+        let cashBalance = INITIAL_BALANCE;
+        let activePosition = null; // { entryPrice, entryPercent, size, leverage }
+        let currentLeverage = 10;
+        let totalTrades = 0;
+        let winningTrades = 0;
+        let sniperEntries = 0;
+
+        // Powerup Statuses
+        let hasShield = false;
+        let whaleCooldown = false;
+        let diamondHandsActive = false;
+
+        // Market Mechanics
+        let marketPricePercent = 50.0; // 0% to 100% scale
+        let aiDrainRate = 0.55; // Per 50ms
+        let clickPumpAmount = 2.4;
+
+        // Candlesticks array
+        let candles = [];
+        let currentCandle = null;
+
+        // Market Events Pool
+        const EVENTS = [
+            { text: "🚀 ELON TWEETED DOGE! +35% GOD CANDLE!", type: "elon", priceDelta: 16 },
+            { text: "🐋 WHALE DUMPED 5,000 BTC! FLASH CRASH!", type: "whale", priceDelta: -16 },
+            { text: "💥 SHORT SQUEEZE DETECTED! PUMP CASCADE!", type: "squeeze", priceDelta: 12 },
+            { text: "🚨 FED RATE HIKE! WILD WHIPSAW VOLATILITY!", type: "whale", priceDelta: -10 },
+            { text: "💎 BINANCE CZ: 'FUNDS ARE SAFU!' +15% BOUNCE", type: "elon", priceDelta: 8 },
+            { text: "📄 RETAIL PANIC SELLING! DIP GETTING JUICY!", type: "squeeze", priceDelta: -8 }
+        ];
+
+        // DOM elements cache
+        const gameCard = document.getElementById('game-card');
+        const portfolioLabel = document.getElementById('portfolio-label');
+        const pnlLabel = document.getElementById('pnl-label');
+        const timerLabel = document.getElementById('timer-label');
+        const candlesView = document.getElementById('candles-view');
+        const livePriceLineContainer = document.getElementById('live-price-line-container');
+        const livePriceBadge = document.getElementById('live-price-badge');
+        const entryLine = document.getElementById('entry-line');
+        const entryBadge = document.getElementById('entry-badge');
+        const eventBanner = document.getElementById('event-banner');
+        const eventIcon = document.getElementById('event-icon');
+        const eventText = document.getElementById('event-text');
+        
+        const buyBtn = document.getElementById('buy-btn');
+        const sellBtn = document.getElementById('sell-btn');
+        const shieldBtn = document.getElementById('shield-btn');
+        const whaleBtn = document.getElementById('whale-btn');
+        const diamondBtn = document.getElementById('diamond-btn');
+        const shieldStatus = document.getElementById('shield-status');
+        const whaleStatus = document.getElementById('whale-status');
+        const diamondStatus = document.getElementById('diamond-status');
+
+        const resultOverlay = document.getElementById('result-overlay');
+        const resultBadge = document.getElementById('result-badge');
+        const personaTag = document.getElementById('persona-tag');
+        const resultTitle = document.getElementById('result-title');
+        const resultDesc = document.getElementById('result-desc');
+        const finalBalance = document.getElementById('final-balance');
+        const finalRoi = document.getElementById('final-roi');
+        const finalTrades = document.getElementById('final-trades');
+        const finalSnipers = document.getElementById('final-snipers');
+        const shareBtn = document.getElementById('share-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        /* ===================================================================
+           INITIALIZATION & PRE-GAME SETUP
+           =================================================================== */
+        const HISTORICAL_CANDLES = [
+            { open: 68, high: 72, low: 66, close: 70 },
+            { open: 70, high: 73, low: 62, close: 64 },
+            { open: 64, high: 66, low: 55, close: 57 },
+            { open: 57, high: 59, low: 48, close: 50 },
+            { open: 50, high: 54, low: 45, close: 48 },
+            { open: 48, high: 52, low: 44, close: 49 },
+            { open: 49, high: 53, low: 46, close: 50 }
+        ];
+
+        function initGame() {
+            candles = [...HISTORICAL_CANDLES];
+            marketPricePercent = 50.0;
+            cashBalance = INITIAL_BALANCE;
+            activePosition = null;
+            hasShield = false;
+            whaleCooldown = false;
+            diamondHandsActive = false;
+            totalTrades = 0;
+            winningTrades = 0;
+            sniperEntries = 0;
+            
+            updateUI();
+            updateDashboard();
         }
 
-        // Master Sound Dispatcher
-        function playSound(type) {
-            if (isMuted) return;
+        // Switch Assets (BTC / Nifty / SOL)
+        document.querySelectorAll('.asset-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (state === 'playing') return;
+                document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAsset = btn.dataset.asset;
+                baseAssetPrice = parseFloat(btn.dataset.price);
 
-            const url = SOUNDS[type];
-            const isPlaceholder = !url || url === `${type}-sound.mp3`;
+                if (currentAsset === 'SOL') {
+                    aiDrainRate = 0.8;
+                    clickPumpAmount = 3.6; // High Volatility
+                    setEvent("🔥 SOLANA DEGEN MODE ACTIVE: EXTREME PUMPS & DUMPS!", "whale");
+                } else if (currentAsset === 'NIFTY') {
+                    aiDrainRate = 0.4;
+                    clickPumpAmount = 1.8; // Low Volatility
+                    setEvent("📈 NIFTY 50 MODE: STEADY MARKET MOVEMENT", "elon");
+                } else {
+                    aiDrainRate = 0.55;
+                    clickPumpAmount = 2.4;
+                    setEvent("⚡ BITCOIN STANDARD: BUY THE DIP & TIME YOUR EXIT!", "squeeze");
+                }
+                updateUI();
+            });
+        });
 
-            if (isPlaceholder) {
-                playSynthesizedSound(type);
-            } else {
-                playAudioFile(url);
-            }
-        }
+        // Switch Leverage
+        document.querySelectorAll('.lev-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (state === 'playing' && activePosition) return; // Cannot change leverage mid-trade
+                document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLeverage = parseInt(btn.dataset.lev);
+                playSound('buy');
 
-        // Toggle Sound Mute
-        soundToggle.addEventListener('click', () => {
+                if (currentLeverage >= 50) {
+                    setEvent(`⚠️ ${currentLeverage}X LEVERAGE: 1 BAD DIP = INSTANT REKT!`, "whale");
+                }
+            });
+        });
+
+        // Sound Toggle
+        document.getElementById('sound-toggle').addEventListener('click', () => {
             isMuted = !isMuted;
             initAudio();
-            if (isMuted) {
-                soundOnIcon.style.display = 'none';
-                soundOffIcon.style.display = 'block';
-            } else {
-                soundOnIcon.style.display = 'block';
-                soundOffIcon.style.display = 'none';
-                playSynthesizedSound('click');
-            }
+            document.getElementById('sound-on-icon').style.display = isMuted ? 'none' : 'block';
+            document.getElementById('sound-off-icon').style.display = isMuted ? 'block' : 'none';
+            if (!isMuted) playSound('buy');
         });
 
         /* ===================================================================
-           CANDLESTICK CHART RENDER ENGINE
+           MARKET EVENTS ENGINE
            =================================================================== */
+        function setEvent(text, type = 'squeeze') {
+            eventBanner.className = `event-banner ${type}`;
+            eventText.innerText = text;
+            eventIcon.innerText = type === 'whale' ? '🐋' : type === 'elon' ? '🚀' : '💥';
+        }
 
-        // Redraws all displayed candlesticks inside the viewport
-        function renderChart() {
-            // Combine historical/completed candles and active game candle
-            const combinedList = [...candles];
-            if (currentCandle) {
-                combinedList.push(currentCandle);
+        function triggerRandomEvent() {
+            if (state !== 'playing') return;
+            const ev = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+            setEvent(ev.text, ev.type);
+
+            if (ev.priceDelta > 0) {
+                playSound('powerup');
+                marketPricePercent = Math.min(95, marketPricePercent + ev.priceDelta);
+            } else {
+                if (hasShield) {
+                    hasShield = false;
+                    shieldStatus.innerText = "Used";
+                    shieldBtn.classList.remove('active-glow');
+                    setEvent("🛡️ STOP-LOSS SHIELD TRIGGERED! CRASH PREVENTED!", "squeeze");
+                    playSound('powerup');
+                    return;
+                }
+                playSound('crash');
+                gameCard.classList.add('shaking');
+                setTimeout(() => gameCard.classList.remove('shaking'), 400);
+                marketPricePercent = Math.max(8, marketPricePercent + ev.priceDelta);
             }
+            updateUI();
+        }
 
-            // Slice list to display last 100 candles to fit screen nicely and allow scrolling
-            const maxVisible = 100;
-            const startIdx = Math.max(0, combinedList.length - maxVisible);
-            const visibleList = combinedList.slice(startIdx);
+        /* ===================================================================
+           POWER-UPS ENGINE
+           =================================================================== */
+        // 1. Stop Loss Shield
+        shieldBtn.addEventListener('click', () => {
+            if (state !== 'playing' || hasShield) return;
+            hasShield = true;
+            shieldBtn.classList.add('active-glow');
+            shieldStatus.innerText = "ACTIVE 🛡️";
+            playSound('powerup');
+            showFloatingText("🛡️ SHIELD ARMED!", shieldBtn, "var(--neon-cyan)");
+        });
 
-            let htmlString = '';
-            visibleList.forEach(c => {
+        // 2. Whale Pump
+        whaleBtn.addEventListener('click', () => {
+            if (state !== 'playing' || whaleCooldown) return;
+            whaleCooldown = true;
+            whaleBtn.disabled = true;
+            whaleStatus.innerText = "Pumping!";
+            playSound('powerup');
+
+            setEvent("🐋 WHALE BUY ORDER EXECUTED! +18% GREEN CANDLE!", "elon");
+            marketPricePercent = Math.min(96, marketPricePercent + 18);
+            showFloatingText("🐋 +18% WHALE PUMP!", whaleBtn, "var(--neon-green)");
+            updateUI();
+
+            setTimeout(() => {
+                whaleStatus.innerText = "Ready";
+                whaleBtn.disabled = false;
+                whaleCooldown = false;
+            }, 6000);
+        });
+
+        // 3. Diamond Hands (2x Profit Multiplier)
+        diamondBtn.addEventListener('click', () => {
+            if (state !== 'playing' || diamondHandsActive) return;
+            diamondHandsActive = true;
+            diamondBtn.classList.add('active-glow');
+            diamondStatus.innerText = "2X ACTIVE!";
+            playSound('powerup');
+            showFloatingText("💎 2X MULTIPLIER!", diamondBtn, "var(--neon-yellow)");
+
+            setTimeout(() => {
+                diamondHandsActive = false;
+                diamondBtn.classList.remove('active-glow');
+                diamondStatus.innerText = "Used";
+                diamondBtn.disabled = true;
+            }, 4000);
+        });
+
+        /* ===================================================================
+           CANDLESTICK RENDERING
+           =================================================================== */
+        function renderChart() {
+            const combined = [...candles];
+            if (currentCandle) combined.push(currentCandle);
+
+            const visible = combined.slice(Math.max(0, combined.length - 80));
+            let html = '';
+
+            visible.forEach(c => {
                 const isGreen = c.close >= c.open;
                 const bodyBottom = Math.min(c.open, c.close);
-                const bodyHeight = Math.max(1.5, Math.abs(c.open - c.close)); // Minimum height for line
+                const bodyHeight = Math.max(1.5, Math.abs(c.open - c.close));
                 const wickBottom = c.low;
                 const wickHeight = Math.max(1.5, c.high - c.low);
 
-                const colorStyle = isGreen ? 'var(--neon-green)' : 'var(--neon-red)';
                 const colorClass = isGreen ? 'green-candle' : 'red-candle';
-
-                htmlString += `
-                    <div class="candle ${colorClass}" style="color: ${colorStyle};">
+                html += `
+                    <div class="candle ${colorClass}">
                         <div class="wick" style="bottom: ${wickBottom}%; height: ${wickHeight}%;"></div>
                         <div class="body" style="bottom: ${bodyBottom}%; height: ${bodyHeight}%;"></div>
                     </div>
                 `;
             });
 
-            candlesView.innerHTML = htmlString;
+            candlesView.innerHTML = html;
             candlesView.scrollLeft = candlesView.scrollWidth;
         }
 
-        // Update UI dynamic colors, line positioning, price label
+        function calculateCurrentPrice() {
+            return (baseAssetPrice * (marketPricePercent / 50.0)).toFixed(currentAsset === 'SOL' ? 2 : 0);
+        }
+
         function updateUI() {
             marketPricePercent = Math.max(0, Math.min(100, marketPricePercent));
 
-            // Synchronize Live Price indicator height percentage
             livePriceLineContainer.style.bottom = `${marketPricePercent}%`;
+            const formattedPrice = `$${parseFloat(calculateCurrentPrice()).toLocaleString()}`;
+            livePriceBadge.innerText = formattedPrice;
 
-            // Calculate simulated price label ($0 to $100,000)
-            const simulatedPrice = Math.round(marketPricePercent * 1000);
-            livePriceBadge.innerText = `$${simulatedPrice.toLocaleString()}`;
-
-            // Sync color themes based on market level
-            let activeColor = 'var(--neon-cyan)';
-            gameCard.classList.remove('bull-run', 'crash-mode', 'neutral-mode');
-            
-            if (marketPricePercent > 60) {
-                gameCard.classList.add('bull-run');
-                headerTitle.innerText = "BULL RUN 📈";
-                activeColor = 'var(--neon-green)';
-            } else if (marketPricePercent < 40) {
-                gameCard.classList.add('crash-mode');
-                headerTitle.innerText = "CRASHING! 📉";
-                activeColor = 'var(--neon-red)';
+            // Sync Entry Line if position is open
+            if (activePosition) {
+                entryLine.style.display = 'block';
+                entryLine.style.bottom = `${activePosition.entryPercent}%`;
+                entryBadge.innerText = `ENTRY: $${parseFloat(activePosition.entryPrice).toLocaleString()} (${activePosition.leverage}x)`;
             } else {
-                gameCard.classList.add('neutral-mode');
-                headerTitle.innerText = "BUY THE DIP";
+                entryLine.style.display = 'none';
             }
 
+            // Color based on level
+            let activeColor = marketPricePercent >= 50 ? 'var(--neon-green)' : 'var(--neon-red)';
             livePriceLineContainer.style.color = activeColor;
+
             renderChart();
+            updateTradePnL();
         }
 
-        // Pre-populates the grid with historical crash data on load
-        function loadHistoricalData() {
-            candles = [...HISTORICAL_CANDLES];
-            currentCandle = null;
-            marketPricePercent = 50.0; // Ends at 50%
-            updateUI();
+        function updateDashboard() {
+            portfolioLabel.innerText = `$${Math.round(cashBalance).toLocaleString()}`;
+        }
+
+        function updateTradePnL() {
+            if (!activePosition) {
+                pnlLabel.innerText = "$0.00";
+                pnlLabel.className = "dash-val";
+                sellBtn.disabled = true;
+                return;
+            }
+
+            sellBtn.disabled = false;
+            const currentP = parseFloat(calculateCurrentPrice());
+            const rawPercentGain = ((currentP - activePosition.entryPrice) / activePosition.entryPrice);
+            let totalGainPercent = rawPercentGain * activePosition.leverage;
+
+            if (diamondHandsActive) totalGainPercent *= 2.0;
+
+            const pnlAmount = activePosition.size * totalGainPercent;
+            const isProfit = pnlAmount >= 0;
+
+            pnlLabel.className = `dash-val ${isProfit ? 'pnl-green' : 'pnl-red'}`;
+            pnlLabel.innerText = `${isProfit ? '+' : ''}$${Math.round(pnlAmount).toLocaleString()} (${(totalGainPercent * 100).toFixed(0)}%)`;
+
+            // Check Liquidation Condition
+            if (totalGainPercent <= -1.0) {
+                triggerLiquidation();
+            }
+        }
+
+        function triggerLiquidation() {
+            playSound('liquidated');
+            gameCard.classList.add('shaking');
+            showFloatingText("💥 LIQUIDATED! -100%", buyBtn, "var(--neon-red)");
+
+            cashBalance = Math.max(0, cashBalance - activePosition.size);
+            activePosition = null;
+            updateDashboard();
+            updateTradePnL();
+
+            setEvent("💀 TRADE LIQUIDATED! 100% MARGIN LOST!", "whale");
+
+            setTimeout(() => gameCard.classList.remove('shaking'), 500);
+
+            if (cashBalance <= 0) {
+                endGame(false, "TOTAL BANKRUPTCY! Margin called to zero.");
+            }
         }
 
         /* ===================================================================
-           CORE GAMEPLAY LOOPS
+           TRADING ACTIONS: BUY & SELL
            =================================================================== */
+        function buyTheDipAction() {
+            initAudio();
 
-        function startGame() {
-            if (window.innerWidth < 768) {
-                const docElm = document.documentElement;
-                if (docElm.requestFullscreen) docElm.requestFullscreen().catch(() => {});
-                else if (docElm.webkitRequestFullscreen) docElm.webkitRequestFullscreen().catch(() => {});
+            if (state === 'ended') return;
+
+            if (state === 'ready') {
+                startRound();
             }
 
+            // Check if Sniper Entry (buying below 35% or near bottom wick)
+            const isSniper = marketPricePercent <= 35.0;
+            let pumpMultiplier = 1.0;
+
+            if (isSniper) {
+                sniperEntries++;
+                pumpMultiplier = 3.0;
+                playSound('sniper');
+                showFloatingText("🎯 SNIPER DIP! +3X!", buyBtn, "var(--neon-cyan)");
+                setEvent("🎯 SNIPER ENTRY SECURED! +3X PUMP MOMENTUM!", "squeeze");
+            } else {
+                playSound('buy');
+            }
+
+            // Open position if none active
+            if (!activePosition) {
+                totalTrades++;
+                const positionSize = Math.min(cashBalance, 2500);
+                activePosition = {
+                    entryPrice: parseFloat(calculateCurrentPrice()),
+                    entryPercent: marketPricePercent,
+                    size: positionSize,
+                    leverage: currentLeverage
+                };
+                showFloatingText(`🟢 OPENED ${currentLeverage}X LONG!`, buyBtn, "var(--neon-green)");
+            }
+
+            // Pump the market
+            marketPricePercent += (clickPumpAmount * pumpMultiplier);
+
+            if (currentCandle) {
+                currentCandle.close = marketPricePercent;
+                currentCandle.high = Math.max(currentCandle.high, marketPricePercent);
+            }
+
+            updateUI();
+
+            // Button tactile shrink
+            buyBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => { buyBtn.style.transform = ''; }, 60);
+        }
+
+        function takeProfitAction() {
+            if (!activePosition) return;
+
+            const currentP = parseFloat(calculateCurrentPrice());
+            const rawPercentGain = ((currentP - activePosition.entryPrice) / activePosition.entryPrice);
+            let totalGainPercent = rawPercentGain * activePosition.leverage;
+            if (diamondHandsActive) totalGainPercent *= 2.0;
+
+            const pnlAmount = activePosition.size * totalGainPercent;
+            cashBalance += pnlAmount;
+
+            if (pnlAmount > 0) {
+                winningTrades++;
+                playSound('profit');
+                showFloatingText(`💰 +$${Math.round(pnlAmount).toLocaleString()} PROFIT!`, sellBtn, "var(--neon-green)");
+                setEvent(`💰 PROFIT LOCKED: +$${Math.round(pnlAmount).toLocaleString()}!`, "elon");
+                triggerConfetti(15);
+            } else {
+                playSound('buy');
+                showFloatingText(`PAPER HANDS: $${Math.round(pnlAmount).toLocaleString()}`, sellBtn, "var(--neon-yellow)");
+            }
+
+            activePosition = null;
+            updateDashboard();
+            updateTradePnL();
+            updateUI();
+        }
+
+        function showFloatingText(text, targetEl, color = 'var(--neon-green)') {
+            const tag = document.createElement('div');
+            tag.className = 'floating-tag';
+            tag.innerText = text;
+            tag.style.color = color;
+            tag.style.textShadow = `0 0 10px ${color}`;
+
+            const rect = targetEl.getBoundingClientRect();
+            tag.style.left = `${rect.left + rect.width / 2 - 40}px`;
+            tag.style.top = `${rect.top - 10}px`;
+
+            document.body.appendChild(tag);
+            setTimeout(() => tag.remove(), 1000);
+        }
+
+        /* ===================================================================
+           ROUND CONTROLLER
+           =================================================================== */
+        function startRound() {
             state = 'playing';
             startTime = Date.now();
-            score = 0;
-            marketPricePercent = 50.0;
             elapsed = 0;
             tickCounter = 0;
-            
-            // Clear historical records to show only the active game path
             candles = [];
-            
-            // Open the first live candlestick
+
             currentCandle = {
                 open: marketPricePercent,
                 close: marketPricePercent,
@@ -1036,22 +1433,28 @@
                 low: marketPricePercent
             };
 
-            buyBtn.classList.remove('pulsing');
-            instructionLabel.innerText = "TAP RAPIDLY TO PUMP!";
+            setEvent("⚡ BATTLE COMMENCED: SQUEEZE THE BEARS & SECURE PROFIT!", "squeeze");
 
-            // Game main interval loop
+            // Event scheduler (every 3 to 4 seconds)
+            const eventInterval = setInterval(() => {
+                if (state !== 'playing') {
+                    clearInterval(eventInterval);
+                    return;
+                }
+                triggerRandomEvent();
+            }, 3600);
+
+            // Main Game Loop
             gameLoopTimer = setInterval(() => {
                 const now = Date.now();
                 elapsed = now - startTime;
                 const timeRemaining = Math.max(0, GAME_DURATION - elapsed);
 
-                // Update digital countdown display
                 timerLabel.innerText = `${(timeRemaining / 1000).toFixed(1)}s`;
 
-                // Bear Market Drain action
-                marketPricePercent -= AI_DRAIN_PER_TICK;
+                // Natural Bear drain
+                marketPricePercent -= aiDrainRate;
 
-                // Update current candle wicks and body close
                 if (currentCandle) {
                     currentCandle.close = marketPricePercent;
                     currentCandle.high = Math.max(currentCandle.high, marketPricePercent);
@@ -1059,9 +1462,7 @@
                 }
 
                 tickCounter++;
-                
-                // Close current candle and open a new one every 500ms (10 ticks)
-                if (tickCounter % TICKS_PER_CANDLE === 0 && timeRemaining > 0) {
+                if (tickCounter % CANDLE_TICKS === 0 && timeRemaining > 0) {
                     candles.push(currentCandle);
                     currentCandle = {
                         open: marketPricePercent,
@@ -1073,161 +1474,113 @@
 
                 updateUI();
 
-                // Trigger card shakes on severe price drops (< 20%)
-                if (marketPricePercent < 20) {
-                    gameCard.classList.add('shaking');
-                } else {
-                    gameCard.classList.remove('shaking');
-                }
-
-                // Check game finish state
                 if (timeRemaining <= 0) {
-                    endGame();
+                    endGame(cashBalance >= INITIAL_BALANCE);
                 }
             }, TICK_INTERVAL);
         }
 
-        function buyTheDip() {
-            initAudio();
-
-            if (state === 'ended') return;
-
-            if (state === 'ready') {
-                startGame();
-            }
-
-            score++;
-            scoreLabel.innerText = score;
-
-            // Pump the market price up!
-            marketPricePercent += USER_CLICK_INCREASE;
-
-            // Instantly update current candle metrics
-            if (currentCandle) {
-                currentCandle.close = marketPricePercent;
-                currentCandle.high = Math.max(currentCandle.high, marketPricePercent);
-            }
-
-            updateUI();
-            playSound('click');
-
-            // Tactile click scale shrink
-            buyBtn.style.transform = 'scale(0.96) translateY(4px)';
-            setTimeout(() => {
-                if (state !== 'ended') {
-                    buyBtn.style.transform = '';
-                }
-            }, 60);
-        }
-
-        function endGame() {
+        function endGame(isWin, customMsg) {
             clearInterval(gameLoopTimer);
             state = 'ended';
 
-            // Close the final active candle into history
-            if (currentCandle) {
-                candles.push(currentCandle);
-                currentCandle = null;
+            // Auto cash-out any open trade
+            if (activePosition) {
+                takeProfitAction();
             }
-            updateUI();
 
-            gameCard.classList.remove('shaking');
-            buyBtn.style.transform = '';
-            buyBtn.style.display = 'none';
-            instructionLabel.style.display = 'none';
+            const roi = (((cashBalance - INITIAL_BALANCE) / INITIAL_BALANCE) * 100).toFixed(0);
 
-            const isWin = marketPricePercent >= 50.0;
-            const finalFormattedPrice = `$${Math.round(marketPricePercent * 1000).toLocaleString()}`;
-            
-            resultOverlay.className = `result-overlay active ${isWin ? 'win' : 'lose'}`;
+            // Assign Persona Badge
+            let badge = "🏆";
+            let persona = "Chad Institutional Whale";
+            let desc = "You dominated the book and sucked liquidity out of retail bears!";
 
-            if (isWin) {
-                resultBadge.innerText = "🚀";
-                resultTitle.innerText = "BULL RUN SECURED!";
-                resultDesc.innerText = `You successfully squeezed the bears and saved the market! 💎🙌`;
-                playSound('win');
-                triggerConfetti();
+            if (cashBalance >= 20000) {
+                badge = "🐋";
+                persona = "Chad Institutional Whale";
+                desc = "Legendary performance! The Wall Street floor whispers your name.";
+            } else if (sniperEntries >= 3) {
+                badge = "🎯";
+                persona = "Apex Sniper Scalper";
+                desc = "Flawless entries at bottom wicks. You never catch a falling knife!";
+            } else if (cashBalance > INITIAL_BALANCE) {
+                badge = "💎";
+                persona = "Diamond Hands Maestro";
+                desc = "Survived high volatility and closed cleanly in green profit.";
+            } else if (cashBalance > 0) {
+                badge = "📄";
+                persona = "Paper Hands Panic Seller";
+                desc = "Cut trades too early and took small hits. Still alive to trade tomorrow!";
             } else {
-                resultBadge.innerText = "🐻";
-                resultTitle.innerText = "REKT BY THE BEAR!";
-                resultDesc.innerText = `Liquidation triggered! The bear market crashed the price below break-even. 🐻💸`;
-                playSound('lose');
+                badge = "💀";
+                persona = "Degenerate Liquidated Gambler";
+                desc = "Full degen leverage blew your account! Risk management where?";
             }
 
-            finalScore.innerText = score;
-            finalPrice.innerText = finalFormattedPrice;
+            resultBadge.innerText = badge;
+            personaTag.innerText = persona;
+            resultTitle.innerText = isWin ? "BULL VICTORY!" : "MARKET CLOSED!";
+            resultDesc.innerText = customMsg || desc;
+
+            finalBalance.innerText = `$${Math.round(cashBalance).toLocaleString()}`;
+            finalRoi.innerText = `${roi >= 0 ? '+' : ''}${roi}%`;
+            finalRoi.style.color = roi >= 0 ? 'var(--neon-green)' : 'var(--neon-red)';
+            finalTrades.innerText = `${winningTrades} / ${totalTrades}`;
+            finalSnipers.innerText = `${sniperEntries} 🎯`;
+
+            resultOverlay.className = `result-overlay active ${isWin ? 'win' : 'lose'}`;
+            if (isWin) triggerConfetti(35);
 
             // WhatsApp Share
-            const shareText = `I scored ${score} clicks in 10 seconds and survived the crypto crash! Can you beat my score? Play here: https://tradejournall.com/game`;
+            const shareText = `I made $${Math.round(cashBalance).toLocaleString()} (${roi >= 0 ? '+' : ''}${roi}% ROI) in Buy The Dip!\nMy Trader Persona: ${badge} ${persona}!\nCan you beat my trading skills? Play free: https://tradejournall.com/game`;
             shareBtn.onclick = () => {
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
             };
         }
 
-        function resetGame() {
+        function resetRound() {
+            resultOverlay.className = "result-overlay";
             state = 'ready';
-            score = 0;
-            elapsed = 0;
-            tickCounter = 0;
+            timerLabel.innerText = "15.0s";
+            shieldStatus.innerText = "Ready";
+            shieldBtn.classList.remove('active-glow');
+            shieldBtn.disabled = false;
+            whaleStatus.innerText = "Ready";
+            whaleBtn.disabled = false;
+            diamondStatus.innerText = "Ready (2x)";
+            diamondBtn.classList.remove('active-glow');
+            diamondBtn.disabled = false;
 
-            timerLabel.innerText = "10.0s";
-            scoreLabel.innerText = "0";
-            headerTitle.innerText = "BUY THE DIP";
-            instructionLabel.innerText = "Click Button to Start Battle";
-
-            gameCard.classList.remove('bull-run', 'crash-mode', 'neutral-mode', 'shaking');
-            resultOverlay.className = "result-overlay"; // Hide modal
-
-            buyBtn.style.display = 'flex';
-            buyBtn.style.transform = '';
-            buyBtn.classList.add('pulsing');
-            instructionLabel.style.display = 'block';
-
-            loadHistoricalData();
+            initGame();
+            setEvent("⚡ READY: SELECT LEVERAGE & CLICK BUY TO START!", "squeeze");
         }
 
-        // Add accessible snappy tap/click event listeners
-        buyBtn.addEventListener('click', () => {
-            buyTheDip();
-        });
+        // Event Listeners
+        buyBtn.addEventListener('click', buyTheDipAction);
+        sellBtn.addEventListener('click', takeProfitAction);
+        restartBtn.addEventListener('click', resetRound);
 
-        restartBtn.addEventListener('click', () => {
-            playSound('click');
-            resetGame();
-        });
-
-        // Initialize historical data on page load
-        loadHistoricalData();
-
-        /* ===================================================================
-           CELEBRATION CONFETTI ENGINE (Zero-dependency canvas fallback)
-           =================================================================== */
-        function triggerConfetti() {
+        // Confetti
+        function triggerConfetti(count = 25) {
             const colors = ['#00ff66', '#00f0ff', '#ffffff', '#ffb700'];
-            const container = document.getElementById('result-overlay');
-            
-            for (let i = 0; i < 40; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'confetti';
-                
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.background = randomColor;
-                particle.style.left = `${Math.random() * 90 + 5}%`;
-                particle.style.width = `${Math.random() * 6 + 6}px`;
-                particle.style.height = `${Math.random() * 6 + 6}px`;
-                particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                
-                const delay = Math.random() * 0.5;
-                const duration = Math.random() * 1.5 + 1.2;
-                particle.style.animation = `fall ${duration}s linear ${delay}s forwards`;
-                
-                container.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.remove();
-                }, (delay + duration) * 1000);
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = `${Math.random() * 90 + 5}%`;
+                p.style.width = `${Math.random() * 6 + 6}px`;
+                p.style.height = `${Math.random() * 6 + 6}px`;
+                p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                const dur = Math.random() * 1.5 + 1.0;
+                p.style.animation = `fall ${dur}s linear forwards`;
+                resultOverlay.appendChild(p);
+                setTimeout(() => p.remove(), dur * 1000);
             }
         }
+
+        // Run initial setup
+        initGame();
     </script>
 </body>
 </html>
