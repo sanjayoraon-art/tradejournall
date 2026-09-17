@@ -166,20 +166,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
         }
 
-        const postType = (req.query.type as string) || req.body?.type || (new Date().getUTCHours() >= 2 ? 'evergreen' : 'trending');
+        // Strategy: Exclusively Evergreen posts (timeless, high search-volume, enduring SEO value)
+        const postType = 'evergreen';
 
-        const topicDirective = postType === 'evergreen'
-            ? `TOPIC TYPE: EVERGREEN MASTER-CLASS (TIMELESS TRADING FOUNDATIONS)
-Write an exhaustive, deeply researched, timeless master-class trading guide on an enduring high-value concept. Select a pillar such as:
-- Institutional Order Flow, Liquidity Sweeps, and Fair Value Gaps (Smart Money / ICT Concepts)
-- Wyckoff Accumulation/Distribution Schematics, Springs, and Phase Analysis
-- Mathematical Position Sizing, Kelly Criterion, and Capital Preservation Frameworks
-- Multi-Timeframe Volume Profile, Value Area High/Low, and Delta Divergence
-- The Quantitative Psychology of High-Stake Trading: Overcoming Fear of Loss, Revenge Trading, and Cognitive Biases
-REQUIREMENT: Provide exact step-by-step entry triggers, invalidation criteria, and risk-to-reward mathematics (1:2 to 1:3+). The content MUST remain authoritative and completely valid 5+ years from now.`
-            : `TOPIC TYPE: REAL-TIME TRENDING MARKET ANALYSIS (CURRENT BREAKOUTS & MACRO SHIFTS)
-Conduct a timely, deeply researched, quantitative market analysis of an active, high-impact CURRENT TRENDING topic in Crypto (e.g. Bitcoin ETF institutional absorption, halving supply dynamics), US Equities (e.g. Fed interest rate paths, bond yield curve steepening, big tech chip earnings momentum), or Global Forex.
-REQUIREMENT: Cite specific institutional metrics, on-chain flows, macro correlations, and verified structural market mechanics driving smart money vs retail liquidity.`;
+        const evergreenPillars = [
+            'Institutional Order Flow, Liquidity Sweeps, and Fair Value Gaps (Smart Money / ICT Concepts)',
+            'Wyckoff Accumulation/Distribution Schematics, Springs, and Phase Analysis',
+            'Mathematical Position Sizing, The 1% Risk Rule, Kelly Criterion, and Capital Preservation Frameworks',
+            'Multi-Timeframe Volume Profile, Point of Control (POC), Value Area (VAH/VAL), and Delta Divergence',
+            'The Quantitative Psychology of High-Stake Trading: Overcoming Fear of Loss, Revenge Trading, and Cognitive Biases',
+            'Advanced Price Action & Market Structure: Break of Structure (BOS), Change of Character (CHoCH), and Supply & Demand Zones',
+            'Institutional Trading Indicators: Anchored VWAP (AVWAP), Hidden RSI Divergence, and Exponential Moving Average Confluence',
+            'The Disciplined Trader’s Edge: How to Build and Analyze a Winning Trading Journal (Expectancy, Win Rate, and Drawdown Tracking)',
+            'Execution Mastery: Limit vs Market Orders, Slippage Reduction, Stop-Loss Optimization, and Risk-to-Reward Ratios (1:2 to 1:5)',
+            'Multi-Timeframe Top-Down Analysis: From Monthly/Weekly Trend Direction to 15m/5m High-Probability Precision Entries'
+        ];
+
+        const chosenPillar = evergreenPillars[Math.floor(Math.random() * evergreenPillars.length)];
+
+        const topicDirective = `TOPIC TYPE: EVERGREEN MASTER-CLASS (TIMELESS TRADING FOUNDATIONS)
+Write an exhaustive, deeply researched, timeless master-class trading guide on an enduring high-value concept. Focus on:
+PRIMARY PILLAR: ${chosenPillar}
+
+REQUIREMENT: Provide exact step-by-step entry triggers, invalidation criteria, and risk-to-reward mathematics (1:2 to 1:3+). The content MUST remain authoritative, universally educational, and completely valid 5+ years from now.`;
 
         const prompt = `You are a legendary Wall Street quantitative analyst and managing partner of a top-tier proprietary trading firm.
 ${topicDirective}
