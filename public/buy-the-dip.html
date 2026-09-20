@@ -753,6 +753,178 @@
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(480px) rotate(720deg); opacity: 0; }
         }
+
+        /* ===================================================================
+           MOBILE RESPONSIVE OPTIMIZATIONS (Smartphones & Small Viewports)
+           =================================================================== */
+        @media (max-width: 600px) {
+            body {
+                padding: 4px;
+                min-height: 100vh;
+                min-height: 100dvh;
+            }
+
+            .game-wrapper {
+                max-width: 100%;
+            }
+
+            .game-card {
+                padding: 10px 10px;
+                border-radius: 18px;
+            }
+
+            .top-bar {
+                margin-bottom: 6px;
+            }
+
+            .asset-btn {
+                padding: 4px 6px;
+                font-size: 0.6rem;
+            }
+
+            .sound-btn {
+                width: 30px;
+                height: 30px;
+            }
+
+            .dashboard-panel {
+                gap: 5px;
+                margin-bottom: 6px;
+            }
+
+            .dash-box {
+                padding: 5px 6px;
+                border-radius: 10px;
+            }
+
+            .dash-lbl {
+                font-size: 0.52rem;
+                letter-spacing: 0.5px;
+            }
+
+            .dash-val {
+                font-size: 0.88rem;
+            }
+
+            .leverage-bar {
+                padding: 3px 6px;
+                margin-bottom: 6px;
+                font-size: 0.6rem;
+            }
+
+            .lev-btn {
+                padding: 2px 5px;
+                font-size: 0.6rem;
+                border-radius: 5px;
+            }
+
+            .event-banner {
+                min-height: 26px;
+                padding: 4px 8px;
+                font-size: 0.64rem;
+                margin-bottom: 6px;
+            }
+
+            .chart-container {
+                height: min(220px, 32vh);
+                border-radius: 14px;
+                margin-bottom: 6px;
+            }
+
+            .candles-view {
+                padding: 0 6px 0 65px; /* Reduced from 110px for mobile screens */
+                gap: 5px;
+            }
+
+            .grid-line span {
+                font-size: 0.48rem;
+                padding: 1px 4px;
+                margin-left: 4px;
+            }
+
+            .powerups-bar {
+                gap: 5px;
+                margin-bottom: 8px;
+            }
+
+            .powerup-btn {
+                padding: 6px 4px;
+                font-size: 0.65rem;
+                border-radius: 10px;
+            }
+
+            .powerup-btn span {
+                font-size: 0.52rem;
+            }
+
+            .actions-grid {
+                gap: 6px;
+            }
+
+            .trade-btn {
+                padding: 11px 6px;
+                font-size: 0.9rem;
+                border-radius: 12px;
+                min-height: 48px;
+            }
+
+            .trade-btn sub {
+                font-size: 0.52rem;
+            }
+
+            .result-overlay {
+                padding: 16px 12px;
+            }
+
+            .result-badge {
+                font-size: 2.6rem;
+                margin-bottom: 4px;
+            }
+
+            .persona-tag {
+                font-size: 0.65rem;
+                padding: 3px 10px;
+            }
+
+            .result-title {
+                font-size: 1.25rem;
+                margin-bottom: 4px;
+            }
+
+            .result-desc {
+                font-size: 0.75rem;
+                margin-bottom: 12px;
+            }
+
+            .stats-breakdown {
+                padding: 8px;
+                margin-bottom: 12px;
+                gap: 6px;
+            }
+
+            .break-lbl {
+                font-size: 0.52rem;
+            }
+
+            .break-val {
+                font-size: 1.05rem;
+            }
+
+            .btn-overlay {
+                padding: 11px;
+                font-size: 0.85rem;
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .chart-container {
+                height: 180px;
+            }
+            .dashboard-panel, .leverage-bar, .event-banner, .powerups-bar {
+                margin-bottom: 4px;
+            }
+        }
     </style>
 </head>
 <body>
