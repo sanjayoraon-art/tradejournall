@@ -27,11 +27,19 @@
             "destination": "/privacy.html"
         },
         {
+            "source": "/game",
+            "destination": "/game-page.html"
+        },
+        {
+            "source": "/buy-the-dip",
+            "destination": "/game-page.html"
+        },
+        {
             "source": "/blog/:slug",
             "destination": "/api/render-blog?slug=:slug"
         },
         {
-            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html|privacy\\.html).*)",
+            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html|privacy\\.html|game|buy-the-dip).*)",
             "destination": "/index.html"
         }
     ]

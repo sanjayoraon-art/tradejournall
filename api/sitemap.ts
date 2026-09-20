@@ -62,6 +62,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/game</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/buy-the-dip</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/game-page.html</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/buy-the-dip.html</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/blog</loc>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
