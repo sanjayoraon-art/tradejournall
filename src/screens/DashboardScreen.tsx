@@ -68,7 +68,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ performanceSta
                         <Zap size={24} className="text-white" />
                     </div>
                     <div>
-                        <h3 className={`text-base font-bold ${theme.text}`}>Buy The Dip 🎮</h3>
+                        <h3 className={`text-base font-bold ${theme.text}`}>Candle Clash 🎮</h3>
                         <p className="text-xs text-green-500 font-semibold">Play the trading mini-game!</p>
                     </div>
                 </div>

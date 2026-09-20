@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buy The Dip! — Live Crypto & Stock Trading Simulator Game</title>
+    <title>Candle Clash — Stock & Crypto Day Trading Simulator Game</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Play Buy The Dip Game online! An intense 15-second crypto & stock market trading simulator. Buy the bottom wicks, leverage up to 100x, time your exits, and squeeze the bears. Free to play!">
-    <meta name="keywords" content="buy the dip, buy the dip game, trading game, crypto trading game, stock market game, day trading simulator, bull vs bear, trade journal game">
+    <meta name="description" content="Play Candle Clash online! An intense crypto & stock market day trading simulator. Buy bottom wicks, leverage up to 100x, time your exits, and squeeze the bears. Free to play!">
+    <meta name="keywords" content="candle clash, candle clash game, trading game, crypto trading game, stock market game, day trading simulator, buy the dip, bull vs bear, trade journal game">
     <meta name="author" content="Trade Journal">
     <link rel="canonical" href="https://tradejournall.com/buy-the-dip.html">
 
@@ -16,13 +16,13 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "Buy The Dip Trading Game",
+      "name": "Candle Clash: Stock & Crypto Trading Game",
       "url": "https://tradejournall.com/buy-the-dip.html",
       "applicationCategory": "GameApplication",
-      "genre": "Trading Simulator, Educational Game",
+      "genre": "Trading Simulator, Educational Game, Day Trading Game",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript",
-      "description": "Play Buy The Dip — an addictive 15-second crypto & stock trading game. Test your market instincts, time the bottom wicks, and squeeze the bears in real-time.",
+      "description": "Play Candle Clash — an addictive stock & crypto day trading simulator. Test your market instincts, time bottom wicks, and squeeze the bears in real-time.",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -812,7 +812,7 @@
             <!-- Dynamic Market Event Banner -->
             <div class="event-banner" id="event-banner">
                 <span id="event-icon">⚡</span>
-                <span id="event-text">MARKET READY: BUY THE DIP & TIME YOUR EXIT!</span>
+                <span id="event-text">CANDLE CLASH READY: TIME YOUR ENTRIES & EXITS!</span>
             </div>
 
             <!-- Candlestick Visual Chart -->
@@ -1560,7 +1560,7 @@
             if (isWin) triggerConfetti(35);
 
             // WhatsApp Share
-            const shareText = `I made $${Math.round(cashBalance).toLocaleString()} (${roi >= 0 ? '+' : ''}${roi}% ROI) in Buy The Dip!\nMy Trader Persona: ${badge} ${persona}!\nCan you beat my trading skills? Play free: https://tradejournall.com/game`;
+            const shareText = `I made $${Math.round(cashBalance).toLocaleString()} (${roi >= 0 ? '+' : ''}${roi}% ROI) in Candle Clash!\nMy Trader Persona: ${badge} ${persona}!\nCan you beat my trading skills? Play free: https://tradejournall.com/game`;
             shareBtn.onclick = () => {
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
             };

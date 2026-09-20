@@ -131,7 +131,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                                 style={{ textDecoration: 'none' }}
                             >
                                 <Zap size={20} className="text-green-500" />
-                                Play Buy The Dip
+                                Play Candle Clash ⚡
                             </a>
                         </div>
 

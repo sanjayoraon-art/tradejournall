@@ -62,6 +62,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/candle-clash</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/game</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>

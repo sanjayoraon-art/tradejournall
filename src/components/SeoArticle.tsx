@@ -157,19 +157,19 @@ export const SeoArticle: React.FC = () => {
 
                 <h2 className="text-3xl font-bold text-white mt-12 mb-6">The Path to Becoming a Disciplined 1% Trader</h2>
 
-                <h2 className="text-3xl font-bold text-white mt-16 mb-6">Practice Your Instincts: Play the "Buy The Dip" Day Trading Game</h2>
+                <h2 className="text-3xl font-bold text-white mt-16 mb-6">Practice Your Instincts: Play the "Candle Clash" Day Trading Game</h2>
 
                 <p className="mb-6 leading-relaxed">
-                    While journaling is the foundation of long-term consistency, sharpening your real-time market intuition is equally critical. That is why we built the <strong className="text-gray-100">Buy The Dip Trading Game</strong>, a high-speed <strong className="text-gray-100">stock market simulator</strong> and <strong className="text-gray-100">crypto trading game</strong> designed to test your chart-reading reflexes.
+                    While journaling is the foundation of long-term consistency, sharpening your real-time market intuition is equally critical. That is why we built <strong className="text-gray-100">Candle Clash</strong>, an intense <strong className="text-gray-100">stock market simulator</strong> and <strong className="text-gray-100">crypto day trading game</strong> designed to test your chart-reading reflexes.
                 </p>
 
                 <div className="my-8 rounded-2xl overflow-hidden border border-gray-700 shadow-2xl relative group">
                     <div className="absolute inset-0 bg-green-500/20 mix-blend-overlay z-10 group-hover:bg-transparent transition-all duration-500"></div>
-                    <img src="https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&q=80&w=1200" alt="Buy The Dip Trading Game Interface and Stock Market Chart" className="w-full h-[350px] object-cover" />
+                    <img src="https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&q=80&w=1200" alt="Candle Clash Trading Game Interface and Stock Market Chart" className="w-full h-[350px] object-cover" />
                 </div>
 
                 <p className="mb-6 leading-relaxed">
-                    In this intense 10-second challenge, you are presented with a live, randomized candlestick chart. You have seconds to decide: is the market about to pump (Bull), or is it about to crash (Bear)? Correct calls build your streak; wrong calls wipe you out. It is the ultimate <strong className="text-gray-100">day trading game</strong> to practice identifying support, resistance, and momentum without risking real capital. Whether you are a forex scalper or a crypto investor waiting for the perfect entry, the <a href="/game-page.html" className="text-green-400 hover:text-green-300 underline">Buy The Dip crypto game</a> trains your brain to react to price action instantly.
+                    In this intense challenge, you are presented with a live, randomized candlestick chart. You have seconds to decide: buy the bottom wicks, leverage up to 100x, time your exits, and squeeze the bears! It is the ultimate <strong className="text-gray-100">day trading game</strong> to practice identifying support, resistance, and momentum without risking real capital. Whether you are a forex scalper or a crypto investor, the <a href="/game-page.html" className="text-green-400 hover:text-green-300 underline">Candle Clash stock &amp; crypto game</a> trains your brain to react to price action instantly.
                 </p>
                 
                 <div className="flex justify-start mb-12 mt-4">
