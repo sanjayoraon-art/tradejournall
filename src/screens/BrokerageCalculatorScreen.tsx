@@ -7,6 +7,7 @@ interface BrokerageCalculatorScreenProps {
   theme: any;
   isDarkMode: boolean;
   primaryCurrencySymbol: string;
+  initialTab?: 'stock' | 'crypto';
   onLogTrade?: (tradeData: { symbol: string; entryPrice: number; exitPrice: number; pnl: number; type: 'Long' | 'Short' }) => void;
   onBackToLanding?: () => void;
   onSignIn?: () => void;
@@ -16,12 +17,26 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
   theme,
   isDarkMode,
   primaryCurrencySymbol,
+  initialTab = 'stock',
   onLogTrade,
   onBackToLanding,
   onSignIn,
 }) => {
-  const [activeTab, setActiveTab] = useState<'stock' | 'crypto'>('stock');
+  const [activeTab, setActiveTab] = useState<'stock' | 'crypto'>(() => {
+    const path = window.location.pathname;
+    if (path.includes('coindcx-vs-delta') || path.includes('/calculators/crypto')) return 'crypto';
+    return initialTab;
+  });
   const [showBreakdown, setShowBreakdown] = useState(true);
+
+  // Sync tab change with SEO clean URLs
+  const handleTabChange = (tab: 'stock' | 'crypto') => {
+    setActiveTab(tab);
+    const newPath = tab === 'stock'
+      ? '/calculators/stocks/zerodha-vs-groww-brokerage-calculator'
+      : '/calculators/crypto/coindcx-vs-delta-exchange-fee-calculator';
+    window.history.replaceState({}, '', newPath);
+  };
 
   // Stock State
   const [stockInput, setStockInput] = useState<StockInput>({
@@ -95,7 +110,7 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
         {/* TAB SWITCHER */}
         <div className="flex bg-slate-800/80 p-1 rounded-2xl border border-slate-700/80 self-start md:self-auto">
           <button
-            onClick={() => setActiveTab('stock')}
+            onClick={() => handleTabChange('stock')}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 ${
               activeTab === 'stock'
                 ? 'bg-emerald-500 text-slate-950 shadow-lg'
@@ -105,7 +120,7 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
             <span>🇮🇳 Zerodha vs Groww</span>
           </button>
           <button
-            onClick={() => setActiveTab('crypto')}
+            onClick={() => handleTabChange('crypto')}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 ${
               activeTab === 'crypto'
                 ? 'bg-amber-500 text-slate-950 shadow-lg'
