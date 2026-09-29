@@ -638,6 +638,96 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
 
       </div>
 
+      {/* IN-PAGE SEO EXPLAINER ARTICLE & FAQ ACCORDION */}
+      <div className="mt-12 pt-8 border-t border-slate-800 space-y-8 text-slate-300">
+        {activeTab === 'stock' ? (
+          <article className="prose prose-invert max-w-none space-y-6 text-sm leading-relaxed">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Zerodha vs Groww Brokerage Charges: 2026 Complete Tax & Fee Guide
+              </h2>
+              <p className="text-gray-400">
+                When trading Indian equities, options, or intraday stocks, understanding the exact fee structure between <strong>Zerodha</strong> and <strong>Groww</strong> ensures you calculate your true breakeven point and net in-hand profit before taking a position.
+              </p>
+
+              <h3 className="text-xl font-bold text-emerald-400">1. Brokerage Charges Breakdown</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-300">
+                <li><strong>Equity Options Trading</strong>: Both Zerodha and Groww charge a flat <strong>₹20 per executed order</strong> (₹20 on Buy + ₹20 on Sell = ₹40 total per round trade).</li>
+                <li><strong>Equity Intraday Trading</strong>: Zerodha charges <strong>0.03% or ₹20</strong> per order (whichever is lower). Groww charges <strong>0.05% or ₹20</strong> per order. For smaller intraday orders below ₹40,000 turnover, Zerodha is up to 40% cheaper.</li>
+              </ul>
+
+              <h3 className="text-xl font-bold text-emerald-400">2. Government Taxes & Exchange Charges</h3>
+              <p className="text-gray-400">
+                In addition to broker commissions, statutory government taxes are levied automatically on every trade:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                  <h4 className="font-bold text-white mb-1">STT (Securities Transaction Tax)</h4>
+                  <p className="text-xs text-gray-400">0.0625% on Sell side premium for Options. 0.025% on Sell side turnover for Intraday.</p>
+                </div>
+                <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                  <h4 className="font-bold text-white mb-1">18% GST (Goods & Services Tax)</h4>
+                  <p className="text-xs text-gray-400">18% GST is levied on (Brokerage + Exchange Fees + SEBI Fees). GST is NOT charged on STT or Stamp Duty.</p>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold text-emerald-400">Frequently Asked Questions (FAQ)</h3>
+              <div className="space-y-4">
+                <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
+                  <h5 className="font-bold text-white mb-1">Which broker is cheaper for option trading in India?</h5>
+                  <p className="text-xs text-gray-400">Both Zerodha and Groww charge flat ₹20 per order for Options. However, Zerodha offers lower slippage, GTT order execution, and transparent charge breakdown audit tools.</p>
+                </div>
+                <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
+                  <h5 className="font-bold text-white mb-1">How is the breakeven point calculated for Options?</h5>
+                  <p className="text-xs text-gray-400">Breakeven Points = Total Taxes & Brokerage Charges ÷ Lot Quantity. On a 500 qty option trade, total charges of ₹87.50 require a minimum movement of +0.18 points per option contract to break even.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        ) : (
+          <article className="prose prose-invert max-w-none space-y-6 text-sm leading-relaxed">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                CoinDCX vs Delta Exchange Fee & Crypto Tax Math (2026 Guide)
+              </h2>
+              <p className="text-gray-400">
+                Crypto futures and options traders in India must account for exchange Maker/Taker fees as well as Section 194S 1% TDS and Section 115BBH 30% Flat Tax.
+              </p>
+
+              <h3 className="text-xl font-bold text-amber-400">1. Delta Exchange vs CoinDCX Fee Comparison</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-300">
+                <li><strong>Delta Exchange India</strong>: Charges <strong>0.02% Maker fee</strong> and <strong>0.05% Taker fee</strong> on futures, saving up to 33% compared to domestic exchanges.</li>
+                <li><strong>CoinDCX Futures</strong>: Charges <strong>0.025% Maker fee</strong> and <strong>0.075% Taker fee</strong>.</li>
+              </ul>
+
+              <h3 className="text-xl font-bold text-amber-400">2. Indian Crypto Tax Rules (Section 194S & Section 115BBH)</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                  <h4 className="font-bold text-white mb-1">1% TDS Withholding (Sec 194S)</h4>
+                  <p className="text-xs text-gray-400">1% TDS is deducted on gross sell transaction value. It can be claimed as a credit or refund on your annual ITR.</p>
+                </div>
+                <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                  <h4 className="font-bold text-white mb-1">30% Flat Tax (Sec 115BBH)</h4>
+                  <p className="text-xs text-gray-400">Flat 30% tax (plus 4% cess = 31.2%) is levied on net profits. Losses cannot be set off across different trading pairs.</p>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold text-amber-400">Frequently Asked Questions (FAQ)</h3>
+              <div className="space-y-4">
+                <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
+                  <h5 className="font-bold text-white mb-1">Why is Delta Exchange India cheaper than CoinDCX for futures?</h5>
+                  <p className="text-xs text-gray-400">Delta Exchange offers lower taker fees (0.05% vs 0.075%) and native INR liquidity, saving active futures traders thousands of rupees per month.</p>
+                </div>
+                <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
+                  <h5 className="font-bold text-white mb-1">How is TDS deducted on Delta Exchange India?</h5>
+                  <p className="text-xs text-gray-400">Delta Exchange automatically withhold 1% TDS on sell orders in compliance with Section 194S and submits it directly to the Indian Income Tax Department under your PAN.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        )}
+      </div>
+
     </div>
   );
 };
