@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell, Zap, ExternalLink, BookOpen } from 'lucide-react';
+import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell, Zap, ExternalLink, BookOpen, Scale } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { RiskRewardCalculatorScreen } from './screens/RiskRewardCalculatorScreen';
+import { BrokerageCalculatorScreen } from './screens/BrokerageCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -98,7 +99,10 @@ const App = () => {
 
     // Firebase Auth and Sync
     useEffect(() => {
-        if (!auth || !db) return;
+        if (!auth || !db) {
+            setAuthLoading(false);
+            return;
+        }
 
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -550,7 +554,7 @@ const App = () => {
         label: 'text-gray-600'
     };
 
-    const isDevDev = window.location.hostname === 'localhost';
+    const isDevDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !auth || !db;
 
     if (!isDevDev && (!auth || !db)) {
         return (
@@ -625,7 +629,41 @@ const App = () => {
             return <InformationScreen pageType={infoPage} onBack={() => setInfoPage(null)} theme={theme} />;
         }
         if (showLanding) {
-            return <LandingScreen onSignIn={() => setShowLanding(false)} onOpenInfo={(page) => setInfoPage(page)} theme={theme} isDarkMode={isDarkMode} />;
+            return (
+                <LandingScreen
+                    onSignIn={() => {
+                        setShowLanding(false);
+                        setCurrentScreen('dashboard');
+                    }}
+                    onOpenInfo={(page) => setInfoPage(page)}
+                    onOpenCalculator={() => {
+                        setShowLanding(false);
+                        setCurrentScreen('brokerage-calc');
+                    }}
+                    theme={theme}
+                    isDarkMode={isDarkMode}
+                />
+            );
+        }
+        if (currentScreen === 'brokerage-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <BrokerageCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => setShowLanding(true)}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
         }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
@@ -644,6 +682,7 @@ const App = () => {
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Backtesting" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
                     <DeskNavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
+                    <DeskNavButton icon={<Scale size={20} />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
                     <DeskNavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
                     <a 
                         href="/blog" 
@@ -901,6 +940,27 @@ const App = () => {
 
                     {currentScreen === 'risk-reward' && (
                         <RiskRewardCalculatorScreen theme={theme} isDarkMode={isDarkMode} primaryCurrencySymbol={globalCurrency} />
+                    )}
+
+                    {currentScreen === 'brokerage-calc' && (
+                        <BrokerageCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Calculator Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
                     )}
 
                     {currentScreen === 'profile' && (
