@@ -5,6 +5,8 @@ import remarkGfm from 'remark-gfm';
 import { db, appId } from '../utils/firebase';
 import { collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { ArrowLeft, Calendar, User, Share2, Facebook, Twitter, Link as LinkIcon, Loader2, Clock, List as ListIcon, ChevronRight } from 'lucide-react';
+import { DEFAULT_BLOG_POSTS } from '../utils/defaultArticles';
+import { getTopicRelevantImage } from '../utils/blogImages';
 
 interface ArticleScreenProps {
     slug: string;
@@ -71,7 +73,17 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, onHo
 
     useEffect(() => {
         const fetchArticle = async () => {
-            if (!db || !slug) return;
+            if (!slug) return;
+            const defaultMatch = DEFAULT_BLOG_POSTS.find(p => p.slug === slug);
+            if (defaultMatch) {
+                setArticle(defaultMatch);
+                setLoading(false);
+                return;
+            }
+            if (!db) {
+                setLoading(false);
+                return;
+            }
             try {
                 const q = query(
                     collection(db, 'artifacts', appId, 'blog'),
@@ -81,9 +93,12 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, onHo
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
                     setArticle(querySnapshot.docs[0].data());
+                } else if (defaultMatch) {
+                    setArticle(defaultMatch);
                 }
             } catch (error) {
                 console.error("Error fetching article:", error);
+                if (defaultMatch) setArticle(defaultMatch);
             } finally {
                 setLoading(false);
             }
@@ -343,16 +358,14 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, onHo
                     </p>
                 )}
 
-                {article.featuredImage && (
-                    <div className="rounded-3xl overflow-hidden shadow-2xl mb-12 flex justify-center bg-black/20 p-2">
-                        <img
-                            src={article.featuredImage}
-                            alt={article.title}
-                            className="object-contain rounded-2xl mx-auto"
-                            style={{ width: 'auto', maxWidth: '100%', maxHeight: '600px' }}
-                        />
-                    </div>
-                )}
+                {/* HD Topic-Matched Featured Image Banner */}
+                <div className="rounded-3xl overflow-hidden shadow-2xl mb-12 flex justify-center bg-black/20 border border-gray-800">
+                    <img
+                        src={getTopicRelevantImage(article.title, article.category, article.featuredImage)}
+                        alt={article.title}
+                        className="w-full max-h-[500px] object-cover rounded-2xl"
+                    />
+                </div>
             </header>
 
             {/* Table of Contents */}

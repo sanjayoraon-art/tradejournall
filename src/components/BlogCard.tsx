@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, User, ArrowRight, Clock, Tag } from 'lucide-react';
+import { getTopicRelevantImage } from '../utils/blogImages';
 
 interface BlogCardProps {
     post: {
@@ -19,6 +20,7 @@ interface BlogCardProps {
 }
 
 export const BlogCard: React.FC<BlogCardProps> = ({ post, onClick, theme }) => {
+    const displayImage = getTopicRelevantImage(post.title, post.category, post.featuredImage);
     // Robust date parsing (Timestamp, ISO string, Date object)
     const rawDate = post.date || post.lastUpdated;
     let formattedDate = 'Recent';
@@ -64,20 +66,12 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post, onClick, theme }) => {
             style={{ textDecoration: 'none' }}
         >
             <div className="aspect-video w-full overflow-hidden relative bg-gray-900">
-                {post.featuredImage ? (
-                    <img 
-                        src={post.featuredImage} 
-                        alt={post.title} 
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-6 text-center">
-                        <span className="text-gray-500 font-black text-lg tracking-tight group-hover:text-green-400 transition-colors">
-                            {post.title}
-                        </span>
-                    </div>
-                )}
+                <img 
+                    src={displayImage} 
+                    alt={post.title} 
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
                 
                 {post.category && (
                     <div className="absolute top-3 left-3 z-10">

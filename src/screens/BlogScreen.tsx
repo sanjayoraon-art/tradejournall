@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db, appId } from '../utils/firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { BlogCard } from '../components/BlogCard';
-import { Search, Filter, ArrowLeft, Loader2 } from 'lucide-react';
+import { Search, ArrowLeft, Loader2 } from 'lucide-react';
+import { DEFAULT_BLOG_POSTS } from '../utils/defaultArticles';
 
 interface BlogScreenProps {
     onBack: () => void;
@@ -11,16 +12,17 @@ interface BlogScreenProps {
 }
 
 export const BlogScreen: React.FC<BlogScreenProps> = ({ onBack, onArticleClick, theme }) => {
-    const [posts, setPosts] = useState<any[]>([]);
+    const [posts, setPosts] = useState<any[]>(DEFAULT_BLOG_POSTS);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const fetchPosts = async () => {
-            if (!db) return;
+            if (!db) {
+                setLoading(false);
+                return;
+            }
             try {
-                // Query active posts and sort in memory to guarantee newest posts are always first
-                // without triggering Firestore missing composite index errors
                 const q = query(
                     collection(db, 'artifacts', appId, 'blog'),
                     where('isActive', '==', true)
@@ -31,21 +33,24 @@ export const BlogScreen: React.FC<BlogScreenProps> = ({ onBack, onArticleClick, 
                     ...doc.data()
                 }));
 
-                // Sort descending: newest post first
-                fetchedPosts.sort((a: any, b: any) => {
-                    const getTime = (p: any) => {
-                        const val = p.date || p.lastUpdated || p.createdAt;
-                        if (!val) return 0;
-                        if (typeof val === 'object' && val.seconds) return val.seconds * 1000;
-                        const ms = new Date(val).getTime();
-                        return isNaN(ms) ? 0 : ms;
-                    };
-                    return getTime(b) - getTime(a);
-                });
-
-                setPosts(fetchedPosts);
+                if (fetchedPosts.length > 0) {
+                    fetchedPosts.sort((a: any, b: any) => {
+                        const getTime = (p: any) => {
+                            const val = p.date || p.lastUpdated || p.createdAt;
+                            if (!val) return 0;
+                            if (typeof val === 'object' && val.seconds) return val.seconds * 1000;
+                            const ms = new Date(val).getTime();
+                            return isNaN(ms) ? 0 : ms;
+                        };
+                        return getTime(b) - getTime(a);
+                    });
+                    setPosts(fetchedPosts);
+                } else {
+                    setPosts(DEFAULT_BLOG_POSTS);
+                }
             } catch (error) {
                 console.error("Error fetching blog posts:", error);
+                setPosts(DEFAULT_BLOG_POSTS);
             } finally {
                 setLoading(false);
             }

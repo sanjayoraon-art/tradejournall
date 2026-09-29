@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Disable crawling of admin and private endpoints
+Disallow: /admin
+Disallow: /api/private
+
+# Google Search Console Sitemap Index Location
 Sitemap: https://tradejournall.com/sitemap.xml
