@@ -1,14 +1,4 @@
 {
-    "crons": [
-        {
-            "path": "/api/generate-blog?type=evergreen",
-            "schedule": "30 0 * * *"
-        },
-        {
-            "path": "/api/generate-blog?type=evergreen",
-            "schedule": "30 12 * * *"
-        }
-    ],
     "rewrites": [
         {
             "source": "/sitemap.xml",

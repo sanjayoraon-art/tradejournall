@@ -146,15 +146,10 @@ async function notifyGoogleIndexing(articleUrl: string) {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    // 1. Security Check
-    const authHeader = req.headers.authorization;
-    const cronSecret = process.env.CRON_SECRET;
-    
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}` && req.body?.adminToken !== cronSecret) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const errors: string[] = [];
+    return res.status(403).json({
+        error: 'Automated AI blog generation has been disabled. All blog posts must be published manually via the Admin panel.'
+    });
+}
 
     try {
         const geminiApiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;

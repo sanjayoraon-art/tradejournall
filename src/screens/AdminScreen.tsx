@@ -614,6 +614,31 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
         return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     };
 
+    const handleDeleteAllBlogs = async () => {
+        if (!db) {
+            alert('Database not connected.');
+            return;
+        }
+        if (!window.confirm('⚠️ Are you sure you want to PERMANENTLY DELETE ALL BLOG POSTS? This action cannot be undone.')) {
+            return;
+        }
+        setIsLoading(true);
+        try {
+            const q = collection(db, 'artifacts', appId, 'blog');
+            const snap = await getDocs(q);
+            const deletePromises = snap.docs.map(d => deleteDoc(doc(db!, 'artifacts', appId, 'blog', d.id)));
+            await Promise.all(deletePromises);
+            await updateSitemapData();
+            setBlogPosts([]);
+            alert('✅ All blog posts deleted successfully!');
+        } catch (err: any) {
+            console.error("Failed to delete all blogs:", err);
+            alert('Failed to delete all blogs: ' + (err.message || 'Unknown error'));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const mockUsers: any[] = [];
 
     const adminStats = [
@@ -1057,45 +1082,13 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({ theme, onBack, isDarkM
                         <div className="flex justify-between items-center gap-2 flex-wrap">
                             <h3 className="font-black text-sm uppercase tracking-widest text-gray-400">Blog Management</h3>
                             <div className="flex items-center gap-2">
-                                <a
-                                    href="/api/pinterest?action=connect"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center gap-1.5 text-[10px] font-black bg-red-600/20 text-red-400 hover:bg-red-600/30 px-3 py-1.5 rounded-lg border border-red-500/30 transition-all"
-                                    title="Connect Pinterest for automated Pin posting"
-                                >
-                                    📌 CONNECT PINTEREST
-                                </a>
                                 <button
-                                    onClick={async () => {
-                                        try {
-                                            setIsAddingPost(true);
-                                            const res = await fetch('/api/generate-blog', { 
-                                                method: 'POST', 
-                                                headers: { 'Content-Type': 'application/json' }, 
-                                                body: JSON.stringify({ adminToken: process.env.VITE_CRON_SECRET || 'test' }) // Use an env var or a known token
-                                            });
-                                            if (!res.ok) throw new Error(await res.text());
-                                            const data = await res.json();
-                                            const indexingMsg = data.googleIndexing?.notified 
-                                                ? '🚀 Submitted to Google Indexing API!' 
-                                                : `ℹ️ Sitemap updated (${data.googleIndexing?.reason || 'Indexing API inactive'})`;
-                                            const pinterestMsg = data.pinterest?.success 
-                                                ? `📌 Auto-Pinned to Pinterest: ${data.pinterest.pinUrl}` 
-                                                : `⚠️ Pinterest: ${data.pinterest?.reason || 'Check connection'}`;
-                                            alert(`AI Blog Generated Successfully!\n\nGoogle Status:\n${indexingMsg}\n\nPinterest Status:\n${pinterestMsg}`);
-                                            setPublishedLink(`https://tradejournall.com/blog/${data.post.slug}`);
-                                        } catch (err: any) {
-                                            alert('Error generating AI blog: ' + err.message);
-                                        } finally {
-                                            setIsAddingPost(false);
-                                        }
-                                    }}
-                                    disabled={isAddingPost}
-                                    className={`flex items-center gap-2 text-[10px] font-black bg-indigo-600/20 text-indigo-400 px-3 py-1.5 rounded-lg border border-indigo-500/30 ${isAddingPost ? 'opacity-50' : 'hover:bg-indigo-600/30'}`}
+                                    onClick={handleDeleteAllBlogs}
+                                    disabled={isLoading}
+                                    className="flex items-center gap-2 text-[10px] font-black bg-red-600/20 text-red-400 hover:bg-red-600/30 px-3 py-1.5 rounded-lg border border-red-500/30 transition-all active:scale-95"
                                 >
-                                    {isAddingPost ? <Loader2 size={14} className="animate-spin" /> : <Brain size={14} />}
-                                    TRIGGER AI AUTO-BLOG
+                                    <Trash2 size={14} />
+                                    DELETE ALL BLOGS
                                 </button>
                             </div>
                         </div>
