@@ -146,10 +146,7 @@ async function notifyGoogleIndexing(articleUrl: string) {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    return res.status(403).json({
-        error: 'Automated AI blog generation has been disabled. All blog posts must be published manually via the Admin panel.'
-    });
-}
+    const errors: string[] = [];
 
     try {
         const geminiApiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
