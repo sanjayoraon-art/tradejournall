@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, Bell, Zap, ExternalLink, BookOpen, Scale } from 'lucide-react';
+import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { RiskRewardCalculatorScreen } from './screens/RiskRewardCalculatorScreen';
 import { BrokerageCalculatorScreen } from './screens/BrokerageCalculatorScreen';
+import { PropFirmCalculatorScreen } from './screens/PropFirmCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -37,6 +38,19 @@ interface Trade {
     isBacktest?: boolean;
 }
 
+// Helper to check if URL path targets Prop Firm Calculator
+function getPropFirmRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/ftmo-calculator') ||
+        path.includes('/tools/funding-pips-calculator') ||
+        path.includes('/tools/fundednext-calculator') ||
+        path.includes('/tools/e8-calculator') ||
+        path.includes('/tools/prop-firm-calculator') ||
+        path.includes('/calculators/prop-firm')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -53,6 +67,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getPropFirmRouteFromUrl()) return 'prop-firm-calc';
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin screen on fresh reload or navigation from external links
         if (saved === 'admin') return 'dashboard';
@@ -412,10 +427,17 @@ const App = () => {
         const totalLoss = Math.abs(filteredTrades.filter(t => t.pnl < 0).reduce((sum, t) => sum + t.pnl, 0));
 
         // Metrics calculation logic
+        // Safe Date parser helper
+        const parseSafeDate = (dStr: any) => {
+            if (!dStr) return new Date();
+            const d = new Date(dStr);
+            return isNaN(d.getTime()) ? new Date() : d;
+        };
+
         // Sharpe Ratio Calculation (Daily)
         const dailyPnlMap: Record<string, number> = {};
         filteredTrades.forEach(t => {
-            const dateStr = new Date(t.date).toISOString().split('T')[0];
+            const dateStr = parseSafeDate(t.date).toISOString().split('T')[0];
             dailyPnlMap[dateStr] = (dailyPnlMap[dateStr] || 0) + t.pnl;
         });
         const dailyPnls = Object.values(dailyPnlMap);
@@ -431,7 +453,7 @@ const App = () => {
 
         // Max Drawdown Calculation
         // Sort trades by date for equity curve
-        const sortedForDd = [...filteredTrades].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        const sortedForDd = [...filteredTrades].sort((a, b) => parseSafeDate(a.date).getTime() - parseSafeDate(b.date).getTime());
         let currentEquity = 0;
         let peakEquity = 0;
         let maxDrawdown = 0;
@@ -459,7 +481,7 @@ const App = () => {
             const strat = t.strategy || 'Unknown';
             strategyDataMap[strat] = (strategyDataMap[strat] || 0) + t.pnl;
 
-            const date = new Date(t.date);
+            const date = parseSafeDate(t.date);
 
             // Monthly Key
             const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -628,31 +650,17 @@ const App = () => {
         if (infoPage) {
             return <InformationScreen pageType={infoPage} onBack={() => setInfoPage(null)} theme={theme} />;
         }
-        if (showLanding) {
-            return (
-                <LandingScreen
-                    onSignIn={() => {
-                        setShowLanding(false);
-                        setCurrentScreen('dashboard');
-                    }}
-                    onOpenInfo={(page) => setInfoPage(page)}
-                    onOpenCalculator={() => {
-                        setShowLanding(false);
-                        setCurrentScreen('brokerage-calc');
-                    }}
-                    theme={theme}
-                    isDarkMode={isDarkMode}
-                />
-            );
-        }
-        if (currentScreen === 'brokerage-calc') {
+        if (currentScreen === 'prop-firm-calc') {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
-                    <BrokerageCalculatorScreen
+                    <PropFirmCalculatorScreen
                         theme={theme}
                         isDarkMode={isDarkMode}
                         primaryCurrencySymbol={globalCurrency}
-                        onBackToLanding={() => setShowLanding(true)}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                        }}
                         onSignIn={() => {
                             setShowLanding(false);
                             setCurrentScreen('dashboard');
@@ -663,6 +671,52 @@ const App = () => {
                         }}
                     />
                 </div>
+            );
+        }
+        if (currentScreen === 'brokerage-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <BrokerageCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
+        if (showLanding) {
+            return (
+                <LandingScreen
+                    onSignIn={() => {
+                        setShowLanding(false);
+                        setCurrentScreen('dashboard');
+                    }}
+                    onOpenInfo={(page) => setInfoPage(page)}
+                    onOpenCalculator={() => {
+                        window.history.pushState({}, '', '/calculators/stocks/zerodha-vs-groww-brokerage-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('brokerage-calc');
+                    }}
+                    onOpenPropFirmCalculator={() => {
+                        window.history.pushState({}, '', '/tools/ftmo-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('prop-firm-calc');
+                    }}
+                    theme={theme}
+                    isDarkMode={isDarkMode}
+                />
             );
         }
         if (!isDevDev) return <LoginScreen theme={theme} />;
@@ -682,6 +736,7 @@ const App = () => {
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Backtesting" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
                     <DeskNavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
+                    <DeskNavButton icon={<ShieldAlert size={20} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} />
                     <DeskNavButton icon={<Scale size={20} />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
                     <DeskNavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
                     <a 
@@ -866,9 +921,14 @@ const App = () => {
                                 </div>
                             </div>
 
-                            <button onClick={() => setCurrentScreen('risk-reward')} className={`${theme.card} border ${theme.border} w-full text-blue-500 font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-blue-500/10 mb-4`}>
-                                <Calculator size={20} /> Risk Reward Calculator
-                            </button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                <button onClick={() => setCurrentScreen('prop-firm-calc')} className={`${theme.card} border border-emerald-500/40 w-full text-emerald-400 font-extrabold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-500/10 hover:bg-emerald-950/20`}>
+                                    <ShieldAlert size={20} className="text-emerald-400" /> Prop Firm Challenge Calculator
+                                </button>
+                                <button onClick={() => setCurrentScreen('risk-reward')} className={`${theme.card} border ${theme.border} w-full text-blue-500 font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-blue-500/10`}>
+                                    <Calculator size={20} /> Risk Reward Calculator
+                                </button>
+                            </div>
 
                             <div className={`${theme.card} p-4 rounded-xl border ${theme.border}`}>
                                 <h2 className="font-bold mb-4">Recent Trades</h2>
@@ -940,6 +1000,27 @@ const App = () => {
 
                     {currentScreen === 'risk-reward' && (
                         <RiskRewardCalculatorScreen theme={theme} isDarkMode={isDarkMode} primaryCurrencySymbol={globalCurrency} />
+                    )}
+
+                    {currentScreen === 'prop-firm-calc' && (
+                        <PropFirmCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Calculator Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
                     )}
 
                     {currentScreen === 'brokerage-calc' && (

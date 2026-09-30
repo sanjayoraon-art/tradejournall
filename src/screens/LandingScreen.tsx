@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, BarChart3, ShieldCheck, Brain, ArrowRight, Zap, BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical } from 'lucide-react';
+import { TrendingUp, BarChart3, ShieldCheck, ShieldAlert, Brain, ArrowRight, Zap, BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
 import { BlogCard } from '../components/BlogCard';
@@ -10,11 +10,19 @@ interface LandingScreenProps {
     onSignIn: () => void;
     onOpenInfo: (page: 'about' | 'privacy' | 'terms' | 'contact') => void;
     onOpenCalculator?: () => void;
+    onOpenPropFirmCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
 
-export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenInfo, onOpenCalculator, theme, isDarkMode }) => {
+export const LandingScreen: React.FC<LandingScreenProps> = ({
+    onSignIn,
+    onOpenInfo,
+    onOpenCalculator,
+    onOpenPropFirmCalculator,
+    theme,
+    isDarkMode
+}) => {
     const [blogPosts, setBlogPosts] = useState<any[]>([]);
     const [loadingBlogs, setLoadingBlogs] = useState(true);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -101,6 +109,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             <button
                                 onClick={() => {
                                     setIsMenuOpen(false);
+                                    if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                                }}
+                                className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-emerald-400 font-bold text-sm transition text-left cursor-pointer"
+                            >
+                                <ShieldAlert size={18} className="text-emerald-400" />
+                                <span>Prop Firm Calc</span>
+                                <span className="ml-auto bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-black px-1.5 py-0.5 rounded">NEW</span>
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    setIsMenuOpen(false);
                                     if (onOpenCalculator) onOpenCalculator();
                                 }}
                                 className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-amber-400 font-bold text-sm transition text-left cursor-pointer"
@@ -118,6 +138,17 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                             >
                                 <BookOpen size={18} className="text-green-400" />
                                 <span>Trading Blog</span>
+                            </a>
+
+                            <a
+                                href="/game-page.html"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-purple-400 font-bold text-sm transition text-left"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <Zap size={18} className="text-purple-400" />
+                                <span>Candle Clash 🎮</span>
+                                <span className="ml-auto bg-purple-500/20 border border-purple-500/40 text-purple-400 text-[10px] font-black px-1.5 py-0.5 rounded">GAME</span>
                             </a>
 
                             <div className="border-t border-gray-800 my-1"></div>
@@ -156,26 +187,11 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-2">
                             <button
                                 onClick={onSignIn}
-                                className="group px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center gap-2 text-lg active:scale-95"
+                                className="group px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center gap-2 text-lg active:scale-95 cursor-pointer"
                             >
                                 Start Journaling Now
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button
-                                onClick={onOpenCalculator}
-                                className="group px-6 py-4 bg-gradient-to-r from-amber-500/20 to-emerald-500/20 hover:from-amber-500/30 hover:to-emerald-500/30 text-amber-300 font-bold rounded-2xl transition-all border border-amber-500/40 hover:border-amber-400 flex items-center justify-center gap-2 text-base active:scale-95 cursor-pointer"
-                            >
-                                <Calculator size={20} className="text-amber-400" />
-                                <span>Brokerage & Tax Calc 🧮</span>
-                            </button>
-                            <a
-                                href="/game-page.html"
-                                className="group px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-2xl transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] border border-gray-700 hover:border-green-500/50 flex items-center justify-center gap-2 text-lg active:scale-95"
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <Zap size={20} className="text-green-500" />
-                                Play Candle Clash ⚡
-                            </a>
                         </div>
 
                         <div className="flex items-center gap-4 pt-4 mt-2">
@@ -616,6 +632,14 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
 
                     <div className="flex flex-wrap items-center justify-center gap-6 text-gray-500 font-medium">
                         <button
+                            onClick={() => {
+                                if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                            }}
+                            className="hover:text-emerald-300 transition-colors text-emerald-400 font-bold flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <ShieldAlert size={15} /> Prop Firm Calc
+                        </button>
+                        <button
                             onClick={onOpenCalculator}
                             className="hover:text-amber-300 transition-colors text-amber-400 font-bold flex items-center gap-1.5 cursor-pointer"
                         >
@@ -623,6 +647,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onSignIn, onOpenIn
                         </button>
                         <a href="/blog" className="hover:text-white transition-colors text-green-400 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
                             <BookOpen size={15} /> Trading Blog
+                        </a>
+                        <a href="/game-page.html" className="hover:text-purple-300 transition-colors text-purple-400 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
+                            <Zap size={15} /> Candle Clash 🎮
                         </a>
                         <button onClick={() => onOpenInfo('about')} className="hover:text-white transition-colors cursor-pointer">About Us</button>
                         <button onClick={() => onOpenInfo('contact')} className="hover:text-white transition-colors cursor-pointer">Contact Support</button>
