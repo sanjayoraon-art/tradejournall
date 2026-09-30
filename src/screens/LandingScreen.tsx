@@ -11,6 +11,7 @@ interface LandingScreenProps {
     onOpenInfo: (page: 'about' | 'privacy' | 'terms' | 'contact') => void;
     onOpenCalculator?: () => void;
     onOpenPropFirmCalculator?: () => void;
+    onOpenLeverageCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -20,6 +21,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenInfo,
     onOpenCalculator,
     onOpenPropFirmCalculator,
+    onOpenLeverageCalculator,
     theme,
     isDarkMode
 }) => {
@@ -105,55 +107,83 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
                     {/* 3-Dot Dropdown Menu Card */}
                     {isMenuOpen && (
-                        <div className="absolute right-0 top-14 w-60 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                            <button
-                                onClick={() => {
-                                    setIsMenuOpen(false);
-                                    if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
-                                }}
-                                className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-emerald-400 font-bold text-sm transition text-left cursor-pointer"
-                            >
-                                <ShieldAlert size={18} className="text-emerald-400" />
-                                <span>Prop Firm Calc</span>
-                                <span className="ml-auto bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-black px-1.5 py-0.5 rounded">NEW</span>
-                            </button>
+                        <div className="absolute right-0 top-14 w-64 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200 space-y-3">
+                            {/* Category 1: Trading Tools */}
+                            <div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 px-2 block mb-1">
+                                    🛠️ Trading Tools
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        if (onOpenLeverageCalculator) onOpenLeverageCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-800 text-amber-400 font-bold text-xs transition text-left cursor-pointer"
+                                >
+                                    <Zap size={16} className="text-amber-400" />
+                                    <span>Crypto Leverage Calc</span>
+                                    <span className="ml-auto bg-amber-500/20 border border-amber-500/40 text-amber-400 text-[9px] font-black px-1.5 py-0.5 rounded">HOT</span>
+                                </button>
 
-                            <button
-                                onClick={() => {
-                                    setIsMenuOpen(false);
-                                    if (onOpenCalculator) onOpenCalculator();
-                                }}
-                                className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-amber-400 font-bold text-sm transition text-left cursor-pointer"
-                            >
-                                <Scale size={18} className="text-amber-400" />
-                                <span>Brokerage & Tax Calc</span>
-                                <span className="ml-auto bg-amber-500/20 border border-amber-500/40 text-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded">FREE</span>
-                            </button>
+                                <button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-800 text-emerald-400 font-bold text-xs transition text-left cursor-pointer"
+                                >
+                                    <ShieldAlert size={16} className="text-emerald-400" />
+                                    <span>Prop Firm Calc</span>
+                                    <span className="ml-auto bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[9px] font-black px-1.5 py-0.5 rounded">NEW</span>
+                                </button>
 
-                            <a
-                                href="/blog"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-gray-200 font-bold text-sm transition text-left"
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <BookOpen size={18} className="text-green-400" />
-                                <span>Trading Blog</span>
-                            </a>
+                                <button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        if (onOpenCalculator) onOpenCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-800 text-blue-400 font-bold text-xs transition text-left cursor-pointer"
+                                >
+                                    <Scale size={16} className="text-blue-400" />
+                                    <span>Brokerage & Tax Calc</span>
+                                    <span className="ml-auto bg-blue-500/20 border border-blue-500/40 text-blue-400 text-[9px] font-black px-1.5 py-0.5 rounded">FREE</span>
+                                </button>
+                            </div>
 
-                            <a
-                                href="/game-page.html"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-gray-800 text-purple-400 font-bold text-sm transition text-left"
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <Zap size={18} className="text-purple-400" />
-                                <span>Candle Clash 🎮</span>
-                                <span className="ml-auto bg-purple-500/20 border border-purple-500/40 text-purple-400 text-[10px] font-black px-1.5 py-0.5 rounded">GAME</span>
-                            </a>
+                            {/* Category 2: Interactive Games */}
+                            <div className="border-t border-gray-800 pt-2">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 px-2 block mb-1">
+                                    🎮 Games & Practice
+                                </span>
+                                <a
+                                    href="/game-page.html"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-800 text-purple-400 font-bold text-xs transition text-left"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <Zap size={16} className="text-purple-400" />
+                                    <span>Candle Clash 🎮</span>
+                                    <span className="ml-auto bg-purple-500/20 border border-purple-500/40 text-purple-400 text-[9px] font-black px-1.5 py-0.5 rounded">PLAY</span>
+                                </a>
+                            </div>
 
-                            <div className="border-t border-gray-800 my-1"></div>
+                            {/* Category 3: Resources */}
+                            <div className="border-t border-gray-800 pt-2">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 px-2 block mb-1">
+                                    📚 Resources & Blog
+                                </span>
+                                <a
+                                    href="/blog"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-800 text-gray-200 font-bold text-xs transition text-left"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <BookOpen size={16} className="text-green-400" />
+                                    <span>Trading Blog</span>
+                                </a>
+                            </div>
 
-                            <div className="px-3.5 py-2">
+                            <div className="border-t border-gray-800 pt-2 px-2">
                                 <LanguageSelector isDarkMode={isDarkMode} />
                             </div>
                         </div>
@@ -624,42 +654,82 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
             {/* Footer */}
             <footer className="w-full py-12 text-sm border-t border-gray-800/50 bg-gray-900/50">
-                <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex items-center gap-2">
-                        <img src="/logo.png" alt="Trade Journal Logo" className="w-6 h-6 object-contain rounded-md bg-white/10" />
-                        <span className="font-bold text-gray-300">Trade Journal</span>
+                <div className="max-w-6xl mx-auto px-4 space-y-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                        {/* Column 1: Brand */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                                <img src="/logo.png" alt="Trade Journal Logo" className="w-7 h-7 object-contain rounded-lg bg-white/10" />
+                                <span className="font-extrabold text-lg text-white">Trade Journal</span>
+                            </div>
+                            <p className="text-xs text-gray-400 leading-relaxed">
+                                Free AI-powered trading journal & risk tools for crypto, forex, and stock market traders.
+                            </p>
+                        </div>
+
+                        {/* Column 2: Trading Tools */}
+                        <div className="space-y-2">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400">🛠️ Trading Tools</h4>
+                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <button
+                                        onClick={() => { if (onOpenLeverageCalculator) onOpenLeverageCalculator(); }}
+                                        className="hover:text-amber-400 transition-colors text-gray-300 font-bold flex items-center gap-1.5 cursor-pointer text-left"
+                                    >
+                                        <Zap size={14} className="text-amber-400" /> Crypto Leverage Danger Calc
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => { if (onOpenPropFirmCalculator) onOpenPropFirmCalculator(); }}
+                                        className="hover:text-emerald-400 transition-colors text-gray-300 font-bold flex items-center gap-1.5 cursor-pointer text-left"
+                                    >
+                                        <ShieldAlert size={14} className="text-emerald-400" /> Prop Firm Calculator
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={onOpenCalculator}
+                                        className="hover:text-blue-400 transition-colors text-gray-300 font-bold flex items-center gap-1.5 cursor-pointer text-left"
+                                    >
+                                        <Scale size={14} className="text-blue-400" /> Brokerage & Tax Calculator
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Column 3: Games & Learning */}
+                        <div className="space-y-2">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400">🎮 Games & Learning</h4>
+                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a href="/game-page.html" className="hover:text-purple-400 transition-colors text-gray-300 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
+                                        <Zap size={14} className="text-purple-400" /> Candle Clash Game 🎮
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/blog" className="hover:text-green-400 transition-colors text-gray-300 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
+                                        <BookOpen size={14} className="text-green-400" /> Trading Blog & Guides
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Column 4: Company & Legal */}
+                        <div className="space-y-2">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400">ℹ️ Company</h4>
+                            <ul className="space-y-1.5 text-xs text-gray-400">
+                                <li><button onClick={() => onOpenInfo('about')} className="hover:text-white transition-colors cursor-pointer">About Us</button></li>
+                                <li><button onClick={() => onOpenInfo('contact')} className="hover:text-white transition-colors cursor-pointer">Contact Support</button></li>
+                                <li><button onClick={() => onOpenInfo('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</button></li>
+                                <li><button onClick={() => onOpenInfo('terms')} className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</button></li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-center gap-6 text-gray-500 font-medium">
-                        <button
-                            onClick={() => {
-                                if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
-                            }}
-                            className="hover:text-emerald-300 transition-colors text-emerald-400 font-bold flex items-center gap-1.5 cursor-pointer"
-                        >
-                            <ShieldAlert size={15} /> Prop Firm Calc
-                        </button>
-                        <button
-                            onClick={onOpenCalculator}
-                            className="hover:text-amber-300 transition-colors text-amber-400 font-bold flex items-center gap-1.5 cursor-pointer"
-                        >
-                            <Scale size={15} /> Brokerage & Tax Calc
-                        </button>
-                        <a href="/blog" className="hover:text-white transition-colors text-green-400 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
-                            <BookOpen size={15} /> Trading Blog
-                        </a>
-                        <a href="/game-page.html" className="hover:text-purple-300 transition-colors text-purple-400 font-bold flex items-center gap-1.5" style={{ textDecoration: 'none' }}>
-                            <Zap size={15} /> Candle Clash 🎮
-                        </a>
-                        <button onClick={() => onOpenInfo('about')} className="hover:text-white transition-colors cursor-pointer">About Us</button>
-                        <button onClick={() => onOpenInfo('contact')} className="hover:text-white transition-colors cursor-pointer">Contact Support</button>
-                        <button onClick={() => onOpenInfo('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
-                        <button onClick={() => onOpenInfo('terms')} className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</button>
-                    </div>
-
-                    <div className="text-gray-600 flex flex-col items-end text-right">
+                    <div className="pt-6 border-t border-gray-800 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-3">
                         <span>&copy; {new Date().getFullYear()} Trade Journal App. All rights reserved.</span>
-                        <span className="text-xs mt-2 max-w-sm text-gray-500 hidden md:block">TradeJournall (with double L) is a specialized tool designed for serious traders seeking the ultimate free stock market trade tracker.</span>
+                        <span className="text-gray-500">TradeJournall — Free Trading Journal & Financial Tools</span>
                     </div>
                 </div>
             </footer>

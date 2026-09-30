@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { User, Camera, Edit, PlayCircle, Moon, Sun, Share2, Download, ShieldCheck, FileCheck, Info, HelpCircle, ChevronRight, ArrowLeft, LogOut, Brain, Key } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { User, Camera, Edit, PlayCircle, Moon, Sun, Share2, Download, ShieldCheck, FileCheck, Info, HelpCircle, ChevronRight, ArrowLeft, LogOut, Brain, Key, Search, Zap, Scale, Calculator, BarChart3, Gamepad2, ShieldAlert } from 'lucide-react';
 import { auth } from '../utils/firebase';
 import { signOut } from 'firebase/auth';
 import { SupportChatModal } from '../components/SupportChatModal';
@@ -83,6 +83,93 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
     const [showSupportChat, setShowSupportChat] = useState(false);
     const [showApiModal, setShowApiModal] = useState(false);
     const [geminiApiKey, setGeminiApiKey] = useState(() => localStorage.getItem('geminiApiKey') || '');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const allTools = useMemo(() => [
+        {
+            id: 'leverage-calc',
+            name: 'Crypto Leverage Danger Calculator',
+            category: 'Trading Tools',
+            description: 'Calculate Liquidation Price, % Distance, Notional Value & Flash-Wick Risk.',
+            icon: Zap,
+            iconColor: 'text-amber-400',
+            badge: 'HOT',
+            badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
+            action: () => setCurrentScreen('leverage-calc')
+        },
+        {
+            id: 'prop-firm-calc',
+            name: 'Prop Firm Challenge Calculator',
+            category: 'Trading Tools',
+            description: 'Calculate daily loss limits, trailing drawdown & max lot sizes for FTMO & Funding Pips.',
+            icon: ShieldAlert,
+            iconColor: 'text-emerald-400',
+            badge: 'NEW',
+            badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
+            action: () => setCurrentScreen('prop-firm-calc')
+        },
+        {
+            id: 'risk-reward',
+            name: 'Risk & Position Sizing Calculator',
+            category: 'Trading Tools',
+            description: 'Calculate risk-to-reward ratios, stop loss distance, and position sizing.',
+            icon: Calculator,
+            iconColor: 'text-blue-400',
+            badge: 'FREE',
+            badgeColor: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
+            action: () => setCurrentScreen('risk-reward')
+        },
+        {
+            id: 'brokerage-calc',
+            name: 'Brokerage & Tax Calculator',
+            category: 'Trading Tools',
+            description: 'Calculate broker fees, STT, turnover tax, and net P&L.',
+            icon: Scale,
+            iconColor: 'text-amber-400',
+            badge: 'FREE',
+            badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
+            action: () => setCurrentScreen('brokerage-calc')
+        },
+        {
+            id: 'backtesting',
+            name: 'Backtesting Engine',
+            category: 'Analytics',
+            description: 'Backtest historical setups, win rates, Sharpe ratio & equity curves.',
+            icon: BarChart3,
+            iconColor: 'text-purple-400',
+            badge: 'PRO',
+            badgeColor: 'bg-purple-500/20 text-purple-400 border-purple-500/40',
+            action: () => setCurrentScreen('backtesting')
+        },
+        {
+            id: 'ai-coach',
+            name: 'AI Trading Mentor & Coach',
+            category: 'AI Tools',
+            description: 'Get real-time AI feedback on your trades, emotional discipline & risk management.',
+            icon: Brain,
+            iconColor: 'text-green-400',
+            badge: 'AI',
+            badgeColor: 'bg-green-500/20 text-green-400 border-green-500/40',
+            action: () => setIsChatOpen(true)
+        },
+        {
+            id: 'candle-clash',
+            name: 'Candle Clash (Trading Game)',
+            category: 'Games',
+            description: 'Play free interactive candlestick guessing game to sharpen price action skills.',
+            icon: Gamepad2,
+            iconColor: 'text-purple-400',
+            badge: 'GAME',
+            badgeColor: 'bg-purple-500/20 text-purple-400 border-purple-500/40',
+            action: () => { window.location.href = '/game-page.html'; }
+        }
+    ], [setCurrentScreen, setIsChatOpen]);
+
+    const filteredTools = useMemo(() => {
+        if (!searchQuery.trim()) return allTools;
+        const q = searchQuery.toLowerCase();
+        return allTools.filter(t => t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q));
+    }, [allTools, searchQuery]);
 
     // Simplified admin check using centralized utility
     const currentUserEmail = auth?.currentUser?.email;
@@ -213,6 +300,70 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
                 </div>
 
                 {/* Profile elements end here */}
+
+                {/* Trading Tools & Utilities Hub Section */}
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between ml-2">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Trading Tools & Utilities Hub</h3>
+                        <span className="text-[10px] font-mono text-green-500 font-bold">{filteredTools.length} Available</span>
+                    </div>
+
+                    {/* Search Bar Input */}
+                    <div className="relative">
+                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search tools, calculators, games..."
+                            className={`w-full pl-11 pr-10 py-3.5 rounded-[20px] ${isDarkMode ? 'bg-[#1e2230] text-white border-gray-700/60 focus:border-green-500' : 'bg-white text-gray-900 border-gray-200 focus:border-green-500'} border text-xs font-bold outline-none transition-colors placeholder-gray-500 shadow-xl`}
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-white font-bold px-1.5 py-0.5 rounded-full bg-gray-700/50"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Tools List */}
+                    <div className={`${isDarkMode ? 'bg-[#1e2230]' : 'bg-white'} rounded-[24px] border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} overflow-hidden shadow-xl divide-y ${isDarkMode ? 'divide-gray-800' : 'divide-gray-50'}`}>
+                        {filteredTools.map((tool) => {
+                            const Icon = tool.icon;
+                            return (
+                                <div
+                                    key={tool.id}
+                                    onClick={tool.action}
+                                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 transition-all active:scale-[0.98]"
+                                >
+                                    <div className="flex items-center space-x-4">
+                                        <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-[#2a2f3e]' : 'bg-gray-100'}`}>
+                                            <Icon size={20} className={tool.iconColor} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-[14px] font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{tool.name}</span>
+                                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded border ${tool.badgeColor}`}>
+                                                    {tool.badge}
+                                                </span>
+                                            </div>
+                                            <span className="text-[11px] text-gray-400 mt-0.5">{tool.description}</span>
+                                        </div>
+                                    </div>
+                                    <ChevronRight size={18} className="text-gray-600 flex-shrink-0 ml-2" />
+                                </div>
+                            );
+                        })}
+
+                        {filteredTools.length === 0 && (
+                            <div className="p-8 text-center text-gray-500 text-xs">
+                                No tools found matching "{searchQuery}"
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 {/* App Settings Section */}
                 <div className="space-y-3">

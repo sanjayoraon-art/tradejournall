@@ -6,6 +6,7 @@ import { LoginScreen } from './screens/LoginScreen';
 import { RiskRewardCalculatorScreen } from './screens/RiskRewardCalculatorScreen';
 import { BrokerageCalculatorScreen } from './screens/BrokerageCalculatorScreen';
 import { PropFirmCalculatorScreen } from './screens/PropFirmCalculatorScreen';
+import { LeverageCalculatorScreen } from './screens/LeverageCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -38,6 +39,17 @@ interface Trade {
     isBacktest?: boolean;
 }
 
+// Helper to check if URL path targets Leverage Danger Calculator
+function getLeverageRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/leverage-danger-calculator') ||
+        path.includes('/tools/crypto-liquidation-calculator') ||
+        path.includes('/calculators/leverage-danger') ||
+        path.includes('/calculators/liquidation')
+    );
+}
+
 // Helper to check if URL path targets Prop Firm Calculator
 function getPropFirmRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
@@ -67,6 +79,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getLeverageRouteFromUrl()) return 'leverage-calc';
         if (getPropFirmRouteFromUrl()) return 'prop-firm-calc';
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin screen on fresh reload or navigation from external links
@@ -714,6 +727,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('prop-firm-calc');
                     }}
+                    onOpenLeverageCalculator={() => {
+                        window.history.pushState({}, '', '/tools/leverage-danger-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('leverage-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -737,6 +755,7 @@ const App = () => {
                     <DeskNavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
                     <DeskNavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
                     <DeskNavButton icon={<ShieldAlert size={20} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} />
+                    <DeskNavButton icon={<Zap size={20} className="text-amber-400" />} label="Leverage Danger Calc" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} />
                     <DeskNavButton icon={<Scale size={20} />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
                     <DeskNavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
                     <a 
@@ -921,12 +940,15 @@ const App = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                                 <button onClick={() => setCurrentScreen('prop-firm-calc')} className={`${theme.card} border border-emerald-500/40 w-full text-emerald-400 font-extrabold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-500/10 hover:bg-emerald-950/20`}>
-                                    <ShieldAlert size={20} className="text-emerald-400" /> Prop Firm Challenge Calculator
+                                    <ShieldAlert size={20} className="text-emerald-400" /> Prop Firm Calc
+                                </button>
+                                <button onClick={() => setCurrentScreen('leverage-calc')} className={`${theme.card} border border-amber-500/40 w-full text-amber-400 font-extrabold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-amber-500/10 hover:bg-amber-950/20`}>
+                                    <Zap size={20} className="text-amber-400" /> Leverage Danger Calc
                                 </button>
                                 <button onClick={() => setCurrentScreen('risk-reward')} className={`${theme.card} border ${theme.border} w-full text-blue-500 font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-blue-500/10`}>
-                                    <Calculator size={20} /> Risk Reward Calculator
+                                    <Calculator size={20} /> Risk Reward Calc
                                 </button>
                             </div>
 
@@ -1017,6 +1039,27 @@ const App = () => {
                                     pnl: tradeData.pnl,
                                     type: tradeData.type,
                                     strategy: 'Calculator Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'leverage-calc' && (
+                        <LeverageCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Leverage Calc Import',
                                 });
                                 setShowAddTrade(true);
                             }}
