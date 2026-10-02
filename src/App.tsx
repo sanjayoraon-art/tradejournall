@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale } from 'lucide-react';
+import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -38,6 +38,117 @@ interface Trade {
     screenshot?: string;
     isBacktest?: boolean;
 }
+
+const DEMO_TRADES: Trade[] = [
+    {
+        id: "demo-1",
+        symbol: "BTC/USDT",
+        date: "2026-03-24",
+        entryPrice: 94200,
+        exitPrice: 97400,
+        pnl: 1840,
+        type: "Long",
+        strategy: "Breakout",
+        style: "Swing",
+        mentalState: "Disciplined",
+        note: "Clean 4H consolidation breakout with volume surge.",
+        isFavorite: true
+    },
+    {
+        id: "demo-2",
+        symbol: "ETH/USDT",
+        date: "2026-03-25",
+        entryPrice: 2840,
+        exitPrice: 2760,
+        pnl: 720,
+        type: "Short",
+        strategy: "Resistance Rejection",
+        style: "Scalp",
+        mentalState: "Flow State",
+        note: "Key rejection at daily resistance level, strict risk."
+    },
+    {
+        id: "demo-3",
+        symbol: "SOL/USDT",
+        date: "2026-03-26",
+        entryPrice: 192,
+        exitPrice: 201,
+        pnl: 960,
+        type: "Long",
+        strategy: "Trend Following",
+        style: "Day Trade",
+        mentalState: "Confident",
+        note: "Bounced off 21 EMA on 15m timeframe.",
+        isFavorite: true
+    },
+    {
+        id: "demo-4",
+        symbol: "NIFTY 24200 CE",
+        date: "2026-03-27",
+        entryPrice: 140,
+        exitPrice: 110,
+        pnl: -450,
+        type: "Long",
+        strategy: "Gap Fill",
+        style: "Options Intraday",
+        mentalState: "Slight FOMO",
+        note: "Entered before confirmation candle. Cut early."
+    },
+    {
+        id: "demo-5",
+        symbol: "BNB/USDT",
+        date: "2026-03-28",
+        entryPrice: 670,
+        exitPrice: 695,
+        pnl: 1250,
+        type: "Long",
+        strategy: "Support Bounce",
+        style: "Swing",
+        mentalState: "Disciplined",
+        note: "Daily double bottom structure target hit.",
+        isFavorite: true
+    },
+    {
+        id: "demo-6",
+        symbol: "XAU/USD",
+        date: "2026-03-29",
+        entryPrice: 2640,
+        exitPrice: 2665,
+        pnl: 1500,
+        type: "Long",
+        strategy: "Macro Trend",
+        style: "Forex Swing",
+        mentalState: "Patient",
+        note: "Gold multi-week continuation setup."
+    },
+    {
+        id: "demo-7",
+        symbol: "BANKNIFTY 51500 PE",
+        date: "2026-03-30",
+        entryPrice: 260,
+        exitPrice: 210,
+        pnl: -500,
+        type: "Short",
+        strategy: "Mean Reversion",
+        style: "Options Intraday",
+        mentalState: "Revenge Warning",
+        note: "Faded trend during strong institutional push. Cut quickly."
+    },
+    {
+        id: "demo-8",
+        symbol: "BTC/USDT",
+        date: "2026-03-31",
+        entryPrice: 95500,
+        exitPrice: 98100,
+        pnl: 2600,
+        type: "Long",
+        strategy: "ATH Breakout",
+        style: "Position",
+        mentalState: "Disciplined",
+        note: "Institutional liquidity sweep reclaim.",
+        isFavorite: true
+    }
+];
 
 // Helper to check if URL path targets Leverage Danger Calculator
 function getLeverageRouteFromUrl(): boolean {
@@ -303,13 +414,14 @@ const App = () => {
         const saved = localStorage.getItem('trades');
         if (saved && saved !== '[]') {
             try {
-                setTrades(JSON.parse(saved));
+                const parsed = JSON.parse(saved);
+                setTrades(parsed && parsed.length > 0 ? parsed : DEMO_TRADES);
             } catch (e) {
                 console.error("Failed to parse cached trades", e);
-                setTrades([]);
+                setTrades(DEMO_TRADES);
             }
         } else {
-            setTrades([]);
+            setTrades(DEMO_TRADES);
         }
 
         const savedBalance = localStorage.getItem('initialBalance');
@@ -572,21 +684,21 @@ const App = () => {
     const performanceStats = useMemo(() => calculatePerformanceStats(), [trades, statsTimeframe, statsStrategy]);
 
     const theme = isDarkMode ? {
-        bg: 'bg-gray-900',
-        card: 'bg-gray-800',
-        text: 'text-white',
-        subtext: 'text-gray-400',
-        border: 'border-gray-700',
-        input: 'bg-gray-900 text-white border-gray-700 placeholder-gray-600',
-        label: 'text-gray-400'
+        bg: 'bg-[#0a0f1d]',
+        card: 'bg-[#0e1628]/90 backdrop-blur-xl',
+        text: 'text-slate-100',
+        subtext: 'text-slate-400',
+        border: 'border-slate-800/80',
+        input: 'bg-slate-950/80 text-white border-slate-700/80 placeholder-slate-500',
+        label: 'text-slate-400'
     } : {
-        bg: 'bg-gray-100',
+        bg: 'bg-slate-50',
         card: 'bg-white',
-        text: 'text-gray-900',
-        subtext: 'text-gray-600',
-        border: 'border-gray-300',
-        input: 'bg-white text-gray-900 border-gray-300 placeholder-gray-400',
-        label: 'text-gray-600'
+        text: 'text-slate-900',
+        subtext: 'text-slate-500',
+        border: 'border-slate-200',
+        input: 'bg-white text-slate-900 border-slate-300 placeholder-slate-400',
+        label: 'text-slate-600'
     };
 
     const isDevDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !auth || !db;
@@ -744,119 +856,283 @@ const App = () => {
         <div className={`min-h-screen w-full flex flex-col md:flex-row ${theme.bg} ${theme.text} transition-colors duration-300`}>
             {/* Desktop Sidebar */}
             <aside className={`hidden md:flex flex-col w-64 border-r ${theme.border} ${theme.card} h-screen sticky top-0 z-50`}>
-                <div className="p-6 border-b border-gray-700/50 flex items-center gap-3">
-                    <img src="/logo.png" alt="Trade Journal Logo" className="w-10 h-10 object-contain rounded-xl bg-white/10" />
-                    <span className="text-xl font-black tracking-tight">Trade Journal</span>
+                <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <img src="/logo.png" alt="Trade Journal Logo" className="w-9 h-9 object-contain rounded-xl bg-slate-900 border border-slate-700/80 p-0.5" />
+                        <div>
+                            <span className="text-base font-black tracking-tight text-white">Trade<span className="text-emerald-400">Journall</span></span>
+                            <p className="text-[10px] text-slate-400 font-mono">v2.5 Terminal</p>
+                        </div>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 </div>
-                <nav className="flex-1 p-4 space-y-2 mt-4">
-                    <DeskNavButton icon={<Home size={20} />} label="Dashboard" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
-                    <DeskNavButton icon={<TrendingUp size={20} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
-                    <DeskNavButton icon={<BarChart3 size={20} />} label="Backtesting" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
-                    <DeskNavButton icon={<MessageSquare size={20} />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
-                    <DeskNavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
-                    <DeskNavButton icon={<ShieldAlert size={20} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} />
-                    <DeskNavButton icon={<Zap size={20} className="text-amber-400" />} label="Leverage Danger Calc" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} />
-                    <DeskNavButton icon={<Scale size={20} />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
-                    <DeskNavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
-                    <a 
-                        href="/blog" 
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-400 hover:text-white hover:bg-gray-800"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <BookOpen size={20} className="text-green-400" />
-                        <span className="text-sm">Trading Blog</span>
-                    </a>
+
+                <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
+                    {/* Main Nav */}
+                    <div className="space-y-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
+                            Trading Hub
+                        </span>
+                        <DeskNavButton icon={<Home size={17} />} label="Dashboard" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
+                        <DeskNavButton icon={<TrendingUp size={17} />} label="Trades Log" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} badge={trades.length > 0 ? trades.length : undefined} />
+                        <DeskNavButton icon={<BarChart3 size={17} />} label="Backtesting" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
+                        <DeskNavButton icon={<BarChart3 size={17} />} label="Analytics & Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
+                    </div>
+
+                    {/* AI Coach */}
+                    <div className="space-y-1 pt-2 border-t border-slate-800/80">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
+                            AI Mentorship
+                        </span>
+                        <DeskNavButton icon={<Brain size={17} className="text-purple-400" />} label="AI Coach & Tilt" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} badge="AI" />
+                    </div>
+
+                    {/* Tools */}
+                    <div className="space-y-1 pt-2 border-t border-slate-800/80">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
+                            Risk Tools
+                        </span>
+                        <DeskNavButton icon={<Zap size={17} className="text-amber-400" />} label="Leverage Danger" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} badge="HOT" />
+                        <DeskNavButton icon={<ShieldAlert size={17} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} badge="NEW" />
+                        <DeskNavButton icon={<Scale size={17} className="text-cyan-400" />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
+                    </div>
+
+                    {/* Games & Resources */}
+                    <div className="space-y-1 pt-2 border-t border-slate-800/80">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
+                            Practice & Guides
+                        </span>
+                        <a 
+                            href="/game-page.html" 
+                            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all font-bold text-xs text-purple-400 hover:text-white hover:bg-slate-800/60"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <Zap size={17} className="text-purple-400" />
+                                <span>Candle Clash 🎮</span>
+                            </div>
+                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">PLAY</span>
+                        </a>
+                        <a 
+                            href="/blog" 
+                            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all font-bold text-xs text-slate-400 hover:text-white hover:bg-slate-800/60"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <BookOpen size={17} className="text-emerald-400" />
+                            <span>Trading Blog</span>
+                        </a>
+                    </div>
                 </nav>
+
+                {/* Sidebar Footer */}
+                <div className="p-3 border-t border-slate-800/80 space-y-2">
+                    <DeskNavButton icon={<User size={17} />} label="Profile & Settings" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
+                    <button 
+                        onClick={() => setShowLanding(true)}
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-xs font-semibold border border-slate-800 transition cursor-pointer"
+                    >
+                        <span>← Back to Landing</span>
+                    </button>
+                </div>
             </aside>
 
             {/* Content Wrapper */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Mobile Header */}
-                <header className={`md:hidden ${theme.card} border-b ${theme.border} p-4 flex items-center justify-between z-10`}>
-                    <div className="flex items-center gap-3">
-                        <img src="/logo.png" alt="Trade Journal Logo" className="w-8 h-8 object-contain rounded-lg bg-white/10" />
-                        <h1 className="text-xl font-black tracking-tight">Trade Journal</h1>
+                <header className="md:hidden bg-[#0a0f1d]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
+                    <div className="flex items-center gap-2.5">
+                        <img src="/logo.png" alt="Trade Journal Logo" className="w-8 h-8 object-contain rounded-xl bg-slate-900 border border-slate-800 p-0.5" />
+                        <div>
+                            <h1 className="text-base font-black tracking-tight text-white leading-tight">Trade<span className="text-emerald-400">Journall</span></h1>
+                            <span className="text-[9px] text-slate-400 font-mono">Mobile App</span>
+                        </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        {currentScreen === 'ai-coach' && (
-                            <button
-                                onClick={clearChat}
-                                className="p-2 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors"
-                                title="Clear Chat"
-                            >
-                                <Trash2 size={20} />
-                            </button>
-                        )}
+                        {/* Currency Quick Switcher on Mobile */}
+                        <button
+                            onClick={() => setGlobalCurrency(globalCurrency === '$' ? '₹' : globalCurrency === '₹' ? '€' : '$')}
+                            className="px-2 py-1 rounded-lg border border-slate-800 bg-slate-900 text-xs font-mono font-bold text-emerald-400 cursor-pointer"
+                            title="Toggle Currency"
+                        >
+                            {globalCurrency}
+                        </button>
+                        <button
+                            onClick={() => setShowLanding(true)}
+                            className="px-2.5 py-1 rounded-lg border border-slate-700/80 bg-slate-800/60 text-xs text-slate-300 font-bold hover:text-white cursor-pointer"
+                        >
+                            Landing
+                        </button>
                         <button
                             onClick={() => {
                                 setCurrentScreen('notifications');
                                 setUnreadNotifications(0);
                             }}
-                            className={`p-2 rounded-xl border ${theme.border} ${theme.card} relative hover:bg-gray-700/50 transition-colors`}
+                            className="p-1.5 rounded-lg border border-slate-800 bg-slate-900 relative text-slate-300 hover:text-white cursor-pointer"
+                            title="Notifications"
                         >
-                            <Bell size={20} className="text-gray-400" />
+                            <Bell size={16} />
                             {unreadNotifications > 0 && (
-                                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-gray-800"></span>
+                                <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full"></span>
                             )}
                         </button>
                     </div>
                 </header>
 
-                {/* Desktop Top Bar (Optional, for notifications) */}
-                <header className={`hidden md:flex ${theme.card} border-b ${theme.border} p-4 items-center justify-end z-10 sticky top-0`}>
+                {/* Desktop Top Bar */}
+                <header className={`hidden md:flex ${theme.card} border-b ${theme.border} px-8 py-3.5 items-center justify-between z-10 sticky top-0 backdrop-blur-xl`}>
                     <div className="flex items-center gap-3">
-                        {currentScreen === 'ai-coach' && (
-                            <button
-                                onClick={clearChat}
-                                className="px-4 py-2 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors flex items-center gap-2"
-                            >
-                                <Trash2 size={18} /> <span className="text-sm font-bold">Clear Chat</span>
-                            </button>
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                            <span>App</span>
+                            <span>/</span>
+                            <span className="text-white capitalize">{currentScreen.replace('-', ' ')}</span>
+                        </div>
+                        {trades.length > 0 && (
+                            <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">
+                                {trades.length} Trades Synced
+                            </span>
                         )}
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        {/* Currency Toggle */}
+                        <div className="flex items-center rounded-xl bg-slate-950/80 border border-slate-800 p-0.5 text-xs font-bold">
+                            {['$', '₹', '€'].map(curr => (
+                                <button
+                                    key={curr}
+                                    onClick={() => setGlobalCurrency(curr)}
+                                    className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${globalCurrency === curr ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'}`}
+                                >
+                                    {curr}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Switch to Landing Page */}
+                        <button
+                            onClick={() => setShowLanding(true)}
+                            className="px-3 py-1.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <span>Landing Page</span>
+                            <ExternalLink size={12} />
+                        </button>
+
+                        {/* Notification Bell */}
                         <button
                             onClick={() => {
                                 setCurrentScreen('notifications');
                                 setUnreadNotifications(0);
                             }}
-                            className={`p-2 rounded-xl border ${theme.border} ${theme.card} relative hover:bg-gray-700/50 transition-colors`}
+                            className={`p-2 rounded-xl border ${theme.border} bg-slate-800/40 relative hover:bg-slate-800 transition-colors cursor-pointer`}
+                            title="Notifications"
                         >
-                            <Bell size={20} className="text-gray-400" />
+                            <Bell size={18} className="text-slate-300" />
                             {unreadNotifications > 0 && (
-                                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-gray-800"></span>
+                                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-400 rounded-full"></span>
                             )}
                         </button>
                     </div>
                 </header>
 
-                {/* Bottom Navigation */}
-                <nav className={`md:hidden ${theme.card} border-t ${theme.border} fixed bottom-0 left-0 w-full z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)]`}>
-                    <div className="max-w-md mx-auto flex items-center justify-around py-2 px-2 pb-safe">
-                        <NavButton icon={<Home size={20} />} label="Home" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
-                        <NavButton icon={<TrendingUp size={20} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
-                        <NavButton icon={<BarChart3 size={20} />} label="Backtest" active={currentScreen === 'backtesting'} onClick={() => setCurrentScreen('backtesting')} />
-                        <NavButton icon={<BarChart3 size={20} />} label="Stats" active={currentScreen === 'stats'} onClick={() => setCurrentScreen('stats')} />
-                        <NavButton icon={<User size={20} />} label="Profile" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
+                {/* Mobile Bottom Navigation */}
+                <nav className="md:hidden bg-[#0a0f1d]/95 backdrop-blur-2xl border-t border-slate-800/90 fixed bottom-0 left-0 w-full z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+                    <div className="max-w-md mx-auto flex items-center justify-around py-2 px-1 pb-safe">
+                        <NavButton icon={<Home size={18} />} label="Home" active={currentScreen === 'dashboard'} onClick={() => setCurrentScreen('dashboard')} />
+                        <NavButton icon={<TrendingUp size={18} />} label="Trades" active={currentScreen === 'trades'} onClick={() => setCurrentScreen('trades')} />
+                        <NavButton icon={<Brain size={18} className="text-purple-400" />} label="AI Coach" active={currentScreen === 'ai-coach'} onClick={() => setCurrentScreen('ai-coach')} />
+                        <NavButton icon={<Zap size={18} className="text-amber-400" />} label="Leverage" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} />
+                        <NavButton icon={<User size={18} />} label="Profile & Tools" active={currentScreen === 'profile'} onClick={() => setCurrentScreen('profile')} />
                     </div>
                 </nav>
 
                 {/* Main Content */}
                 <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-8 pb-24 md:pb-8">
                     {currentScreen === 'dashboard' && (
-                        <div className="space-y-4">
-                            {/* 1. Total Net P&L (Value Only) */}
-                            <div className={`${theme.card} p-5 rounded-xl border ${theme.border} text-center mb-4`}>
-                                <p className="text-xs text-gray-400 uppercase tracking-widest mb-2 font-semibold">Total Net P&L</p>
-                                <div className="flex items-baseline justify-center gap-1">
-                                    <span className={`text-5xl font-black ${totalPnl >= 0 ? 'text-green-500' : 'text-red-500'} tracking-tight`}>
-                                        {totalPnl >= 0 ? '+' : ''}{globalCurrency}{totalPnl.toLocaleString()}
+                        <div className="space-y-6">
+                            {/* Portfolio Status Bar */}
+                            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-cyan-500/15 border border-emerald-500/30 flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-2.5">
+                                    <Sparkles size={16} className="text-emerald-400 animate-pulse" />
+                                    <span className="text-slate-200 font-semibold">
+                                        <strong className="text-white">Active Portfolio Overview:</strong> Real-time P&amp;L analytics, win rate, and risk parameters.
                                     </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => {
+                                            setTrades(DEMO_TRADES);
+                                        }}
+                                        className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 text-[11px] font-bold transition cursor-pointer"
+                                    >
+                                        Reset Demo Data
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* 2. P&L History Chart */}
-                            <div className={`${theme.card} p-4 md:p-6 rounded-xl border ${theme.border} mb-4`}>
-                                <h3 className="text-xs text-gray-400 uppercase tracking-widest mb-4 font-bold">Equity Curve</h3>
-                                <div className="h-48 md:h-72 w-full">
+                            {/* 1. Hero Total Net P&L Card with glowing FinTech design */}
+                            <div className={`${theme.card} p-6 sm:p-8 rounded-3xl border ${theme.border} relative overflow-hidden shadow-2xl`}>
+                                <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                                    <div>
+                                        <p className="text-xs text-slate-400 uppercase tracking-widest font-extrabold flex items-center gap-2">
+                                            <TrendingUp size={14} className="text-emerald-400" />
+                                            <span>Cumulative Net P&amp;L</span>
+                                        </p>
+                                        <div className="flex items-baseline gap-3 mt-1">
+                                            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                {totalPnl >= 0 ? '+' : ''}{globalCurrency}{totalPnl.toLocaleString()}
+                                            </span>
+                                            <span className={`text-xs sm:text-sm font-bold px-2.5 py-1 rounded-lg ${totalPnl >= 0 ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'}`}>
+                                                {totalPnl >= 0 ? '+34.8%' : '-8.2%'} All-Time
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setShowAddTrade(true)}
+                                            className="px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-xl transition-all shadow-lg shadow-emerald-500/25 active:scale-95 text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+                                        >
+                                            <Plus size={18} />
+                                            <span>Log Trade</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Mini Metrics Bar inside Hero */}
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-800/80 text-xs">
+                                    <div>
+                                        <span className="text-slate-400 text-[10px] uppercase font-bold">Account Balance</span>
+                                        <p className="font-bold text-white font-mono text-sm mt-0.5">{globalCurrency}{(initialBalance + totalPnl).toLocaleString()}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 text-[10px] uppercase font-bold">Win Rate</span>
+                                        <p className="font-bold text-emerald-400 font-mono text-sm mt-0.5">{winRate}%</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 text-[10px] uppercase font-bold">Profit Factor</span>
+                                        <p className="font-bold text-cyan-400 font-mono text-sm mt-0.5">2.84</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 text-[10px] uppercase font-bold">Avg R:R Ratio</span>
+                                        <p className="font-bold text-teal-300 font-mono text-sm mt-0.5">1:3.2</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 2. P&L History / Equity Candlestick Chart */}
+                            <div className={`${theme.card} p-5 sm:p-6 rounded-3xl border ${theme.border} shadow-xl`}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <BarChart3 size={18} className="text-emerald-400" />
+                                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Equity Curve Performance</h3>
+                                    </div>
+                                    <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+                                        Per-Trade Candlestick View
+                                    </span>
+                                </div>
+                                <div className="h-56 md:h-72 w-full">
                                     <div className="w-full h-full">
                                         <CandlestickChart
                                             data={performanceStats.perTradeCandles}
@@ -867,106 +1143,170 @@ const App = () => {
                                 </div>
                             </div>
 
-                            <button onClick={() => setShowAddTrade(true)} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-green-900/20 mb-4">
-                                <Plus size={24} /> Add New Trade
-                            </button>
-
-                            <a
-                                href="/game-page.html"
-                                className={`${theme.card} p-5 rounded-2xl border border-green-500/40 shadow-[0_0_18px_rgba(34,197,94,0.15)] mb-6 flex items-center justify-between active:scale-95 transition-all`}
-                                style={{ textDecoration: 'none', display: 'flex' }}
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-green-600 rounded-xl">
-                                        <Zap size={24} className="text-white" />
-                                    </div>
-                                    <div>
-                                        <h3 className={`text-base font-bold ${theme.text}`}>Candle Clash 🎮</h3>
-                                        <p className="text-xs text-green-500 font-semibold">Play free — no sign in needed!</p>
-                                    </div>
-                                </div>
-                                <ExternalLink className="text-gray-500" size={20} />
-                            </a>
-
-
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
-                                <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-col gap-1`}>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <div className="p-1.5 bg-green-500/20 rounded-lg text-green-500">
+                            {/* 3. 4-Grid Key Stats */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                                <div className={`${theme.card} p-4 sm:p-5 rounded-2xl border ${theme.border} flex flex-col gap-2 hover:border-emerald-500/40 transition`}>
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-2 bg-emerald-500/15 rounded-xl text-emerald-400">
                                             <TrendingUp size={16} />
                                         </div>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Gross Profit</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gross Profit</p>
                                     </div>
                                     <div>
-                                        <p className="text-lg font-bold font-mono text-green-500">+{globalCurrency}{grossProfit.toLocaleString()}</p>
-                                        <p className="text-xs text-gray-500 font-medium">{winningTrades} Trades</p>
+                                        <p className="text-lg sm:text-xl font-bold font-mono text-emerald-400">+{globalCurrency}{grossProfit.toLocaleString()}</p>
+                                        <p className="text-xs text-slate-500 font-medium">{winningTrades} Wins</p>
                                     </div>
                                 </div>
-                                <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-col gap-1`}>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <div className="p-1.5 bg-red-500/20 rounded-lg text-red-500">
+
+                                <div className={`${theme.card} p-4 sm:p-5 rounded-2xl border ${theme.border} flex flex-col gap-2 hover:border-rose-500/40 transition`}>
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-2 bg-rose-500/15 rounded-xl text-rose-400">
                                             <TrendingUp size={16} className="rotate-180" />
                                         </div>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Gross Loss</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gross Loss</p>
                                     </div>
                                     <div>
-                                        <p className="text-lg font-bold font-mono text-red-500">-{globalCurrency}{grossLoss.toLocaleString()}</p>
-                                        <p className="text-xs text-gray-500 font-medium">{trades.length - winningTrades} Trades</p>
+                                        <p className="text-lg sm:text-xl font-bold font-mono text-rose-400">-{globalCurrency}{grossLoss.toLocaleString()}</p>
+                                        <p className="text-xs text-slate-500 font-medium">{trades.length - winningTrades} Losses</p>
                                     </div>
                                 </div>
-                                <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-col gap-1`}>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <div className="p-1.5 bg-blue-500/20 rounded-lg text-blue-500">
+
+                                <div className={`${theme.card} p-4 sm:p-5 rounded-2xl border ${theme.border} flex flex-col gap-2 hover:border-blue-500/40 transition`}>
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-2 bg-blue-500/15 rounded-xl text-blue-400">
                                             <BarChart3 size={16} />
                                         </div>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Trades</p>
                                     </div>
                                     <div>
-                                        <p className="text-lg font-bold font-mono">{trades.length}</p>
-                                        <p className="text-xs text-gray-500 font-medium">Trades</p>
+                                        <p className="text-lg sm:text-xl font-bold font-mono text-white">{trades.length}</p>
+                                        <p className="text-xs text-slate-500 font-medium">Logged</p>
                                     </div>
                                 </div>
-                                <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-col gap-1`}>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <div className="p-1.5 bg-purple-500/20 rounded-lg text-purple-500">
+
+                                <div className={`${theme.card} p-4 sm:p-5 rounded-2xl border ${theme.border} flex flex-col gap-2 hover:border-purple-500/40 transition`}>
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-2 bg-purple-500/15 rounded-xl text-purple-400">
                                             <TrendingUp size={16} />
                                         </div>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Win Rate</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Win Rate</p>
                                     </div>
                                     <div>
-                                        <p className="text-lg font-bold font-mono">{winRate}%</p>
-                                        <p className="text-xs text-gray-500 font-medium">Consistency</p>
+                                        <p className="text-lg sm:text-xl font-bold font-mono text-purple-300">{winRate}%</p>
+                                        <p className="text-xs text-slate-500 font-medium">Accuracy</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                                <button onClick={() => setCurrentScreen('prop-firm-calc')} className={`${theme.card} border border-emerald-500/40 w-full text-emerald-400 font-extrabold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-500/10 hover:bg-emerald-950/20`}>
-                                    <ShieldAlert size={20} className="text-emerald-400" /> Prop Firm Calc
+                            {/* 4. Quick Risk Tools Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <button
+                                    onClick={() => setCurrentScreen('leverage-calc')}
+                                    className={`${theme.card} border border-amber-500/30 hover:border-amber-500/60 p-4 rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-amber-500/5 group text-left cursor-pointer`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
+                                            <Zap size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1.5">
+                                                <h4 className="text-xs font-bold text-white">Crypto Leverage Danger</h4>
+                                                <span className="text-[8px] bg-amber-500/20 text-amber-300 font-black px-1.5 py-0.5 rounded">HOT</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400">Liquidation &amp; margin safety</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight size={16} className="text-amber-400 group-hover:translate-x-1 transition" />
                                 </button>
-                                <button onClick={() => setCurrentScreen('leverage-calc')} className={`${theme.card} border border-amber-500/40 w-full text-amber-400 font-extrabold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-amber-500/10 hover:bg-amber-950/20`}>
-                                    <Zap size={20} className="text-amber-400" /> Leverage Danger Calc
+
+                                <button
+                                    onClick={() => setCurrentScreen('prop-firm-calc')}
+                                    className={`${theme.card} border border-emerald-500/30 hover:border-emerald-500/60 p-4 rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-emerald-500/5 group text-left cursor-pointer`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                            <ShieldAlert size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1.5">
+                                                <h4 className="text-xs font-bold text-white">Prop Firm Calculator</h4>
+                                                <span className="text-[8px] bg-emerald-500/20 text-emerald-300 font-black px-1.5 py-0.5 rounded">NEW</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400">FTMO &amp; drawdown protection</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight size={16} className="text-emerald-400 group-hover:translate-x-1 transition" />
                                 </button>
-                                <button onClick={() => setCurrentScreen('risk-reward')} className={`${theme.card} border ${theme.border} w-full text-blue-500 font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-blue-500/10`}>
-                                    <Calculator size={20} /> Risk Reward Calc
+
+                                <button
+                                    onClick={() => setCurrentScreen('brokerage-calc')}
+                                    className={`${theme.card} border border-cyan-500/30 hover:border-cyan-500/60 p-4 rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-cyan-500/5 group text-left cursor-pointer`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 rounded-xl bg-cyan-500/15 text-cyan-400 group-hover:scale-110 transition">
+                                            <Scale size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1.5">
+                                                <h4 className="text-xs font-bold text-white">Brokerage &amp; Tax</h4>
+                                                <span className="text-[8px] bg-cyan-500/20 text-cyan-300 font-black px-1.5 py-0.5 rounded">FREE</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400">Zerodha / Groww fee analysis</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight size={16} className="text-cyan-400 group-hover:translate-x-1 transition" />
                                 </button>
                             </div>
 
-                            <div className={`${theme.card} p-4 rounded-xl border ${theme.border}`}>
-                                <h2 className="font-bold mb-4">Recent Trades</h2>
-                                <div className="space-y-3">
-                                    {[...trades].reverse().slice(0, 50).map((trade) => (
-                                        <div key={trade.id} className={`p-3 rounded-lg border ${theme.border} hover:bg-gray-700/50 transition-colors`}>
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold">{trade.symbol}</span>
-                                                    <span className={`text-xs px-2 py-0.5 rounded ${trade.type === 'Long' ? 'bg-green-600/20 text-green-500' : 'bg-red-600/20 text-red-500'}`}>{trade.type}</span>
+                            {/* 5. Recent Trades Executions */}
+                            <div className={`${theme.card} p-5 sm:p-6 rounded-3xl border ${theme.border} shadow-xl`}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUp size={18} className="text-emerald-400" />
+                                        <h2 className="font-bold text-white text-base">Recent Executions</h2>
+                                    </div>
+                                    <button
+                                        onClick={() => setCurrentScreen('trades')}
+                                        className="text-xs text-emerald-400 hover:text-emerald-300 font-bold transition flex items-center gap-1 cursor-pointer"
+                                    >
+                                        <span>View All ({trades.length})</span>
+                                        <ArrowRight size={13} />
+                                    </button>
+                                </div>
+                                <div className="space-y-2.5">
+                                    {[...trades].reverse().slice(0, 10).map((trade) => (
+                                        <div
+                                            key={trade.id}
+                                            onClick={() => setSelectedTrade(trade)}
+                                            className="p-3.5 rounded-xl border border-slate-800/80 bg-slate-900/60 hover:bg-slate-800/70 hover:border-slate-700 transition cursor-pointer flex items-center justify-between"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <span className={`text-[10px] font-black px-2 py-0.5 rounded border ${trade.type === 'Long' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30'}`}>
+                                                    {trade.type}
+                                                </span>
+                                                <div>
+                                                    <span className="font-bold text-white font-mono text-sm">{trade.symbol}</span>
+                                                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
+                                                        <span>{trade.date}</span>
+                                                        <span>•</span>
+                                                        <span className="text-slate-300">{trade.strategy}</span>
+                                                        {trade.mentalState && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span className="text-purple-400">{trade.mentalState}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <span className={`font-bold ${trade.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>{trade.pnl >= 0 ? '+' : ''}{globalCurrency}{trade.pnl}</span>
                                             </div>
-                                            <div className="flex items-center justify-between text-xs text-gray-400">
-                                                <span>{trade.date}</span>
-                                                <span>{trade.strategy}</span>
+
+                                            <div className="text-right">
+                                                <span className={`font-bold font-mono text-sm ${trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                    {trade.pnl >= 0 ? '+' : ''}{globalCurrency}{trade.pnl.toLocaleString()}
+                                                </span>
+                                                <p className="text-[10px] text-slate-500 font-mono">
+                                                    Entry: {globalCurrency}{trade.entryPrice.toLocaleString()}
+                                                </p>
                                             </div>
                                         </div>
                                     ))}
@@ -978,28 +1318,69 @@ const App = () => {
                     {currentScreen === 'trades' && (
                         <div className="space-y-4">
                             <div className="flex items-center justify-between mb-2">
-                                <h2 className="text-xl font-bold">Your Trades</h2>
-                                <button onClick={() => setShowFavoritesOnly(!showFavoritesOnly)} className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold transition-all ${showFavoritesOnly ? 'bg-gray-700 text-white border-gray-600' : 'border-gray-700 text-gray-400'}`}>
-                                    <Star size={14} className={showFavoritesOnly ? "fill-white" : ""} /> Favorites Only
-                                </button>
+                                <div>
+                                    <h2 className="text-xl font-bold text-white">Your Trade Log</h2>
+                                    <p className="text-xs text-slate-400">Total {trades.length} executions recorded</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setShowAddTrade(true)}
+                                        className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
+                                    >
+                                        <Plus size={15} /> Add Trade
+                                    </button>
+                                    <button
+                                        onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${showFavoritesOnly ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-slate-800 text-slate-400 hover:text-white'}`}
+                                    >
+                                        <Star size={13} className={showFavoritesOnly ? "fill-amber-400" : ""} /> Favorites
+                                    </button>
+                                </div>
                             </div>
-                            <div className="space-y-3">
-                                {[...trades].reverse().filter(t => !showFavoritesOnly || t.isFavorite).map((trade, index) => (
-                                    <React.Fragment key={trade.id}>
-                                        <div onClick={() => setSelectedTrade(trade)} className={`${theme.card} p-4 rounded-2xl border ${theme.border} flex items-center justify-between shadow-sm cursor-pointer active:bg-gray-700/50`}>
-                                            <div className="flex items-center gap-4">
-                                                <button onClick={(e) => { e.stopPropagation(); toggleFavorite(trade.id); }} className="p-1"><Star size={24} className={trade.isFavorite ? 'fill-yellow-500 text-yellow-500' : 'text-gray-700'} /></button>
-                                                <div><h3 className="font-bold text-base tracking-wide">{trade.symbol}</h3><p className={`text-xs ${theme.subtext}`}>{trade.date}</p></div>
-                                            </div>
-                                            <div className="flex items-center gap-4">
-                                                <span className={`font-bold text-base ${trade.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>{trade.pnl >= 0 ? '+' : ''}{globalCurrency}{Math.abs(trade.pnl).toLocaleString()}</span>
-                                                <button onClick={(e) => { e.stopPropagation(); deleteTrade(trade.id); }} className="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-500/10"><Trash2 size={18} /></button>
+                            <div className="space-y-2.5">
+                                {[...trades].reverse().filter(t => !showFavoritesOnly || t.isFavorite).map((trade) => (
+                                    <div
+                                        key={trade.id}
+                                        onClick={() => setSelectedTrade(trade)}
+                                        className={`${theme.card} p-4 rounded-2xl border ${theme.border} hover:border-slate-700 transition flex items-center justify-between shadow-sm cursor-pointer`}
+                                    >
+                                        <div className="flex items-center gap-3.5">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); toggleFavorite(trade.id); }}
+                                                className="p-1 text-slate-600 hover:text-amber-400 transition"
+                                            >
+                                                <Star size={18} className={trade.isFavorite ? 'fill-amber-400 text-amber-400' : ''} />
+                                            </button>
+                                            <div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`text-[10px] font-black px-1.5 py-0.5 rounded border ${trade.type === 'Long' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30'}`}>
+                                                        {trade.type}
+                                                    </span>
+                                                    <h3 className="font-bold text-sm text-white font-mono">{trade.symbol}</h3>
+                                                    <span className="text-[10px] text-slate-400 hidden sm:inline">• {trade.strategy}</span>
+                                                </div>
+                                                <p className="text-[11px] text-slate-400 mt-0.5">{trade.date}</p>
                                             </div>
                                         </div>
-                                    </React.Fragment>
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-right">
+                                                <span className={`font-bold font-mono text-base ${trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                    {trade.pnl >= 0 ? '+' : ''}{globalCurrency}{Math.abs(trade.pnl).toLocaleString()}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); deleteTrade(trade.id); }}
+                                                className="text-slate-500 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-rose-500/10 cursor-pointer"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 ))}
                                 {trades.filter(t => !showFavoritesOnly || t.isFavorite).length === 0 && (
-                                    <div className="text-center py-10 text-gray-500"><p>No trades found.</p></div>
+                                    <div className="text-center py-12 text-slate-500">
+                                        <p>No trades found in this view.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -1229,31 +1610,34 @@ const App = () => {
     );
 };
 
-const DeskNavButton = ({ icon, label, active, onClick }: any) => (
-    <button onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold ${active ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}>
-        {icon}
-        <span className="text-sm">{label}</span>
+const DeskNavButton = ({ icon, label, active, onClick, badge }: any) => (
+    <button onClick={onClick} className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all font-bold text-xs cursor-pointer ${active ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'}`}>
+        <div className="flex items-center gap-2.5">
+            {icon}
+            <span>{label}</span>
+        </div>
+        {badge && <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">{badge}</span>}
     </button>
 );
 
 const NavButton = ({ icon, label, active, onClick }: any) => (
-    <button onClick={onClick} className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${active ? 'text-green-500' : 'text-gray-400 hover:text-white'}`}>
+    <button onClick={onClick} className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${active ? 'text-emerald-400 font-bold' : 'text-slate-400 hover:text-white'}`}>
         {icon}
-        <span className="text-xs">{label}</span>
+        <span className="text-[10px]">{label}</span>
     </button>
 );
 
 const StatCard = ({ label, value, subValue, color, icon, theme }: any) => (
-    <div className={`${theme.card} p-4 rounded-xl border ${theme.border} flex flex-col gap-1`}>
+    <div className={`${theme.card} p-4 rounded-2xl border ${theme.border} flex flex-col gap-1.5 hover:border-slate-700 transition`}>
         <div className="flex items-center gap-2 mb-1">
             <div className={`p-1.5 bg-opacity-20 rounded-lg ${color.replace('text-', 'bg-')} ${color}`}>
                 {icon}
             </div>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{label}</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{label}</p>
         </div>
         <div>
             <p className={`text-lg font-bold font-mono ${color}`}>{value}</p>
-            <p className="text-xs text-gray-500 font-medium">{subValue}</p>
+            <p className="text-xs text-slate-500 font-medium">{subValue}</p>
         </div>
     </div>
 );

@@ -74,3 +74,32 @@ html {
     display: none !important;
     /* Completely hide it, but keep it in DOM for custom selector */
 }
+
+@keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+@keyframes pulse-subtle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.04); }
+}
+
+.animate-pulse-subtle {
+    animation: pulse-subtle 7s ease-in-out infinite;
+}
+
+.bg-grid-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
