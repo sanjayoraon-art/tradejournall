@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    TrendingUp, BarChart3, ShieldCheck, ShieldAlert, Brain, ArrowRight, Zap,
+    TrendingUp, TrendingDown, BarChart3, ShieldCheck, ShieldAlert, Brain, ArrowRight, Zap,
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
@@ -217,6 +217,61 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         </div>
                         <p className="text-[10px] text-slate-400 font-medium hidden sm:block">AI-Powered Trading Analytics</p>
                     </div>
+                </div>
+
+                {/* Desktop Center Links for Risk Tools */}
+                <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+                    <a
+                        href="/tools/drawdown-recovery-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-rose-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <TrendingDown size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                        <span>Drawdown &amp; Goal</span>
+                        <span className="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black border border-rose-500/30">PRO</span>
+                    </a>
+                    <a
+                        href="/tools/ftmo-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-emerald-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <ShieldAlert size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                        <span>Prop Firm Calc</span>
+                        <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black border border-emerald-500/30">NEW</span>
+                    </a>
+                    <a
+                        href="/tools/leverage-danger-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenLeverageCalculator) onOpenLeverageCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-amber-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                        <span>Leverage Danger</span>
+                        <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-black border border-amber-500/30">HOT</span>
+                    </a>
+                    <a
+                        href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenCalculator) onOpenCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-cyan-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                        <span>Brokerage &amp; Tax</span>
+                    </a>
                 </div>
 
                 <div className="flex items-center gap-2.5 sm:gap-4 relative">
@@ -611,6 +666,153 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <p className="text-3xl sm:text-4xl font-black text-emerald-400 font-mono">100% FREE</p>
                         <p className="text-xs sm:text-sm text-slate-400 font-medium mt-1">Zero Paywalls, Zero KYC</p>
                     </div>
+                </div>
+            </section>
+
+            {/* Direct Tool Showcase Section: Highly Visible to All Users */}
+            <section className="w-full py-12 px-4 max-w-7xl mx-auto border-b border-slate-800/80">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                            <Calculator size={13} /> Free Risk &amp; Performance Tools
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+                            Essential Trading Tools &amp; Calculators
+                        </h2>
+                        <p className="text-slate-400 text-sm mt-1 max-w-xl">
+                            Instant mathematical precision before executing high-risk trades. 100% free, no login or signup required.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Card 1: Drawdown Recovery & Compounding */}
+                    <a
+                        href="/tools/drawdown-recovery-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-rose-500/30 hover:border-rose-500/70 transition-all duration-300 shadow-lg shadow-rose-500/5 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
+                                    <TrendingDown size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                    PRO TOOL
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
+                                Drawdown Recovery &amp; Goal
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Calculate exact percentage return, RRR, and winning trades needed to recover losses and plan account compounding.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
+                            <span>Open Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 2: Prop Firm Challenge Calculator */}
+                    <a
+                        href="/tools/ftmo-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/30 hover:border-emerald-500/70 transition-all duration-300 shadow-lg shadow-emerald-500/5 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                    <ShieldAlert size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    NEW
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                Prop Firm Calculator
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Max daily drawdown &amp; lot size calculator for FTMO, Funding Pips, FundedNext, and E8 evaluation challenges.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
+                            <span>Open Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 3: Crypto Leverage Danger Calculator */}
+                    <a
+                        href="/tools/leverage-danger-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenLeverageCalculator) onOpenLeverageCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-amber-500/30 hover:border-amber-500/70 transition-all duration-300 shadow-lg shadow-amber-500/5 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
+                                    <Zap size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                    HOT
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                Leverage Danger &amp; Liquidation
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Exact liquidation price and margin danger calculator for Binance, Bybit, BTC, and 100x futures contracts.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
+                            <span>Open Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 4: Brokerage & Tax Calculator */}
+                    <a
+                        href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenCalculator) onOpenCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-cyan-500/30 hover:border-cyan-500/70 transition-all duration-300 shadow-lg shadow-cyan-500/5 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-cyan-500/15 text-cyan-400 group-hover:scale-110 transition">
+                                    <Scale size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                    FREE
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
+                                Brokerage &amp; Tax Calculator
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Zerodha vs Groww, STT, GST, SEBI fee comparison and Indian 30% crypto tax &amp; 1% TDS breakdowns.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400">
+                            <span>Open Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
                 </div>
             </section>
 
