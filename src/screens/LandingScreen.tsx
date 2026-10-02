@@ -12,6 +12,8 @@ import { BlogCard } from '../components/BlogCard';
 import { db, appId } from '../utils/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
+import { DEFAULT_BLOG_POSTS } from '../utils/defaultArticles';
+
 interface LandingScreenProps {
     onSignIn: () => void;
     onOpenInfo: (page: 'about' | 'privacy' | 'terms' | 'contact') => void;
@@ -31,8 +33,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     theme,
     isDarkMode
 }) => {
-    const [blogPosts, setBlogPosts] = useState<any[]>([]);
-    const [loadingBlogs, setLoadingBlogs] = useState(true);
+    const [blogPosts, setBlogPosts] = useState<any[]>(DEFAULT_BLOG_POSTS);
+    const [loadingBlogs, setLoadingBlogs] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
@@ -66,9 +68,14 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                     return getTime(b) - getTime(a);
                 });
 
-                setBlogPosts(posts);
+                if (posts.length > 0) {
+                    setBlogPosts(posts);
+                } else {
+                    setBlogPosts(DEFAULT_BLOG_POSTS);
+                }
             } catch (err) {
                 console.error("Error fetching landing blog posts:", err);
+                setBlogPosts(DEFAULT_BLOG_POSTS);
             } finally {
                 setLoadingBlogs(false);
             }
@@ -241,12 +248,15 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     </span>
                                     <span className="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold">3 TOOLS</span>
                                 </div>
-                                <button
-                                    onClick={() => {
+                                <a
+                                    href="/tools/leverage-danger-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
                                         setIsMenuOpen(false);
                                         if (onOpenLeverageCalculator) onOpenLeverageCalculator();
                                     }}
                                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group"
+                                    style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
                                         <Zap size={15} />
@@ -258,14 +268,17 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">Calculate liquidation & risk</p>
                                     </div>
-                                </button>
+                                </a>
 
-                                <button
-                                    onClick={() => {
+                                <a
+                                    href="/tools/ftmo-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
                                         setIsMenuOpen(false);
                                         if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
                                     }}
                                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
                                         <ShieldAlert size={15} />
@@ -277,14 +290,17 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">Drawdown & target sizing</p>
                                     </div>
-                                </button>
+                                </a>
 
-                                <button
-                                    onClick={() => {
+                                <a
+                                    href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
                                         setIsMenuOpen(false);
                                         if (onOpenCalculator) onOpenCalculator();
                                     }}
                                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-cyan-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
                                         <Scale size={15} />
@@ -296,7 +312,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">STT, GST & broker breakdown</p>
                                     </div>
-                                </button>
+                                </a>
                             </div>
 
                             {/* Category 2: Interactive Games */}
@@ -640,6 +656,21 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 <div className="bg-rose-500 h-full w-[85%]"></div>
                             </div>
                         </div>
+
+                        <a
+                            href="/tools/leverage-danger-calculator"
+                            onClick={(e) => {
+                                if (onOpenLeverageCalculator) {
+                                    e.preventDefault();
+                                    onOpenLeverageCalculator();
+                                }
+                            }}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 mt-4 group/link"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <span>Launch Danger Calculator Free</span>
+                            <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
+                        </a>
                     </div>
 
                     {/* Bento 3: AI Psychology Coach & Mistake Tagging */}
@@ -1156,7 +1187,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
             <div className="w-full bg-[#060a14] border-t border-slate-800/80 text-center py-10 px-4">
                 <div className="max-w-4xl mx-auto">
                     <p className="text-xs text-slate-500 leading-relaxed">
-                        TradeJournall is a professional-grade <strong className="text-slate-400">free crypto trading journal</strong> for Binance, WazirX, CoinDCX, and Bybit traders. Whether you trade <strong className="text-slate-400">Bitcoin</strong>, <strong className="text-slate-400">Ethereum</strong>, <strong className="text-slate-400">Nifty 50 Options</strong>, or <strong className="text-slate-400">Forex</strong>, our tool helps you calculate P&amp;L, avoid revenge trading, eliminate liquidation risk with the Crypto Leverage Danger Calculator, and build true trading consistency — 100% free.
+                        TradeJournall is a professional-grade <strong className="text-slate-400">free crypto trading journal</strong> for Binance, WazirX, CoinDCX, and Bybit traders. Whether you trade <strong className="text-slate-400">Bitcoin</strong>, <strong className="text-slate-400">Ethereum</strong>, <strong className="text-slate-400">Nifty 50 Options</strong>, or <strong className="text-slate-400">Forex</strong>, our tool helps you calculate P&amp;L, avoid revenge trading, eliminate liquidation risk with the <a href="/tools/leverage-danger-calculator" className="text-amber-400 hover:text-amber-300 font-bold underline decoration-amber-500/40 underline-offset-2">Crypto Leverage Danger Calculator</a>, and build true trading consistency — 100% free.
                     </p>
                 </div>
             </div>
@@ -1181,31 +1212,52 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🛠️ Trading Tools</h4>
                             <ul className="space-y-2 text-xs">
                                 <li>
-                                    <button
-                                        onClick={() => { if (onOpenLeverageCalculator) onOpenLeverageCalculator(); }}
+                                    <a
+                                        href="/tools/leverage-danger-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenLeverageCalculator) {
+                                                e.preventDefault();
+                                                onOpenLeverageCalculator();
+                                            }
+                                        }}
                                         className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
                                     >
                                         <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
                                         <span>Crypto Leverage Danger Calc</span>
-                                    </button>
+                                    </a>
                                 </li>
                                 <li>
-                                    <button
-                                        onClick={() => { if (onOpenPropFirmCalculator) onOpenPropFirmCalculator(); }}
+                                    <a
+                                        href="/tools/ftmo-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmCalculator();
+                                            }
+                                        }}
                                         className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
                                     >
                                         <ShieldAlert size={14} className="text-emerald-400 group-hover:scale-110 transition" />
                                         <span>Prop Firm Calculator</span>
-                                    </button>
+                                    </a>
                                 </li>
                                 <li>
-                                    <button
-                                        onClick={onOpenCalculator}
+                                    <a
+                                        href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCalculator) {
+                                                e.preventDefault();
+                                                onOpenCalculator();
+                                            }
+                                        }}
                                         className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
                                     >
                                         <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
                                         <span>Brokerage &amp; Tax Calculator</span>
-                                    </button>
+                                    </a>
                                 </li>
                             </ul>
                         </div>

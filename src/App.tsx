@@ -174,6 +174,18 @@ function getPropFirmRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Brokerage Calculator
+function getBrokerageRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/calculators/stocks/') ||
+        path.includes('/calculators/crypto/') ||
+        path.includes('/calculators/forex/') ||
+        path.includes('/tools/brokerage-calculator') ||
+        path.includes('/calculators/brokerage')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -192,6 +204,7 @@ const App = () => {
     const [currentScreen, setCurrentScreen] = useState(() => {
         if (getLeverageRouteFromUrl()) return 'leverage-calc';
         if (getPropFirmRouteFromUrl()) return 'prop-firm-calc';
+        if (getBrokerageRouteFromUrl()) return 'brokerage-calc';
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin screen on fresh reload or navigation from external links
         if (saved === 'admin') return 'dashboard';
@@ -221,7 +234,10 @@ const App = () => {
     const [products, setProducts] = useState<any[]>([]);
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
-    const [showLanding, setShowLanding] = useState(true);
+    const [showLanding, setShowLanding] = useState(() => {
+        if (getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        return true;
+    });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
     const chatEndRef = React.useRef<HTMLDivElement>(null);
     // Analytics Tracking
@@ -775,6 +791,30 @@ const App = () => {
         if (infoPage) {
             return <InformationScreen pageType={infoPage} onBack={() => setInfoPage(null)} theme={theme} />;
         }
+        if (currentScreen === 'leverage-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <LeverageCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (currentScreen === 'prop-firm-calc') {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
@@ -785,6 +825,7 @@ const App = () => {
                         onBackToLanding={() => {
                             setCurrentScreen('dashboard');
                             setShowLanding(true);
+                            window.history.pushState({}, '', '/');
                         }}
                         onSignIn={() => {
                             setShowLanding(false);
@@ -808,6 +849,7 @@ const App = () => {
                         onBackToLanding={() => {
                             setCurrentScreen('dashboard');
                             setShowLanding(true);
+                            window.history.pushState({}, '', '/');
                         }}
                         onSignIn={() => {
                             setShowLanding(false);
