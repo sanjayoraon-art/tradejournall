@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -7,6 +7,7 @@ import { RiskRewardCalculatorScreen } from './screens/RiskRewardCalculatorScreen
 import { BrokerageCalculatorScreen } from './screens/BrokerageCalculatorScreen';
 import { PropFirmCalculatorScreen } from './screens/PropFirmCalculatorScreen';
 import { LeverageCalculatorScreen } from './screens/LeverageCalculatorScreen';
+import { DrawdownRecoveryCalculatorScreen } from './screens/DrawdownRecoveryCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -186,6 +187,18 @@ function getBrokerageRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Drawdown Recovery & Compounding Calculator
+function getDrawdownRecoveryRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/drawdown-recovery-calculator') ||
+        path.includes('/tools/trading-drawdown-recovery-calculator') ||
+        path.includes('/tools/compounding-calculator') ||
+        path.includes('/calculators/drawdown-recovery') ||
+        path.includes('/calculators/compounding')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -202,6 +215,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getDrawdownRecoveryRouteFromUrl()) return 'drawdown-calc';
         if (getLeverageRouteFromUrl()) return 'leverage-calc';
         if (getPropFirmRouteFromUrl()) return 'prop-firm-calc';
         if (getBrokerageRouteFromUrl()) return 'brokerage-calc';
@@ -235,7 +249,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -863,6 +877,26 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'drawdown-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <DrawdownRecoveryCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (showLanding) {
             return (
                 <LandingScreen
@@ -885,6 +919,11 @@ const App = () => {
                         window.history.pushState({}, '', '/tools/leverage-danger-calculator');
                         setShowLanding(false);
                         setCurrentScreen('leverage-calc');
+                    }}
+                    onOpenDrawdownCalculator={() => {
+                        window.history.pushState({}, '', '/tools/drawdown-recovery-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('drawdown-calc');
                     }}
                     theme={theme}
                     isDarkMode={isDarkMode}
@@ -937,6 +976,7 @@ const App = () => {
                         <DeskNavButton icon={<Zap size={17} className="text-amber-400" />} label="Leverage Danger" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} badge="HOT" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} badge="NEW" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400" />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
+                        <DeskNavButton icon={<TrendingDown size={17} className="text-rose-400" />} label="Drawdown & Goal" active={currentScreen === 'drawdown-calc'} onClick={() => setCurrentScreen('drawdown-calc')} badge="PRO" />
                     </div>
 
                     {/* Games & Resources */}
@@ -1298,6 +1338,25 @@ const App = () => {
                                     </div>
                                     <ArrowRight size={16} className="text-cyan-400 group-hover:translate-x-1 transition" />
                                 </button>
+
+                                <button
+                                    onClick={() => setCurrentScreen('drawdown-calc')}
+                                    className={`${theme.card} border border-rose-500/30 hover:border-rose-500/60 p-4 rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-rose-500/5 group text-left cursor-pointer`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
+                                            <TrendingDown size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1.5">
+                                                <h4 className="text-xs font-bold text-white">Drawdown &amp; Goal</h4>
+                                                <span className="text-[8px] bg-rose-500/20 text-rose-300 font-black px-1.5 py-0.5 rounded">PRO</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400">Recovery &amp; Compounding</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight size={16} className="text-rose-400 group-hover:translate-x-1 transition" />
+                                </button>
                             </div>
 
                             {/* 5. Recent Trades Executions */}
@@ -1507,6 +1566,14 @@ const App = () => {
                                 });
                                 setShowAddTrade(true);
                             }}
+                        />
+                    )}
+
+                    {currentScreen === 'drawdown-calc' && (
+                        <DrawdownRecoveryCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
                         />
                     )}
 

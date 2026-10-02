@@ -75,6 +75,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   <!-- 🛠️ Trading Tools & Risk Calculators (High Priority) -->
   <url>
+    <loc>${SITE_URL}/tools/drawdown-recovery-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/trading-drawdown-recovery-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/leverage-danger-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>

@@ -20,6 +20,7 @@ interface LandingScreenProps {
     onOpenCalculator?: () => void;
     onOpenPropFirmCalculator?: () => void;
     onOpenLeverageCalculator?: () => void;
+    onOpenDrawdownCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -30,6 +31,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenCalculator,
     onOpenPropFirmCalculator,
     onOpenLeverageCalculator,
+    onOpenDrawdownCalculator,
     theme,
     isDarkMode
 }) => {
@@ -246,7 +248,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                         🛠️ Trading Tools
                                     </span>
-                                    <span className="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold">3 TOOLS</span>
+                                    <span className="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold">4 TOOLS</span>
                                 </div>
                                 <a
                                     href="/tools/leverage-danger-calculator"
@@ -311,6 +313,28 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[8px] font-black px-1.5 py-0.5 rounded">FREE</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">STT, GST & broker breakdown</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/drawdown-recovery-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
+                                        <Scale size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Drawdown & Goal Calc</span>
+                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">PRO</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Break-even math & compounding</p>
                                     </div>
                                 </a>
                             </div>
@@ -1257,6 +1281,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
                                         <span>Brokerage &amp; Tax Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/drawdown-recovery-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenDrawdownCalculator) {
+                                                e.preventDefault();
+                                                onOpenDrawdownCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Drawdown &amp; Goal Calculator</span>
                                     </a>
                                 </li>
                             </ul>
