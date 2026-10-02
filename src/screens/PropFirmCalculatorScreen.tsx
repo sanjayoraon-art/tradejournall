@@ -141,8 +141,14 @@ export const PropFirmCalculatorScreen: React.FC<PropFirmCalculatorScreenProps> =
 }) => {
   // Parse URL search params or path for presets
   const getInitialParams = () => {
-    const search = new URLSearchParams(window.location.search);
     const path = window.location.pathname.toLowerCase();
+    const isToolPage = path.includes('/tools/') || path.includes('/calculators/');
+
+    if (!isToolPage) {
+      return { firmId: 'ftmo', capital: 100000, balance: 100000, equity: 100000, pair: 'EUR/USD', sl: 20 };
+    }
+
+    const search = new URLSearchParams(window.location.search);
 
     let firmId = 'ftmo';
     if (path.includes('funding-pips') || search.get('firm') === 'funding-pips') firmId = 'funding-pips';
@@ -214,6 +220,12 @@ export const PropFirmCalculatorScreen: React.FC<PropFirmCalculatorScreenProps> =
 
   // Sync URL replacement without full page reload
   useEffect(() => {
+    const path = window.location.pathname.toLowerCase();
+    // Only update query params if currently on a dedicated tool/calculator route
+    if (!path.includes('/tools/') && !path.includes('/calculators/')) {
+      return;
+    }
+
     const params = new URLSearchParams();
     params.set('firm', selectedFirmId);
     params.set('capital', accountCapital.toString());

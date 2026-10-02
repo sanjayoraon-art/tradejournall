@@ -219,11 +219,24 @@ const App = () => {
         if (getLeverageRouteFromUrl()) return 'leverage-calc';
         if (getPropFirmRouteFromUrl()) return 'prop-firm-calc';
         if (getBrokerageRouteFromUrl()) return 'brokerage-calc';
+
+        // When on root homepage (/), ALWAYS default to clean dashboard/landing page!
+        const path = window.location.pathname.toLowerCase();
+        if (path === '/' || path === '' || path === '/index.html') return 'dashboard';
+
         const saved = localStorage.getItem('currentScreen');
-        // Security & UX: Never auto-open admin screen on fresh reload or navigation from external links
-        if (saved === 'admin') return 'dashboard';
+        // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
+        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc') return 'dashboard';
         return saved || 'dashboard';
     });
+
+    // Ensure root homepage is completely clean of any leftover calculator query params
+    useEffect(() => {
+        const path = window.location.pathname.toLowerCase();
+        if ((path === '/' || path === '' || path === '/index.html') && window.location.search) {
+            window.history.replaceState({}, '', '/');
+        }
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('currentScreen', currentScreen);
@@ -805,6 +818,39 @@ const App = () => {
         if (infoPage) {
             return <InformationScreen pageType={infoPage} onBack={() => setInfoPage(null)} theme={theme} />;
         }
+        if (showLanding) {
+            return (
+                <LandingScreen
+                    onSignIn={() => {
+                        setShowLanding(false);
+                        setCurrentScreen('dashboard');
+                    }}
+                    onOpenInfo={(page) => setInfoPage(page)}
+                    onOpenCalculator={() => {
+                        window.history.pushState({}, '', '/calculators/stocks/zerodha-vs-groww-brokerage-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('brokerage-calc');
+                    }}
+                    onOpenPropFirmCalculator={() => {
+                        window.history.pushState({}, '', '/tools/ftmo-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('prop-firm-calc');
+                    }}
+                    onOpenLeverageCalculator={() => {
+                        window.history.pushState({}, '', '/tools/leverage-danger-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('leverage-calc');
+                    }}
+                    onOpenDrawdownCalculator={() => {
+                        window.history.pushState({}, '', '/tools/drawdown-recovery-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('drawdown-calc');
+                    }}
+                    theme={theme}
+                    isDarkMode={isDarkMode}
+                />
+            );
+        }
         if (currentScreen === 'leverage-calc') {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
@@ -895,39 +941,6 @@ const App = () => {
                         }}
                     />
                 </div>
-            );
-        }
-        if (showLanding) {
-            return (
-                <LandingScreen
-                    onSignIn={() => {
-                        setShowLanding(false);
-                        setCurrentScreen('dashboard');
-                    }}
-                    onOpenInfo={(page) => setInfoPage(page)}
-                    onOpenCalculator={() => {
-                        window.history.pushState({}, '', '/calculators/stocks/zerodha-vs-groww-brokerage-calculator');
-                        setShowLanding(false);
-                        setCurrentScreen('brokerage-calc');
-                    }}
-                    onOpenPropFirmCalculator={() => {
-                        window.history.pushState({}, '', '/tools/ftmo-calculator');
-                        setShowLanding(false);
-                        setCurrentScreen('prop-firm-calc');
-                    }}
-                    onOpenLeverageCalculator={() => {
-                        window.history.pushState({}, '', '/tools/leverage-danger-calculator');
-                        setShowLanding(false);
-                        setCurrentScreen('leverage-calc');
-                    }}
-                    onOpenDrawdownCalculator={() => {
-                        window.history.pushState({}, '', '/tools/drawdown-recovery-calculator');
-                        setShowLanding(false);
-                        setCurrentScreen('drawdown-calc');
-                    }}
-                    theme={theme}
-                    isDarkMode={isDarkMode}
-                />
             );
         }
         if (!isDevDev) return <LoginScreen theme={theme} />;
