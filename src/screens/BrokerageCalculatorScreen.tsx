@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Calculator, ArrowRight, Sparkles, ChevronDown, ChevronUp, ExternalLink, ArrowLeft, Scale, Check, AlertCircle } from 'lucide-react';
 import { calculateStockCharges, calculateCryptoFees, StockInput, CryptoInput } from '../utils/feeCalculators';
 import { formatNumber } from '../utils/helpers';
@@ -37,6 +37,92 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
       : '/calculators/crypto/coindcx-vs-delta-exchange-fee-calculator';
     window.history.replaceState({}, '', newPath);
   };
+
+  // Inject Dynamic SEO Title, Meta Tags & JSON-LD Schema for Google Search Console
+  useEffect(() => {
+    const isStock = activeTab === 'stock';
+    const metaTitle = isStock
+      ? "Zerodha vs Groww Brokerage Calculator 2026 | STT, GST & Net Profit | TradeJournall"
+      : "CoinDCX vs Delta Exchange Fee & Crypto Tax Calculator 2026 | TradeJournall";
+    const metaDescription = isStock
+      ? "Compare Zerodha vs Groww brokerage fees, STT, 18% GST, Stamp Duty, and exact breakeven points for Indian Stock Options and Intraday trades in real-time."
+      : "Calculate 1% TDS (Sec 194S), 30% Flat Tax (Sec 115BBH), and Maker/Taker fees comparing Delta Exchange vs CoinDCX for crypto futures trades in India.";
+    const metaKeywords = isStock
+      ? "zerodha vs groww brokerage calculator, zerodha brokerage calculator, groww brokerage calculator, option trading breakeven calculator, stt calculator, gst on brokerage, tradejournall"
+      : "coindcx vs delta exchange fee calculator, delta exchange fee calculator, coindcx fee calculator, crypto 1% tds calculator, crypto 30% tax calculator, tradejournall";
+    const canonicalUrl = isStock
+      ? "https://tradejournall.com/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
+      : "https://tradejournall.com/calculators/crypto/coindcx-vs-delta-exchange-fee-calculator";
+
+    document.title = metaTitle;
+
+    const setMetaTag = (nameAttr: string, attrValue: string, contentValue: string) => {
+      let element = document.querySelector(`meta[${nameAttr}="${attrValue}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(nameAttr, attrValue);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', contentValue);
+    };
+
+    setMetaTag('name', 'title', metaTitle);
+    setMetaTag('name', 'description', metaDescription);
+    setMetaTag('name', 'keywords', metaKeywords);
+    setMetaTag('property', 'og:title', metaTitle);
+    setMetaTag('property', 'og:description', metaDescription);
+    setMetaTag('property', 'og:url', canonicalUrl);
+    setMetaTag('property', 'twitter:title', metaTitle);
+    setMetaTag('property', 'twitter:description', metaDescription);
+    setMetaTag('property', 'twitter:url', canonicalUrl);
+
+    // Update or insert canonical link tag
+    let linkCanonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!linkCanonical) {
+      linkCanonical = document.createElement('link');
+      linkCanonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(linkCanonical);
+    }
+    linkCanonical.setAttribute('href', canonicalUrl);
+
+    // Inject JSON-LD Structured Data Schema for Googlebot
+    const scriptId = 'brokerage-calc-schema';
+    let scriptTag = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.id = scriptId;
+      scriptTag.type = 'application/ld+json';
+      document.head.appendChild(scriptTag);
+    }
+
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": isStock ? "Zerodha vs Groww Brokerage Calculator" : "CoinDCX vs Delta Exchange Fee Calculator",
+      "url": canonicalUrl,
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "description": metaDescription,
+      "publisher": {
+        "@type": "Organization",
+        "name": "TradeJournall",
+        "url": "https://tradejournall.com"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      }
+    };
+    scriptTag.textContent = JSON.stringify(schemaData);
+
+    return () => {
+      // Cleanup script on unmount
+      if (scriptTag && scriptTag.parentNode) {
+        scriptTag.parentNode.removeChild(scriptTag);
+      }
+    };
+  }, [activeTab]);
 
   // Stock State
   const [stockInput, setStockInput] = useState<StockInput>({
