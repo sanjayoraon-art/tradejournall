@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -199,6 +199,19 @@ function getDrawdownRecoveryRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Risk Reward vs Win Rate Matrix & Expectancy Calculator
+function getRiskRewardMatrixRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/risk-reward-win-rate-matrix') ||
+        path.includes('/tools/risk-reward-calculator') ||
+        path.includes('/tools/expectancy-calculator') ||
+        path.includes('/tools/trading-expectancy-calculator') ||
+        path.includes('/calculators/risk-reward-matrix') ||
+        path.includes('/calculators/breakeven-win-rate')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -215,6 +228,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getRiskRewardMatrixRouteFromUrl()) return 'risk-reward';
         if (getDrawdownRecoveryRouteFromUrl()) return 'drawdown-calc';
         if (getLeverageRouteFromUrl()) return 'leverage-calc';
         if (getPropFirmRouteFromUrl()) return 'prop-firm-calc';
@@ -226,7 +240,7 @@ const App = () => {
 
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc') return 'dashboard';
+        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward') return 'dashboard';
         return saved || 'dashboard';
     });
 
@@ -846,9 +860,34 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('drawdown-calc');
                     }}
+                    onOpenRiskRewardMatrix={() => {
+                        window.history.pushState({}, '', '/tools/risk-reward-win-rate-matrix');
+                        setShowLanding(false);
+                        setCurrentScreen('risk-reward');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
+            );
+        }
+        if (currentScreen === 'risk-reward') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <RiskRewardCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
             );
         }
         if (currentScreen === 'leverage-calc') {
@@ -986,6 +1025,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<Grid size={17} className="text-emerald-400" />} label="RR Matrix & Edge" active={currentScreen === 'risk-reward'} onClick={() => setCurrentScreen('risk-reward')} badge="MATRIX" />
                         <DeskNavButton icon={<Zap size={17} className="text-amber-400" />} label="Leverage Danger" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} badge="HOT" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} badge="NEW" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400" />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { User, Camera, Edit, PlayCircle, Moon, Sun, Share2, Download, ShieldCheck, FileCheck, Info, HelpCircle, ChevronRight, ArrowLeft, LogOut, Brain, Key, Search, Zap, Scale, Calculator, BarChart3, Gamepad2, ShieldAlert } from 'lucide-react';
+import { User, Camera, Edit, PlayCircle, Moon, Sun, Share2, Download, ShieldCheck, FileCheck, Info, HelpCircle, ChevronRight, ArrowLeft, LogOut, Brain, Key, Search, Zap, Scale, Calculator, BarChart3, Gamepad2, ShieldAlert, Grid } from 'lucide-react';
 import { auth } from '../utils/firebase';
 import { signOut } from 'firebase/auth';
 import { SupportChatModal } from '../components/SupportChatModal';
@@ -110,13 +110,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ theme, isDarkMode,
         },
         {
             id: 'risk-reward',
-            name: 'Risk & Position Sizing Calculator',
+            name: 'Risk-Reward vs Win Rate Matrix',
             category: 'Trading Tools',
-            description: 'Calculate risk-to-reward ratios, stop loss distance, and position sizing.',
-            icon: Calculator,
-            iconColor: 'text-blue-400',
-            badge: 'FREE',
-            badgeColor: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
+            description: '2D Heatmap & Expectancy Calculator. Analyze breakeven hurdles and positive expectancy edges.',
+            icon: Grid,
+            iconColor: 'text-emerald-400',
+            badge: 'MATRIX',
+            badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
             action: () => setCurrentScreen('risk-reward')
         },
         {
