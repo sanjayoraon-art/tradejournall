@@ -73,7 +73,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>1.0</priority>
   </url>
 
-  <!-- 🛠️ Trading Tools & Risk Calculators (High Priority) -->
+  <!-- Trading Tools and Risk Calculators -->
+  <url>
+    <loc>${SITE_URL}/tools/session-clock-ist</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/revenge-trading-cooldown-timer</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
   <url>
     <loc>${SITE_URL}/tools/drawdown-recovery-calculator</loc>
     <lastmod>${today}</lastmod>
@@ -141,7 +153,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.85</priority>
   </url>
 
-  <!-- 🎮 Trading Games & Practice Simulators -->
+  <!-- Trading Games and Practice Simulators -->
   <url>
     <loc>${SITE_URL}/candle-clash</loc>
     <lastmod>${today}</lastmod>
@@ -173,7 +185,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.85</priority>
   </url>
 
-  <!-- 📚 Trading Blog & Educational Articles Hub -->
+  <!-- Trading Blog and Educational Articles Hub -->
   <url>
     <loc>${SITE_URL}/blog</loc>
     <lastmod>${today}</lastmod>
@@ -182,7 +194,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   </url>${dynamicBlogUrls}
 </urlset>`;
 
-    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     res.status(200).send(sitemap);
 }
