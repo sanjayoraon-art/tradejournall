@@ -23,6 +23,7 @@ interface LandingScreenProps {
     onOpenDrawdownCalculator?: () => void;
     onOpenRiskRewardMatrix?: () => void;
     onOpenSessionClock?: () => void;
+    onOpenCooldownTimer?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -36,6 +37,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenDrawdownCalculator,
     onOpenRiskRewardMatrix,
     onOpenSessionClock,
+    onOpenCooldownTimer,
     theme,
     isDarkMode
 }) => {
@@ -363,6 +365,28 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIVE</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">US market open &amp; Forex overlap in IST</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/revenge-trading-cooldown-timer"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenCooldownTimer) onOpenCooldownTimer();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
+                                        <ShieldAlert size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Revenge Cooldown Timer</span>
+                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">RESET</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Stop-loss reset &amp; tilt breaker</p>
                                     </div>
                                 </a>
 
@@ -775,6 +799,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         </div>
                         <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
                             <span>Launch Clock</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card: Revenge Trade Cooldown Clock */}
+                    <a
+                        href="/tools/revenge-trading-cooldown-timer"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenCooldownTimer) onOpenCooldownTimer();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-rose-500/40 hover:border-rose-500/80 transition-all duration-300 shadow-lg shadow-rose-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
+                                    <ShieldAlert size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                    RESET TILT
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
+                                Revenge Cooldown Clock
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Halt emotional revenge trading after hitting a stop-loss. Interactive 15-minute cooldown timer, discipline quotes &amp; position sizing check.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
+                            <span>Start Cooldown</span>
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
                         </div>
                     </a>
@@ -1656,6 +1712,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Scale size={14} className="text-rose-400 group-hover:scale-110 transition" />
                                         <span>Drawdown &amp; Goal Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/revenge-trading-cooldown-timer"
+                                        onClick={(e) => {
+                                            if (onOpenCooldownTimer) {
+                                                e.preventDefault();
+                                                onOpenCooldownTimer();
+                                            }
+                                        }}
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Revenge Cooldown Timer</span>
                                     </a>
                                 </li>
                             </ul>

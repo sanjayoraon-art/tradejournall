@@ -9,6 +9,7 @@ import { PropFirmCalculatorScreen } from './screens/PropFirmCalculatorScreen';
 import { LeverageCalculatorScreen } from './screens/LeverageCalculatorScreen';
 import { DrawdownRecoveryCalculatorScreen } from './screens/DrawdownRecoveryCalculatorScreen';
 import { SessionClockScreen } from './screens/SessionClockScreen';
+import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -226,6 +227,20 @@ function getSessionClockRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Revenge Trade Cooldown Clock & Psychological Reset Widget
+function getRevengeCooldownRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/revenge-trading-cooldown') ||
+        path.includes('/tools/stop-loss-emotional-reset') ||
+        path.includes('/tools/cooldown-timer') ||
+        path.includes('/tools/revenge-trade-cooldown') ||
+        path.includes('/tools/trading-discipline-timer') ||
+        path.includes('/tools/tilt-breaker') ||
+        path.includes('/calculators/cooldown-timer')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -242,6 +257,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getRevengeCooldownRouteFromUrl()) return 'cooldown-timer';
         if (getSessionClockRouteFromUrl()) return 'session-clock';
         if (getRiskRewardMatrixRouteFromUrl()) return 'risk-reward';
         if (getDrawdownRecoveryRouteFromUrl()) return 'drawdown-calc';
@@ -255,7 +271,7 @@ const App = () => {
 
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock') return 'dashboard';
+        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
         return saved || 'dashboard';
     });
 
@@ -291,7 +307,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -885,9 +901,43 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('session-clock');
                     }}
+                    onOpenCooldownTimer={() => {
+                        window.history.pushState({}, '', '/tools/revenge-trading-cooldown-timer');
+                        setShowLanding(false);
+                        setCurrentScreen('cooldown-timer');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
+            );
+        }
+        if (currentScreen === 'cooldown-timer') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+                    <RevengeTradeCooldownScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onNavigateToTools={(route) => {
+                            window.history.pushState({}, '', route);
+                            if (route.includes('risk-reward')) setCurrentScreen('risk-reward');
+                            else if (route.includes('leverage')) setCurrentScreen('leverage-calc');
+                            else if (route.includes('prop-firm')) setCurrentScreen('prop-firm-calc');
+                            else if (route.includes('brokerage')) setCurrentScreen('brokerage-calc');
+                            else if (route.includes('drawdown')) setCurrentScreen('drawdown-calc');
+                            else if (route.includes('session-clock')) setCurrentScreen('session-clock');
+                        }}
+                    />
+                </div>
             );
         }
         if (currentScreen === 'session-clock') {
@@ -1072,6 +1122,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
                         <DeskNavButton icon={<Grid size={17} className="text-emerald-400" />} label="RR Matrix & Edge" active={currentScreen === 'risk-reward'} onClick={() => setCurrentScreen('risk-reward')} badge="MATRIX" />
                         <DeskNavButton icon={<Clock size={17} className="text-emerald-400" />} label="IST Session Clock" active={currentScreen === 'session-clock'} onClick={() => setCurrentScreen('session-clock')} badge="LIVE" />
                         <DeskNavButton icon={<Zap size={17} className="text-amber-400" />} label="Leverage Danger" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} badge="HOT" />
@@ -1682,6 +1733,20 @@ const App = () => {
                         <SessionClockScreen
                             theme={theme}
                             isDarkMode={isDarkMode}
+                            onBackToLanding={() => {
+                                setCurrentScreen('dashboard');
+                            }}
+                            onSignIn={() => {
+                                setCurrentScreen('dashboard');
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'cooldown-timer' && (
+                        <RevengeTradeCooldownScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
                             onBackToLanding={() => {
                                 setCurrentScreen('dashboard');
                             }}
