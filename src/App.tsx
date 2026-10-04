@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -8,6 +8,7 @@ import { BrokerageCalculatorScreen } from './screens/BrokerageCalculatorScreen';
 import { PropFirmCalculatorScreen } from './screens/PropFirmCalculatorScreen';
 import { LeverageCalculatorScreen } from './screens/LeverageCalculatorScreen';
 import { DrawdownRecoveryCalculatorScreen } from './screens/DrawdownRecoveryCalculatorScreen';
+import { SessionClockScreen } from './screens/SessionClockScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -212,6 +213,19 @@ function getRiskRewardMatrixRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Shift & Night-Trader Session Volatility Clock (IST)
+function getSessionClockRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/session-clock') ||
+        path.includes('/tools/market-session-clock') ||
+        path.includes('/tools/shift-night-trader-session-clock') ||
+        path.includes('/tools/forex-market-hours') ||
+        path.includes('/tools/crypto-session-clock') ||
+        path.includes('/calculators/session-clock')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -228,6 +242,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getSessionClockRouteFromUrl()) return 'session-clock';
         if (getRiskRewardMatrixRouteFromUrl()) return 'risk-reward';
         if (getDrawdownRecoveryRouteFromUrl()) return 'drawdown-calc';
         if (getLeverageRouteFromUrl()) return 'leverage-calc';
@@ -240,7 +255,7 @@ const App = () => {
 
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward') return 'dashboard';
+        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock') return 'dashboard';
         return saved || 'dashboard';
     });
 
@@ -276,7 +291,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -865,9 +880,41 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('risk-reward');
                     }}
+                    onOpenSessionClock={() => {
+                        window.history.pushState({}, '', '/tools/session-clock-ist');
+                        setShowLanding(false);
+                        setCurrentScreen('session-clock');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
+            );
+        }
+        if (currentScreen === 'session-clock') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+                    <SessionClockScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onNavigateToTools={(route) => {
+                            window.history.pushState({}, '', route);
+                            if (route.includes('risk-reward')) setCurrentScreen('risk-reward');
+                            else if (route.includes('leverage')) setCurrentScreen('leverage-calc');
+                            else if (route.includes('prop-firm')) setCurrentScreen('prop-firm-calc');
+                            else if (route.includes('brokerage')) setCurrentScreen('brokerage-calc');
+                            else if (route.includes('drawdown')) setCurrentScreen('drawdown-calc');
+                        }}
+                    />
+                </div>
             );
         }
         if (currentScreen === 'risk-reward') {
@@ -1026,6 +1073,7 @@ const App = () => {
                             Risk Tools
                         </span>
                         <DeskNavButton icon={<Grid size={17} className="text-emerald-400" />} label="RR Matrix & Edge" active={currentScreen === 'risk-reward'} onClick={() => setCurrentScreen('risk-reward')} badge="MATRIX" />
+                        <DeskNavButton icon={<Clock size={17} className="text-emerald-400" />} label="IST Session Clock" active={currentScreen === 'session-clock'} onClick={() => setCurrentScreen('session-clock')} badge="LIVE" />
                         <DeskNavButton icon={<Zap size={17} className="text-amber-400" />} label="Leverage Danger" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} badge="HOT" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-emerald-400" />} label="Prop Firm Calc" active={currentScreen === 'prop-firm-calc'} onClick={() => setCurrentScreen('prop-firm-calc')} badge="NEW" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400" />} label="Brokerage & Tax" active={currentScreen === 'brokerage-calc'} onClick={() => setCurrentScreen('brokerage-calc')} />
@@ -1627,6 +1675,19 @@ const App = () => {
                             theme={theme}
                             isDarkMode={isDarkMode}
                             primaryCurrencySymbol={globalCurrency}
+                        />
+                    )}
+
+                    {currentScreen === 'session-clock' && (
+                        <SessionClockScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            onBackToLanding={() => {
+                                setCurrentScreen('dashboard');
+                            }}
+                            onSignIn={() => {
+                                setCurrentScreen('dashboard');
+                            }}
                         />
                     )}
 

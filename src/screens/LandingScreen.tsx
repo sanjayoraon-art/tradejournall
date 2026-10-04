@@ -22,6 +22,7 @@ interface LandingScreenProps {
     onOpenLeverageCalculator?: () => void;
     onOpenDrawdownCalculator?: () => void;
     onOpenRiskRewardMatrix?: () => void;
+    onOpenSessionClock?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -34,6 +35,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenLeverageCalculator,
     onOpenDrawdownCalculator,
     onOpenRiskRewardMatrix,
+    onOpenSessionClock,
     theme,
     isDarkMode
 }) => {
@@ -339,6 +341,28 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">MATRIX</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">2D Heatmap &amp; Expectancy edge</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/session-clock-ist"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenSessionClock) onOpenSessionClock();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                                        <Clock size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>IST Session Clock</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIVE</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">US market open &amp; Forex overlap in IST</p>
                                     </div>
                                 </a>
 
@@ -722,8 +746,40 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                    {/* Card 0: Risk-Reward vs Win-Rate Matrix */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Card 0: Shift & Night-Trader Session Volatility Clock */}
+                    <a
+                        href="/tools/session-clock-ist"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenSessionClock) onOpenSessionClock();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                    <Clock size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    LIVE IST
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                Session Volatility Clock
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Live visual progress bars for Sydney, Tokyo, London &amp; New York in IST. Golden Volatility Overlap, US market open alerts &amp; audio chimes.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
+                            <span>Launch Clock</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 1: Risk-Reward vs Win-Rate Matrix */}
                     <a
                         href="/tools/risk-reward-win-rate-matrix"
                         onClick={(e) => {
@@ -1506,6 +1562,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <div className="space-y-2.5">
                             <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🛠️ Trading Tools</h4>
                             <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/session-clock-ist"
+                                        onClick={(e) => {
+                                            if (onOpenSessionClock) {
+                                                e.preventDefault();
+                                                onOpenSessionClock();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Clock size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>IST Session Volatility Clock</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <a
                                         href="/tools/risk-reward-win-rate-matrix"
