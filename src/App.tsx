@@ -311,10 +311,14 @@ const App = () => {
         const path = window.location.pathname.toLowerCase();
         if (path === '/' || path === '' || path === '/index.html') return 'dashboard';
 
-        const saved = localStorage.getItem('currentScreen');
-        // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-        if (saved === 'admin' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
-        return saved || 'dashboard';
+        try {
+            const saved = localStorage.getItem('currentScreen');
+            // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
+            if (saved === 'admin' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            return saved || 'dashboard';
+        } catch (e) {
+            return 'dashboard';
+        }
     });
 
     // Ensure root homepage is completely clean of any leftover calculator query params
@@ -326,12 +330,25 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('currentScreen', currentScreen);
+        try {
+            localStorage.setItem('currentScreen', currentScreen);
+        } catch (e) {}
     }, [currentScreen]);
-    const [statsTimeframe, setStatsTimeframe] = useState<'daily' | 'weekly' | 'monthly' | 'yearly' | 'all'>(() => (localStorage.getItem('statsTimeframe') as any) || 'monthly');
+
+    const [statsTimeframe, setStatsTimeframe] = useState<'daily' | 'weekly' | 'monthly' | 'yearly' | 'all'>(() => {
+        try {
+            return (localStorage.getItem('statsTimeframe') as any) || 'monthly';
+        } catch (e) {
+            return 'monthly';
+        }
+    });
+
     useEffect(() => {
-        localStorage.setItem('statsTimeframe', statsTimeframe);
+        try {
+            localStorage.setItem('statsTimeframe', statsTimeframe);
+        } catch (e) {}
     }, [statsTimeframe]);
+
     const [statsStrategy, setStatsStrategy] = useState<string>('All');
     const [globalCurrency, setGlobalCurrency] = useState('$');
     const [initialBalance, setInitialBalance] = useState<number>(10000);
@@ -368,12 +385,19 @@ const App = () => {
 
     // Firebase Auth and Sync
     useEffect(() => {
+        // Fallback safety timeout: ensure authLoading unblocks after 2.5 seconds max
+        const timer = setTimeout(() => {
+            setAuthLoading(false);
+        }, 2500);
+
         if (!auth || !db) {
             setAuthLoading(false);
+            clearTimeout(timer);
             return;
         }
 
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            clearTimeout(timer);
             setUser(currentUser);
             setAuthLoading(false);
 
