@@ -97,22 +97,64 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
 
     const schemaData = {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": isStock ? "Zerodha vs Groww Brokerage Calculator" : "CoinDCX vs Delta Exchange Fee Calculator",
-      "url": canonicalUrl,
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "All",
-      "description": metaDescription,
-      "publisher": {
-        "@type": "Organization",
-        "name": "TradeJournall",
-        "url": "https://tradejournall.com"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "INR"
-      }
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": isStock ? "Zerodha vs Groww Brokerage Calculator" : "CoinDCX vs Delta Exchange Fee Calculator",
+          "url": canonicalUrl,
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "All",
+          "description": metaDescription,
+          "publisher": {
+            "@type": "Organization",
+            "name": "TradeJournall",
+            "url": "https://tradejournall.com"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": isStock ? [
+            {
+              "@type": "Question",
+              "name": "Which broker is cheaper for option trading in India?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Both Zerodha and Groww charge flat ₹20 per order for Options. However, Zerodha offers lower slippage, GTT order execution, and transparent charge breakdown audit tools."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is the breakeven point calculated for Options?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Breakeven Points = Total Taxes & Brokerage Charges ÷ Lot Quantity. On a 500 qty option trade, total charges of ₹87.50 require a minimum movement of +0.18 points per option contract to break even."
+              }
+            }
+          ] : [
+            {
+              "@type": "Question",
+              "name": "Which exchange has lower futures trading fees: CoinDCX or Delta Exchange?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Delta Exchange India generally offers lower futures trading fees with a 0.02% Maker and 0.05% Taker fee compared to CoinDCX's standard futures tier."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is 1% TDS applicable on Delta Exchange India and CoinDCX?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, both exchanges are Indian FIU-compliant entities and automatically deduct 1% TDS on applicable crypto transactions as per Indian tax laws."
+              }
+            }
+          ]
+        }
+      ]
     };
     scriptTag.textContent = JSON.stringify(schemaData);
 
@@ -801,12 +843,12 @@ export const BrokerageCalculatorScreen: React.FC<BrokerageCalculatorScreenProps>
               <h3 className="text-xl font-bold text-amber-400">Frequently Asked Questions (FAQ)</h3>
               <div className="space-y-4">
                 <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
-                  <h5 className="font-bold text-white mb-1">Why is Delta Exchange India cheaper than CoinDCX for futures?</h5>
-                  <p className="text-xs text-gray-400">Delta Exchange offers lower taker fees (0.05% vs 0.075%) and native INR liquidity, saving active futures traders thousands of rupees per month.</p>
+                  <h5 className="font-bold text-white mb-1">Which exchange has lower futures trading fees: CoinDCX or Delta Exchange?</h5>
+                  <p className="text-xs text-gray-400">Delta Exchange India generally offers lower futures trading fees with a 0.02% Maker and 0.05% Taker fee compared to CoinDCX's standard futures tier.</p>
                 </div>
                 <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
-                  <h5 className="font-bold text-white mb-1">How is TDS deducted on Delta Exchange India?</h5>
-                  <p className="text-xs text-gray-400">Delta Exchange automatically withhold 1% TDS on sell orders in compliance with Section 194S and submits it directly to the Indian Income Tax Department under your PAN.</p>
+                  <h5 className="font-bold text-white mb-1">Is 1% TDS applicable on Delta Exchange India and CoinDCX?</h5>
+                  <p className="text-xs text-gray-400">Yes, both exchanges are Indian FIU-compliant entities and automatically deduct 1% TDS on applicable crypto transactions as per Indian tax laws.</p>
                 </div>
               </div>
             </div>
