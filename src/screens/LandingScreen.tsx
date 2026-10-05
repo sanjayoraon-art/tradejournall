@@ -1620,6 +1620,16 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             <ul className="space-y-2 text-xs">
                                 <li>
                                     <a
+                                        href="/tools/nifty-pcr-calculator"
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Compass size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Nifty PCR Sentiment Bias Gauge</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="/tools/nifty-option-theta-decay-calculator"
                                         className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}

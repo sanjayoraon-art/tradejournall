@@ -10,6 +10,7 @@ import { LeverageCalculatorScreen } from './screens/LeverageCalculatorScreen';
 import { DrawdownRecoveryCalculatorScreen } from './screens/DrawdownRecoveryCalculatorScreen';
 import { SessionClockScreen } from './screens/SessionClockScreen';
 import { OptionThetaDecayCalculatorScreen } from './screens/OptionThetaDecayCalculatorScreen';
+import { PcrSentimentCalculatorScreen } from './screens/PcrSentimentCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -256,6 +257,17 @@ function getOptionThetaRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Nifty & BankNifty PCR (Put-Call Ratio) & Sentiment Bias Gauge
+function getPcrRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/nifty-pcr-calculator') ||
+        path.includes('/tools/bank-nifty-put-call-ratio-indicator') ||
+        path.includes('/tools/pcr-sentiment-gauge') ||
+        path.includes('/calculators/pcr-calculator')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -272,6 +284,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getPcrRouteFromUrl()) return 'pcr-calc';
         if (getOptionThetaRouteFromUrl()) return 'option-theta-calc';
         if (getRevengeCooldownRouteFromUrl()) return 'cooldown-timer';
         if (getSessionClockRouteFromUrl()) return 'session-clock';
@@ -287,7 +300,7 @@ const App = () => {
 
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-        if (saved === 'admin' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+        if (saved === 'admin' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
         return saved || 'dashboard';
     });
 
@@ -323,7 +336,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getPcrRouteFromUrl() || getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -1130,6 +1143,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'pcr-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <PcrSentimentCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'PCR Sentiment Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1174,6 +1222,7 @@ const App = () => {
                             Risk Tools
                         </span>
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
+                        <DeskNavButton icon={<Compass size={17} className="text-emerald-400" />} label="Nifty PCR Gauge" active={currentScreen === 'pcr-calc'} onClick={() => setCurrentScreen('pcr-calc')} badge="PCR" />
                         <DeskNavButton icon={<Clock size={17} className="text-amber-400" />} label="Option Theta Clock" active={currentScreen === 'option-theta-calc'} onClick={() => setCurrentScreen('option-theta-calc')} badge="THETA" />
                         <DeskNavButton icon={<Grid size={17} className="text-emerald-400" />} label="RR Matrix & Edge" active={currentScreen === 'risk-reward'} onClick={() => setCurrentScreen('risk-reward')} badge="MATRIX" />
                         <DeskNavButton icon={<Clock size={17} className="text-emerald-400" />} label="IST Session Clock" active={currentScreen === 'session-clock'} onClick={() => setCurrentScreen('session-clock')} badge="LIVE" />
@@ -1804,6 +1853,27 @@ const App = () => {
                             }}
                             onSignIn={() => {
                                 setCurrentScreen('dashboard');
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'pcr-calc' && (
+                        <PcrSentimentCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'PCR Sentiment Import',
+                                });
+                                setShowAddTrade(true);
                             }}
                         />
                     )}
