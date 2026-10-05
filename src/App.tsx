@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
