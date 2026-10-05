@@ -9,6 +9,7 @@ import { PropFirmCalculatorScreen } from './screens/PropFirmCalculatorScreen';
 import { LeverageCalculatorScreen } from './screens/LeverageCalculatorScreen';
 import { DrawdownRecoveryCalculatorScreen } from './screens/DrawdownRecoveryCalculatorScreen';
 import { SessionClockScreen } from './screens/SessionClockScreen';
+import { OptionThetaDecayCalculatorScreen } from './screens/OptionThetaDecayCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -241,6 +242,20 @@ function getRevengeCooldownRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Option Buying Theta Decay & Time-Risk Clock (Nifty / BankNifty)
+function getOptionThetaRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/option-theta-decay-calculator') ||
+        path.includes('/tools/nifty-option-theta-decay-calculator') ||
+        path.includes('/tools/bank-nifty-option-time-decay-holding-tool') ||
+        path.includes('/tools/option-buying-hourly-decay-calculator') ||
+        path.includes('/tools/option-holding-time-risk-clock') ||
+        path.includes('/tools/0-dte-option-decay-risk-timer') ||
+        path.includes('/calculators/option-theta-decay')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -257,6 +272,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getOptionThetaRouteFromUrl()) return 'option-theta-calc';
         if (getRevengeCooldownRouteFromUrl()) return 'cooldown-timer';
         if (getSessionClockRouteFromUrl()) return 'session-clock';
         if (getRiskRewardMatrixRouteFromUrl()) return 'risk-reward';
@@ -271,7 +287,7 @@ const App = () => {
 
         const saved = localStorage.getItem('currentScreen');
         // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-        if (saved === 'admin' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+        if (saved === 'admin' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
         return saved || 'dashboard';
     });
 
@@ -307,7 +323,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -1079,6 +1095,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'option-theta-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <OptionThetaDecayCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Option Theta Calc Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1123,6 +1174,7 @@ const App = () => {
                             Risk Tools
                         </span>
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
+                        <DeskNavButton icon={<Clock size={17} className="text-amber-400" />} label="Option Theta Clock" active={currentScreen === 'option-theta-calc'} onClick={() => setCurrentScreen('option-theta-calc')} badge="THETA" />
                         <DeskNavButton icon={<Grid size={17} className="text-emerald-400" />} label="RR Matrix & Edge" active={currentScreen === 'risk-reward'} onClick={() => setCurrentScreen('risk-reward')} badge="MATRIX" />
                         <DeskNavButton icon={<Clock size={17} className="text-emerald-400" />} label="IST Session Clock" active={currentScreen === 'session-clock'} onClick={() => setCurrentScreen('session-clock')} badge="LIVE" />
                         <DeskNavButton icon={<Zap size={17} className="text-amber-400" />} label="Leverage Danger" active={currentScreen === 'leverage-calc'} onClick={() => setCurrentScreen('leverage-calc')} badge="HOT" />
@@ -1752,6 +1804,27 @@ const App = () => {
                             }}
                             onSignIn={() => {
                                 setCurrentScreen('dashboard');
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'option-theta-calc' && (
+                        <OptionThetaDecayCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Option Theta Calc Import',
+                                });
+                                setShowAddTrade(true);
                             }}
                         />
                     )}

@@ -66,6 +66,12 @@
     <priority>0.90</priority>
   </url>
   <url>
+    <loc>https://tradejournall.com/tools/nifty-option-theta-decay-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://tradejournall.com/calculators/stocks/option-trading-net-profit-breakeven-calculator</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>weekly</changefreq>
