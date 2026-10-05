@@ -272,6 +272,38 @@ Track Prop Firm Trailing Thresholds: https://tradejournall.com/tools/apex-consis
                 '@type': 'Answer',
                 'text': 'The formula for required total profit is: Required Total Profit = Highest Single Day Profit / 0.30. The additional profit needed = Required Total Profit - Current Total Profit.'
               }
+            },
+            {
+              '@type': 'Question',
+              'name': 'Does the 30% consistency rule apply to evaluation or PA accounts?',
+              'acceptedAnswer': {
+                '@type': 'Answer',
+                'text': 'The 30% consistency rule applies specifically to Performance Accounts (PA) when requesting payouts. Evaluation accounts do not require 30% consistency to pass, though maintaining steady daily profits builds good habits for PA accounts.'
+              }
+            },
+            {
+              '@type': 'Question',
+              'name': 'When does the Apex trailing threshold stop trailing permanently?',
+              'acceptedAnswer': {
+                '@type': 'Answer',
+                'text': 'For Apex PA accounts, once your threshold reaches starting balance plus $100 (e.g. $50,100 for a $50k account), it stops trailing and locks permanently at that level.'
+              }
+            },
+            {
+              '@type': 'Question',
+              'name': 'How is Topstep Consistency Rule different from Apex?',
+              'acceptedAnswer': {
+                '@type': 'Answer',
+                'text': 'Topstep uses a 50% consistency rule during evaluations (no single day can exceed 50% of total profit) whereas Apex enforces a 30% consistency rule on PA payout requests. Both encourage steady, sustainable profit distribution.'
+              }
+            },
+            {
+              '@type': 'Question',
+              'name': 'What happens if I make 50% of my total profit on Day 1 of an Apex PA account?',
+              'acceptedAnswer': {
+                '@type': 'Answer',
+                'text': 'Your account is not penalized or forfeited. However, you will not be able to request a payout until you trade additional days and earn enough total profit so that Day 1 is 30% or less of your cumulative profit.'
+              }
             }
           ]
         }
@@ -850,49 +882,255 @@ Track Prop Firm Trailing Thresholds: https://tradejournall.com/tools/apex-consis
         </button>
       </div>
 
-      {/* --------------------------------------------------------------------- */}
-      {/* ON-PAGE SEO EDUCATIONAL GUIDE & KEYWORD HEADINGS */}
-      {/* --------------------------------------------------------------------- */}
       <div className="pt-8 border-t border-slate-800 text-slate-300">
         <article className="prose prose-invert max-w-none space-y-8 text-sm leading-relaxed">
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-10 space-y-8">
             
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Apex & Topstep Prop Firm Consistency Rule & Trailing Drawdown Guide
-            </h2>
-            <p className="text-slate-300 leading-relaxed">
-              Managing a funded futures trading account with <strong>Apex Trader Funding</strong> or <strong>Topstep</strong> requires strict compliance with evaluation and PA payout rules. The two biggest hurdles prop firm traders face are the <strong>30% Consistency Rule</strong> and the <strong>Live Intraday Peak Equity Trailing Drawdown</strong>.
-            </p>
-
-            <h3 className="text-xl font-bold text-purple-400">
-              1. What is the Apex 30% Consistency Rule and How is it Calculated?
-            </h3>
-            <p className="text-slate-300">
-              Apex Trader Funding requires that when requesting a payout, no single trading day can account for more than <strong>30% of your total accumulated profit</strong>.
-            </p>
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center font-mono font-bold text-purple-300 text-sm">
-              Max Allowed Single Day Profit = Total Accumulated Profit × 0.30
+            {/* ARTICLE HEADER */}
+            <div className="border-b border-slate-800 pb-6">
+              <span className="text-xs font-bold text-purple-400 uppercase tracking-widest bg-purple-950/60 border border-purple-500/30 px-3 py-1 rounded-full">
+                Ultimate Prop Firm Guide 2026
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight mt-3 mb-2 leading-tight">
+                Apex & Topstep Prop Firm Consistency Rule & Trailing Drawdown Calculator Masterclass
+              </h2>
+              <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+                Learn how to pass and keep your <strong>Apex Trader Funding</strong> and <strong>Topstep</strong> funded futures accounts by mastering the <strong>30% Consistency Rule</strong>, avoiding the <strong>Intraday Peak Equity Trailing Threshold trap</strong>, and calculating your exact payout eligibility.
+              </p>
             </div>
-            <p className="text-slate-300">
-              If your highest profit day exceeds 30%, your payout is not lost, but it is <strong>locked/blocked</strong> until you make additional profits on other trading days to bring that single day percentage down to 30% or lower.
-            </p>
 
-            <h3 className="text-xl font-bold text-purple-400">
-              2. How Does the Apex Trailing Threshold Peak Equity Trap Work?
-            </h3>
-            <p className="text-slate-300">
-              Unlike static drawdown rules, Apex trailing drawdown trails your account in real-time based on <strong>intraday peak equity (high water mark)</strong>. If an open trade goes up to +$3,000 in unrealized profit, your trailing stop-out threshold instantly ratchets UP by +$3,000. If you let that trade pull back to zero, your trailing stop line remains at the high point, reducing your drawdown cushion.
-            </p>
-
-            <h3 className="text-xl font-bold text-purple-400">Frequently Asked Questions (FAQ)</h3>
+            {/* SECTION 1: WHAT IS THE 30% CONSISTENCY RULE */}
             <div className="space-y-4">
-              <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
-                <h5 className="font-bold text-white mb-1">Does Apex 30% consistency rule apply to evaluation or PA accounts?</h5>
-                <p className="text-xs text-slate-400">The 30% consistency rule applies to Performance Accounts (PA) when requesting payouts. Evaluation accounts do not have a 30% consistency requirement to pass, but PA accounts enforce it for withdrawals.</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-400 flex items-center gap-2">
+                <span>1. What is the Apex 30% Consistency Rule?</span>
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                The <strong>Apex 30% Consistency Rule</strong> is a core payout policy enforced on <strong>Apex Trader Funding Performance Accounts (PA)</strong>. It mandates that when you submit a withdrawal request, <strong>no single trading day can account for more than 30% of your total cumulative profit</strong> accumulated in that account since inception or since your last reset.
+              </p>
+              <p className="text-slate-300 leading-relaxed">
+                Prop firms like Apex Trader Funding and Topstep implement consistency rules to ensure that traders demonstrate repeatable, risk-managed trading edge rather than relying on high-risk, "windfall" jackpot trades (such as gambling full lot size on high-impact NFP or CPI news events).
+              </p>
+              <div className="bg-slate-950 p-5 rounded-2xl border border-purple-500/30 space-y-2">
+                <div className="text-xs text-purple-400 font-bold uppercase tracking-wider">Golden Consistency Formula</div>
+                <div className="font-mono text-base sm:text-lg font-black text-emerald-400 text-center py-2 bg-slate-900 rounded-xl border border-slate-800">
+                  Max Single Day Profit Allowed = Total Cumulative Profit × 0.30
+                </div>
+                <p className="text-xs text-slate-400 text-center">
+                  If your highest single-day profit exceeds this threshold, your account is NOT forfeited, but your payout request will be declined until you earn more profits on other trading days to balance out the ratio.
+                </p>
               </div>
-              <div className="border border-slate-800 rounded-xl p-4 bg-slate-950/60">
-                <h5 className="font-bold text-white mb-1">When does the Apex trailing threshold stop trailing?</h5>
-                <p className="text-xs text-slate-400">For Apex PA accounts, the trailing threshold stops trailing once the liquidation line reaches your starting balance plus $100 safety cap (e.g., $50,100 for a $50k account).</p>
+            </div>
+
+            {/* SECTION 2: MATHEMATICAL DEEP DIVE WITH WORKED EXAMPLES */}
+            <div className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-400">
+                2. Step-by-Step Mathematical Examples: Calculating Apex Payout Eligibility
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                Let's analyze two realistic trading scenarios on a standard <strong>$50,000 Apex PA Account</strong> to see how the 30% consistency rule applies in practice:
+              </p>
+              
+              {/* EXAMPLE CARDS */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* SCENARIO A */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 space-y-3">
+                  <div className="text-xs font-bold text-rose-400 uppercase tracking-wider">Scenario A: Consistency Violation (Locked Payout)</div>
+                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li>Starting Account Balance: <strong>$50,000</strong></li>
+                    <li>Day 1 Profit: <strong>+$1,800</strong> (Windfall Day)</li>
+                    <li>Day 2 Profit: <strong>+$300</strong></li>
+                    <li>Day 3 Profit: <strong>+$400</strong></li>
+                    <li>Day 4 Profit: <strong>+$500</strong></li>
+                    <li>Total Cumulative Profit: <strong>$3,000</strong></li>
+                  </ul>
+                  <div className="bg-rose-950/40 border border-rose-500/30 p-3 rounded-xl text-xs space-y-1">
+                    <p className="text-slate-300"><strong>Max Single Day Share:</strong> $1,800 / $3,000 = <strong className="text-rose-400 font-mono">60.0%</strong> (Exceeds 30% Cap!)</p>
+                    <p className="text-slate-300"><strong>Max Allowed for Payout:</strong> $3,000 × 0.30 = <strong>$900</strong></p>
+                    <p className="text-slate-300"><strong>Required Total Profit Needed:</strong> $1,800 / 0.30 = <strong className="text-purple-300 font-mono">$6,000</strong></p>
+                    <p className="font-bold text-rose-300">❌ Result: Payout Blocked! Needs +$3,000 additional profit across future days.</p>
+                  </div>
+                </div>
+
+                {/* SCENARIO B */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 space-y-3">
+                  <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Scenario B: Fully Compliant (Approved Payout)</div>
+                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li>Starting Account Balance: <strong>$50,000</strong></li>
+                    <li>Day 1 Profit: <strong>+$800</strong></li>
+                    <li>Day 2 Profit: <strong>+$900</strong> (Highest Single Day)</li>
+                    <li>Day 3 Profit: <strong>+$750</strong></li>
+                    <li>Day 4 Profit: <strong>+$850</strong></li>
+                    <li>Total Cumulative Profit: <strong>$3,300</strong></li>
+                  </ul>
+                  <div className="bg-emerald-950/40 border border-emerald-500/30 p-3 rounded-xl text-xs space-y-1">
+                    <p className="text-slate-300"><strong>Max Single Day Share:</strong> $900 / $3,300 = <strong className="text-emerald-400 font-mono">27.27%</strong> (Well Under 30%)</p>
+                    <p className="text-slate-300"><strong>Max Allowed for Payout:</strong> $3,300 × 0.30 = <strong>$990</strong></p>
+                    <p className="text-slate-300"><strong>Safety Cushion:</strong> $990 - $900 = <strong>+$90 headroom</strong></p>
+                    <p className="font-bold text-emerald-300">✅ Result: Payout Approved! Ready for request.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 3: INTRADAY PEAK EQUITY TRAILING DRAWDOWN */}
+            <div className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-400">
+                3. The Intraday Peak Equity Trailing Drawdown Mechanics (High-Water Mark Trap)
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                The most challenging technical aspect of Apex Trader Funding evaluations is the <strong>Live Intraday Peak Equity Trailing Threshold</strong>. Unlike standard End-of-Day (EOD) drawdowns that evaluate your balance after the 5:00 PM EST market close, Apex's threshold trails your account balance <strong>in real time during live trade execution</strong> based on your account's peak unrealized high-water mark.
+              </p>
+              
+              <div className="bg-slate-950 p-5 rounded-2xl border border-amber-500/30 space-y-3">
+                <h4 className="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                  <span>⚠️ Real-World Trailing Drawdown Anatomy</span>
+                </h4>
+                <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside leading-relaxed">
+                  <li>You start a <strong>$50,000 account</strong> with a $2,500 trailing drawdown buffer (Initial liquidation line = <strong>$47,500</strong>).</li>
+                  <li>You enter an NQ futures position. During the trade, price surges up and your unrealized floating profit reaches <strong>+$2,000</strong> (Peak Account Equity = <strong>$52,000</strong>).</li>
+                  <li>The Apex trailing threshold instantly ratchets UP by $2,000 to <strong>$49,500</strong> ($52,000 peak minus $2,500 drawdown).</li>
+                  <li>Market suddenly reverses. You hold out hoping for a rebound and close the trade at <strong>Breakeven ($50,000 balance)</strong>.</li>
+                  <li><strong>The Trap:</strong> Even though your closed balance is still $50,000, your liquidation line stays locked at <strong>$49,500</strong>! Your remaining allowable drawdown cushion shrinks from $2,500 down to just <strong>$500</strong>!</li>
+                </ol>
+              </div>
+
+              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                <div className="font-bold text-purple-300">When Does the Apex Trailing Threshold Stop Trailing?</div>
+                <p>
+                  For Apex PA accounts, the trailing threshold <strong>stops trailing permanently</strong> once the liquidation line reaches your starting balance plus the $100 safety cap. For a $50k account, the threshold stops at <strong>$50,100</strong>. Once your account balance moves above this point, your liquidation line stays permanently at $50,100, allowing you to build an unlimited equity safety cushion above it.
+                </p>
+              </div>
+            </div>
+
+            {/* SECTION 4: APEX VS TOPSTEP COMPARISON */}
+            <div className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-400">
+                4. Apex Trader Funding vs. Topstep Consistency Rule Comparison (2026 Rules)
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                Both Apex and Topstep are leading futures prop trading firms, but they differ significantly in how they enforce consistency guidelines and drawdown thresholds:
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left text-slate-300 border-collapse border border-slate-800">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-200 border-b border-slate-800">
+                      <th className="p-3 border-r border-slate-800 font-bold">Rule Feature</th>
+                      <th className="p-3 border-r border-slate-800 font-bold text-purple-400">Apex Trader Funding</th>
+                      <th className="p-3 font-bold text-indigo-400">Topstep</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800 bg-slate-900/60">
+                    <tr>
+                      <td className="p-3 border-r border-slate-800 font-semibold text-white">Consistency Rule Target</td>
+                      <td className="p-3 border-r border-slate-800"><strong>30% Max Single Day</strong> (Applied to PA Payout Requests)</td>
+                      <td className="p-3"><strong>50% Best Day Rule</strong> (Applied during Evaluation phase)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border-r border-slate-800 font-semibold text-white">Drawdown Evaluation Method</td>
+                      <td className="p-3 border-r border-slate-800 font-semibold text-amber-400">Real-Time Intraday Peak Equity (High-Water Mark)</td>
+                      <td className="p-3 font-semibold text-emerald-400">End-of-Day (EOD) Account Balance Drawdown</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border-r border-slate-800 font-semibold text-white">Trailing Threshold Stop Point</td>
+                      <td className="p-3 border-r border-slate-800">Locks at Starting Balance + $100 Safety Cap</td>
+                      <td className="p-3">Locks at Starting Balance (Maximum Drawdown cap)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border-r border-slate-800 font-semibold text-white">Payout Minimum Days</td>
+                      <td className="p-3 border-r border-slate-800">10 Minimum Trading Days per payout request window</td>
+                      <td className="p-3">5 Minimum Winning Trading Days ($200+ profit per day)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border-r border-slate-800 font-semibold text-white">Action on Rule Violation</td>
+                      <td className="p-3 border-r border-slate-800 text-purple-300">Payout blocked until additional profit dilutes percentage</td>
+                      <td className="p-3 text-indigo-300">Evaluation not passed until additional trading balances daily ratio</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* SECTION 5: 5 RISK MANAGEMENT STRATEGIES */}
+            <div className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-400">
+                5. Top 5 Risk Management Rules to Master Apex & Topstep Accounts
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                  <div className="font-bold text-purple-300">1. Cap Daily Profits at 20-25% of Account Target</div>
+                  <p className="text-slate-400">Never allow a single trading day to exceed 20-25% of your total target. Stop trading when you hit your daily profit cap to guarantee 30% consistency compliance effortless.</p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                  <div className="font-bold text-purple-300">2. Trail Stop-Losses, Don't Let Winners Revert</div>
+                  <p className="text-slate-400">Because intraday high-water marks push your liquidation line up immediately, use trailing stops to lock in profits early. Never let a +$1,000 unrealized trade turn into a loss.</p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                  <div className="font-bold text-purple-300">3. Scale Down Contract Size (Use Micro Futures)</div>
+                  <p className="text-slate-400">Trade MNQ/MES micro contracts instead of full NQ/ES mini contracts. Micro lots allow precise risk scaling, smoother equity curves, and prevent sudden large single-day profit spikes.</p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                  <div className="font-bold text-purple-300">4. Monitor Peak Equity Cushion Live</div>
+                  <p className="text-slate-400">Always track your peak equity high-water mark rather than just your closed account balance. Ensure your stop-loss distantly exceeds your trailing liquidation line.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 6: FAQ ACCORDION SECTION */}
+            <div className="space-y-4 pt-4 border-t border-slate-800">
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-400">
+                Frequently Asked Questions (FAQ) — Prop Firm Rules & Calculations
+              </h3>
+              
+              <div className="space-y-3">
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">What is the 30% Consistency Rule in Apex Trader Funding?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    The 30% Consistency Rule in Apex Trader Funding requires that no single trading day accounts for more than 30% of your total accumulated profit at the time of requesting a payout. If a single day exceeds 30%, you must continue trading to make additional profit on other days until the highest day becomes 30% or less of total profits.
+                  </p>
+                </div>
+
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">How does Apex trailing threshold intraday drawdown work?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Apex trailing drawdown trails your account in real-time based on intraday peak equity (high water mark), including unrealized profits during open trades. The trailing threshold stops trailing once the stop-out line reaches starting balance plus $100 safety cap.
+                  </p>
+                </div>
+
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">How to calculate additional profit needed to pass Apex 30% rule?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    The formula for required total profit is: <code className="text-purple-300 bg-slate-900 px-1.5 py-0.5 rounded">Required Total Profit = Highest Single Day Profit / 0.30</code>. The additional profit needed = Required Total Profit - Current Total Profit.
+                  </p>
+                </div>
+
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">Does the 30% consistency rule apply to evaluation or PA accounts?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    The 30% consistency rule applies specifically to Performance Accounts (PA) when requesting payouts. Evaluation accounts do not require 30% consistency to pass, though maintaining steady daily profits builds good habits for PA accounts.
+                  </p>
+                </div>
+
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">When does the Apex trailing threshold stop trailing permanently?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    For Apex PA accounts, once your threshold reaches starting balance plus $100 (e.g. $50,100 for a $50k account), it stops trailing and locks permanently at that level.
+                  </p>
+                </div>
+
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">How is Topstep Consistency Rule different from Apex?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Topstep uses a 50% consistency rule during evaluations (no single day can exceed 50% of total profit) whereas Apex enforces a 30% consistency rule on PA payout requests. Both encourage steady, sustainable profit distribution.
+                  </p>
+                </div>
+
+                <div className="border border-slate-800 rounded-2xl p-5 bg-slate-950/60 space-y-2">
+                  <h5 className="font-bold text-white text-sm">What happens if I make 50% of my total profit on Day 1 of an Apex PA account?</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Your account is not penalized or forfeited. However, you will not be able to request a payout until you trade additional days and earn enough total profit so that Day 1 is 30% or less of your cumulative profit.
+                  </p>
+                </div>
               </div>
             </div>
 
