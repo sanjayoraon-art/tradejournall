@@ -27,7 +27,8 @@ import {
   Info,
   CreditCard,
   Building2,
-  Landmark
+  Landmark,
+  Sparkles
 } from 'lucide-react';
 
 export interface PropFirmPayoutCalculatorScreenProps {
