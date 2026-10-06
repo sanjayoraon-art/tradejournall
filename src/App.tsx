@@ -12,6 +12,7 @@ import { SessionClockScreen } from './screens/SessionClockScreen';
 import { OptionThetaDecayCalculatorScreen } from './screens/OptionThetaDecayCalculatorScreen';
 import { PcrSentimentCalculatorScreen } from './screens/PcrSentimentCalculatorScreen';
 import { ApexConsistencyCalculatorScreen } from './screens/ApexConsistencyCalculatorScreen';
+import { CryptoFundingCalculatorScreen } from './screens/CryptoFundingCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -280,6 +281,18 @@ function getApexConsistencyRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Crypto Funding Rate APR & Arbitrage Yield Calculator
+function getCryptoFundingRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/crypto-funding-rate-arbitrage-calculator') ||
+        path.includes('/tools/funding-rate-calculator') ||
+        path.includes('/tools/binance-funding-rate-calculator') ||
+        path.includes('/tools/delta-neutral-arbitrage-calculator') ||
+        path.includes('/calculators/funding-rate')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -296,6 +309,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getCryptoFundingRouteFromUrl()) return 'crypto-funding-calc';
         if (getApexConsistencyRouteFromUrl()) return 'apex-consistency-calc';
         if (getPcrRouteFromUrl()) return 'pcr-calc';
         if (getOptionThetaRouteFromUrl()) return 'option-theta-calc';
@@ -314,7 +328,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -366,7 +380,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getApexConsistencyRouteFromUrl() || getPcrRouteFromUrl() || getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getCryptoFundingRouteFromUrl() || getApexConsistencyRouteFromUrl() || getPcrRouteFromUrl() || getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -1215,6 +1229,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'crypto-funding-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <CryptoFundingCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Crypto Funding Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (currentScreen === 'apex-consistency-calc') {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
@@ -1293,6 +1342,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<Zap size={17} className="text-emerald-400 font-bold" />} label="Crypto Funding APR" active={currentScreen === 'crypto-funding-calc'} onClick={() => setCurrentScreen('crypto-funding-calc')} badge="APR" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
                         <DeskNavButton icon={<Award size={17} className="text-purple-400" />} label="Apex 30% Consistency" active={currentScreen === 'apex-consistency-calc'} onClick={() => setCurrentScreen('apex-consistency-calc')} badge="APEX" />
                         <DeskNavButton icon={<Compass size={17} className="text-emerald-400" />} label="Nifty PCR Gauge" active={currentScreen === 'pcr-calc'} onClick={() => setCurrentScreen('pcr-calc')} badge="PCR" />

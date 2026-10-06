@@ -72,6 +72,12 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://tradejournall.com/tools/crypto-funding-rate-arbitrage-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://tradejournall.com/tools/nifty-pcr-calculator</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>daily</changefreq>

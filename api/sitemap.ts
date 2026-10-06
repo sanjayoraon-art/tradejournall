@@ -129,6 +129,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/crypto-funding-rate-arbitrage-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/nifty-pcr-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>

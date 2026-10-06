@@ -1620,6 +1620,16 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             <ul className="space-y-2 text-xs">
                                 <li>
                                     <a
+                                        href="/tools/crypto-funding-rate-arbitrage-calculator"
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Zap size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Funding Rate APR &amp; Arbitrage Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="/tools/apex-consistency-rule-calculator"
                                         className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
