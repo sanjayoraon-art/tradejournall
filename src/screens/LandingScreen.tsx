@@ -4,7 +4,7 @@ import {
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
-    Eye, Smartphone, Grid, Compass
+    Eye, Smartphone, Grid, Compass, Landmark
 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
@@ -1625,6 +1625,16 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <div className="space-y-2.5">
                             <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🛠️ Trading Tools</h4>
                             <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/prop-firm-profit-split-payout-calculator"
+                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Landmark size={14} className="text-purple-400 group-hover:scale-110 transition" />
+                                        <span>Prop Firm Profit Split &amp; Net Payout Tax Calculator</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <a
                                         href="/tools/crypto-funding-rate-arbitrage-calculator"
