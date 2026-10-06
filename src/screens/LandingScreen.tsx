@@ -4,7 +4,7 @@ import {
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
-    Eye, Smartphone, Grid
+    Eye, Smartphone, Grid, Compass
 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
