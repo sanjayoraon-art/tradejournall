@@ -10,7 +10,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
 import { BlogCard } from '../components/BlogCard';
 import { db, appId } from '../utils/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 
 import { DEFAULT_BLOG_POSTS } from '../utils/defaultArticles';
 

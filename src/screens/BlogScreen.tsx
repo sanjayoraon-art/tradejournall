@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, appId } from '../utils/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { BlogCard } from '../components/BlogCard';
 import { Search, ArrowLeft, Loader2 } from 'lucide-react';
 import { DEFAULT_BLOG_POSTS } from '../utils/defaultArticles';
