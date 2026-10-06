@@ -17,46 +17,55 @@ export const BlogScreen: React.FC<BlogScreenProps> = ({ onBack, onArticleClick, 
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            if (!db) {
-                setLoading(false);
-                return;
-            }
-            try {
-                const q = query(
-                    collection(db, 'artifacts', appId, 'blog'),
-                    where('isActive', '==', true)
-                );
-                const querySnapshot = await getDocs(q);
-                const fetchedPosts = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+        if (!db) {
+            setLoading(false);
+            return;
+        }
 
-                if (fetchedPosts.length > 0) {
-                    fetchedPosts.sort((a: any, b: any) => {
-                        const getTime = (p: any) => {
-                            const val = p.date || p.lastUpdated || p.createdAt;
-                            if (!val) return 0;
-                            if (typeof val === 'object' && val.seconds) return val.seconds * 1000;
-                            const ms = new Date(val).getTime();
-                            return isNaN(ms) ? 0 : ms;
-                        };
-                        return getTime(b) - getTime(a);
-                    });
-                    setPosts(fetchedPosts);
-                } else {
-                    setPosts(DEFAULT_BLOG_POSTS);
-                }
-            } catch (error) {
-                console.error("Error fetching blog posts:", error);
-                setPosts(DEFAULT_BLOG_POSTS);
-            } finally {
-                setLoading(false);
-            }
+        const blogColRef = collection(db, 'artifacts', appId, 'blog');
+
+        const getTime = (p: any) => {
+            const val = p.date || p.lastUpdated || p.createdAt;
+            if (!val) return 0;
+            if (typeof val === 'object' && val.seconds) return val.seconds * 1000;
+            const ms = new Date(val).getTime();
+            return isNaN(ms) ? 0 : ms;
         };
 
-        fetchPosts();
+        const unsubscribe = onSnapshot(
+            blogColRef,
+            (snapshot) => {
+                const firestorePosts = snapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter((p: any) => p.isActive !== false);
+
+                // Merge custom Firestore blogs + DEFAULT_BLOG_POSTS (deduplicated by slug)
+                const mergedMap = new Map<string, any>();
+                
+                // 1. Static defaults first
+                DEFAULT_BLOG_POSTS.forEach(p => {
+                    if (p.slug) mergedMap.set(p.slug, p);
+                });
+
+                // 2. Override with Firestore posts (higher priority)
+                firestorePosts.forEach((p: any) => {
+                    if (p.slug) mergedMap.set(p.slug, p);
+                });
+
+                const allPosts = Array.from(mergedMap.values());
+                allPosts.sort((a: any, b: any) => getTime(b) - getTime(a));
+
+                setPosts(allPosts.length > 0 ? allPosts : DEFAULT_BLOG_POSTS);
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Error subscribing to blog posts:", error);
+                setPosts(DEFAULT_BLOG_POSTS);
+                setLoading(false);
+            }
+        );
+
+        return () => unsubscribe();
     }, []);
 
     const filteredPosts = posts.filter(post => 

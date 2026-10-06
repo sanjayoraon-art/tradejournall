@@ -75,33 +75,29 @@ export const ArticleScreen: React.FC<ArticleScreenProps> = ({ slug, onBack, onHo
         const fetchArticle = async () => {
             if (!slug) return;
             const defaultMatch = DEFAULT_BLOG_POSTS.find(p => p.slug === slug);
+
+            if (db) {
+                try {
+                    const q = query(
+                        collection(db, 'artifacts', appId, 'blog'),
+                        where('slug', '==', slug),
+                        limit(1)
+                    );
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) {
+                        setArticle(querySnapshot.docs[0].data());
+                        setLoading(false);
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error fetching article from Firestore:", error);
+                }
+            }
+
             if (defaultMatch) {
                 setArticle(defaultMatch);
-                setLoading(false);
-                return;
             }
-            if (!db) {
-                setLoading(false);
-                return;
-            }
-            try {
-                const q = query(
-                    collection(db, 'artifacts', appId, 'blog'),
-                    where('slug', '==', slug),
-                    limit(1)
-                );
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    setArticle(querySnapshot.docs[0].data());
-                } else if (defaultMatch) {
-                    setArticle(defaultMatch);
-                }
-            } catch (error) {
-                console.error("Error fetching article:", error);
-                if (defaultMatch) setArticle(defaultMatch);
-            } finally {
-                setLoading(false);
-            }
+            setLoading(false);
         };
 
         fetchArticle();
