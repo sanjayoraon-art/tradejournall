@@ -5,7 +5,7 @@ import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 // Default config or load from env
 const firebaseConfigString = import.meta.env.VITE_FIREBASE_CONFIG;
-let firebaseConfig = null;
+let firebaseConfig: any = null;
 
 try {
     if (firebaseConfigString) {

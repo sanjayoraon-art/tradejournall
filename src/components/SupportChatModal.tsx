@@ -63,7 +63,7 @@ export const SupportChatModal: React.FC<SupportChatModalProps> = ({ isOpen, onCl
                 }
             };
 
-            const result = await exponentialBackoffFetch(API_URL, {
+            const result = await exponentialBackoffFetch(API_URL(), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

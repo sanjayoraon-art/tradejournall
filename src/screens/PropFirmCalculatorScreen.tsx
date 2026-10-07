@@ -43,7 +43,7 @@ export interface PropFirmPreset {
   maxOverallPercent: number;
   dailyLossType: 'balance' | 'equity_high';
   overallLossType: 'static' | 'trailing';
-  resetTimezone: 'UTC' | 'CEST';
+  resetTimezone: 'UTC' | 'CEST' | 'CE(S)T';
   badgeColor: string;
   description: string;
 }

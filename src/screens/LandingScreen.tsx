@@ -27,6 +27,7 @@ interface LandingScreenProps {
     onOpenPropFirmScalingCalculator?: () => void;
     onOpenPropFirmPayoutCalculator?: () => void;
     onOpenApexConsistencyCalculator?: () => void;
+    onOpenCrossVsIsolatedCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -44,6 +45,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenPropFirmScalingCalculator,
     onOpenPropFirmPayoutCalculator,
     onOpenApexConsistencyCalculator,
+    onOpenCrossVsIsolatedCalculator,
     theme,
     isDarkMode
 }) => {
@@ -519,6 +521,28 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">HOT</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">Calculate liquidation & risk</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/cross-vs-isolated-margin-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenCrossVsIsolatedCalculator) onOpenCrossVsIsolatedCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
+                                        <Scale size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Cross vs Isolated Liq</span>
+                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIQ</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Liquidation risk & wallet wipeout</p>
                                     </div>
                                 </a>
 
@@ -1215,6 +1239,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         </div>
                         <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400">
                             <span>Open Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 5: Cross vs Isolated Margin Liquidation Risk Calculator */}
+                    <a
+                        href="/tools/cross-vs-isolated-margin-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenCrossVsIsolatedCalculator) onOpenCrossVsIsolatedCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-purple-500/40 hover:border-purple-500/80 transition-all duration-300 shadow-lg shadow-purple-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-purple-500/15 text-purple-400 group-hover:scale-110 transition">
+                                    <Scale size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                    CRYPTO LIQ
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
+                                Cross vs Isolated Liquidation
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Binance &amp; Bybit futures liquidation price simulator. Compare safety buffer %, isolated contagion walls &amp; total wallet wipeout danger.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-purple-400">
+                            <span>Open Simulator</span>
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
                         </div>
                     </a>
@@ -2007,6 +2063,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Scale size={14} className="text-rose-400 group-hover:scale-110 transition" />
                                         <span>Drawdown &amp; Goal Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/cross-vs-isolated-margin-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCrossVsIsolatedCalculator) {
+                                                e.preventDefault();
+                                                onOpenCrossVsIsolatedCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Cross vs Isolated Liq Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/cross-margin-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCrossVsIsolatedCalculator) {
+                                                e.preventDefault();
+                                                onOpenCrossVsIsolatedCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Cross Margin Calculator</span>
                                     </a>
                                 </li>
                             </ul>

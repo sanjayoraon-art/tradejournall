@@ -15,6 +15,7 @@ import { ApexConsistencyCalculatorScreen } from './screens/ApexConsistencyCalcul
 import { CryptoFundingCalculatorScreen } from './screens/CryptoFundingCalculatorScreen';
 import { PropFirmPayoutCalculatorScreen } from './screens/PropFirmPayoutCalculatorScreen';
 import { PropFirmScalingCalculatorScreen } from './screens/PropFirmScalingCalculatorScreen';
+import { CrossVsIsolatedCalculatorScreen } from './screens/CrossVsIsolatedCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -319,6 +320,19 @@ function getPropFirmScalingRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Cross Margin vs Isolated Margin Liquidation Risk Calculator
+function getCrossVsIsolatedRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/cross-vs-isolated-margin-calculator') ||
+        path.includes('/tools/cross-margin-calculator') ||
+        path.includes('/tools/isolated-margin-calculator') ||
+        path.includes('/tools/binance-cross-margin-calculator') ||
+        path.includes('/tools/bybit-cross-margin-calculator') ||
+        path.includes('/calculators/cross-vs-isolated-margin')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -335,6 +349,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getCrossVsIsolatedRouteFromUrl()) return 'cross-vs-isolated-calc';
         if (getPropFirmScalingRouteFromUrl()) return 'prop-firm-scaling-calc';
         if (getPropFirmPayoutRouteFromUrl()) return 'prop-firm-payout-calc';
         if (getCryptoFundingRouteFromUrl()) return 'crypto-funding-calc';
@@ -356,7 +371,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1029,6 +1044,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('apex-consistency-calc');
                     }}
+                    onOpenCrossVsIsolatedCalculator={() => {
+                        window.history.pushState({}, '', '/tools/cross-vs-isolated-margin-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('cross-vs-isolated-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1412,6 +1432,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'cross-vs-isolated-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <CrossVsIsolatedCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Cross vs Isolated Calc Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1457,6 +1512,7 @@ const App = () => {
                         </span>
                         <DeskNavButton icon={<TrendingUp size={17} className="text-emerald-400 font-bold" />} label="Prop Firm Scaling Roadmap" active={currentScreen === 'prop-firm-scaling-calc'} onClick={() => setCurrentScreen('prop-firm-scaling-calc')} badge="ROADMAP" />
                         <DeskNavButton icon={<Landmark size={17} className="text-purple-400 font-bold" />} label="Prop Firm Payout Tax" active={currentScreen === 'prop-firm-payout-calc'} onClick={() => setCurrentScreen('prop-firm-payout-calc')} badge="PAYOUT" />
+                        <DeskNavButton icon={<Scale size={17} className="text-amber-400 font-bold" />} label="Cross vs Isolated Liq" active={currentScreen === 'cross-vs-isolated-calc'} onClick={() => setCurrentScreen('cross-vs-isolated-calc')} badge="LIQ" />
                         <DeskNavButton icon={<Zap size={17} className="text-emerald-400 font-bold" />} label="Crypto Funding APR" active={currentScreen === 'crypto-funding-calc'} onClick={() => setCurrentScreen('crypto-funding-calc')} badge="APR" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
                         <DeskNavButton icon={<Award size={17} className="text-purple-400" />} label="Apex 30% Consistency" active={currentScreen === 'apex-consistency-calc'} onClick={() => setCurrentScreen('apex-consistency-calc')} badge="APEX" />
@@ -2173,6 +2229,69 @@ const App = () => {
                                     pnl: tradeData.pnl,
                                     type: tradeData.type,
                                     strategy: 'Prop Firm Scaling Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'cross-vs-isolated-calc' && (
+                        <CrossVsIsolatedCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Cross vs Isolated Calc Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'crypto-funding-calc' && (
+                        <CryptoFundingCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Crypto Funding Calc Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'prop-firm-payout-calc' && (
+                        <PropFirmPayoutCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Prop Firm Payout Import',
                                 });
                                 setShowAddTrade(true);
                             }}
