@@ -102,6 +102,24 @@
     <priority>0.90</priority>
   </url>
   <url>
+    <loc>https://tradejournall.com/tools/crypto-profit-calculator</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/crypto-profit-exit-ladder-calculator</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/crypto-exit-strategy-calculator</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://tradejournall.com/tools/crypto-funding-rate-arbitrage-calculator</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>daily</changefreq>

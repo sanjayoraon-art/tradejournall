@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass, Landmark } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass, Landmark, CircleDollarSign } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -16,6 +16,7 @@ import { CryptoFundingCalculatorScreen } from './screens/CryptoFundingCalculator
 import { PropFirmPayoutCalculatorScreen } from './screens/PropFirmPayoutCalculatorScreen';
 import { PropFirmScalingCalculatorScreen } from './screens/PropFirmScalingCalculatorScreen';
 import { CrossVsIsolatedCalculatorScreen } from './screens/CrossVsIsolatedCalculatorScreen';
+import { CryptoProfitCalculatorScreen } from './screens/CryptoProfitCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -333,6 +334,18 @@ function getCrossVsIsolatedRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Crypto Profit, Tax & Staged Exit Ladder Calculator
+function getCryptoProfitRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/crypto-profit-calculator') ||
+        path.includes('/tools/crypto-profit-exit-ladder-calculator') ||
+        path.includes('/tools/crypto-exit-strategy-calculator') ||
+        path.includes('/tools/crypto-take-profit-ladder-calculator') ||
+        path.includes('/calculators/crypto-profit')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -349,6 +362,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getCryptoProfitRouteFromUrl()) return 'crypto-profit-calc';
         if (getCrossVsIsolatedRouteFromUrl()) return 'cross-vs-isolated-calc';
         if (getPropFirmScalingRouteFromUrl()) return 'prop-firm-scaling-calc';
         if (getPropFirmPayoutRouteFromUrl()) return 'prop-firm-payout-calc';
@@ -371,7 +385,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1049,6 +1063,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('cross-vs-isolated-calc');
                     }}
+                    onOpenCryptoProfitCalculator={() => {
+                        window.history.pushState({}, '', '/tools/crypto-profit-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('crypto-profit-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1467,6 +1486,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'crypto-profit-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <CryptoProfitCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Crypto Profit Calc Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1513,6 +1567,7 @@ const App = () => {
                         <DeskNavButton icon={<TrendingUp size={17} className="text-emerald-400 font-bold" />} label="Prop Firm Scaling Roadmap" active={currentScreen === 'prop-firm-scaling-calc'} onClick={() => setCurrentScreen('prop-firm-scaling-calc')} badge="ROADMAP" />
                         <DeskNavButton icon={<Landmark size={17} className="text-purple-400 font-bold" />} label="Prop Firm Payout Tax" active={currentScreen === 'prop-firm-payout-calc'} onClick={() => setCurrentScreen('prop-firm-payout-calc')} badge="PAYOUT" />
                         <DeskNavButton icon={<Scale size={17} className="text-amber-400 font-bold" />} label="Cross vs Isolated Liq" active={currentScreen === 'cross-vs-isolated-calc'} onClick={() => setCurrentScreen('cross-vs-isolated-calc')} badge="LIQ" />
+                        <DeskNavButton icon={<CircleDollarSign size={17} className="text-emerald-400 font-bold" />} label="Crypto Profit & Exit" active={currentScreen === 'crypto-profit-calc'} onClick={() => setCurrentScreen('crypto-profit-calc')} badge="PROFIT" />
                         <DeskNavButton icon={<Zap size={17} className="text-emerald-400 font-bold" />} label="Crypto Funding APR" active={currentScreen === 'crypto-funding-calc'} onClick={() => setCurrentScreen('crypto-funding-calc')} badge="APR" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
                         <DeskNavButton icon={<Award size={17} className="text-purple-400" />} label="Apex 30% Consistency" active={currentScreen === 'apex-consistency-calc'} onClick={() => setCurrentScreen('apex-consistency-calc')} badge="APEX" />
@@ -2250,6 +2305,27 @@ const App = () => {
                                     pnl: tradeData.pnl,
                                     type: tradeData.type,
                                     strategy: 'Cross vs Isolated Calc Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'crypto-profit-calc' && (
+                        <CryptoProfitCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Crypto Profit Calc Import',
                                 });
                                 setShowAddTrade(true);
                             }}

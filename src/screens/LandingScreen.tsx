@@ -4,7 +4,7 @@ import {
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
-    Eye, Smartphone, Grid, Compass, Landmark
+    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign
 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
@@ -28,6 +28,7 @@ interface LandingScreenProps {
     onOpenPropFirmPayoutCalculator?: () => void;
     onOpenApexConsistencyCalculator?: () => void;
     onOpenCrossVsIsolatedCalculator?: () => void;
+    onOpenCryptoProfitCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -46,6 +47,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenPropFirmPayoutCalculator,
     onOpenApexConsistencyCalculator,
     onOpenCrossVsIsolatedCalculator,
+    onOpenCryptoProfitCalculator,
     theme,
     isDarkMode
 }) => {
@@ -543,6 +545,28 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIQ</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">Liquidation risk & wallet wipeout</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/crypto-profit-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenCryptoProfitCalculator) onOpenCryptoProfitCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                                        <CircleDollarSign size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Crypto Profit &amp; Exit</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">PROFIT</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Net in-hand profit &amp; staged exit ladder</p>
                                     </div>
                                 </a>
 
@@ -1271,6 +1295,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         </div>
                         <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-purple-400">
                             <span>Open Simulator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 6: Crypto Profit Calculator & Staged Exit Ladder */}
+                    <a
+                        href="/tools/crypto-profit-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenCryptoProfitCalculator) onOpenCryptoProfitCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                    <CircleDollarSign size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    PROFIT LADDER
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                Crypto Profit &amp; Exit Ladder
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Exact net profit after exchange fees &amp; 30% taxes. Model 4-tier staged exit ladders (DCA Out) and lock in risk-free free rides.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
+                            <span>Open Calculator</span>
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
                         </div>
                     </a>
@@ -2095,6 +2151,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
                                         <span>Cross Margin Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/crypto-profit-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCryptoProfitCalculator) {
+                                                e.preventDefault();
+                                                onOpenCryptoProfitCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <CircleDollarSign size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Profit Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/crypto-exit-strategy-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCryptoProfitCalculator) {
+                                                e.preventDefault();
+                                                onOpenCryptoProfitCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Layers size={14} className="text-purple-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Exit Strategy Ladder</span>
                                     </a>
                                 </li>
                             </ul>
