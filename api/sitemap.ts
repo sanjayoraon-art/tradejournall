@@ -129,6 +129,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/prop-firm-scaling-plan-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/prop-firm-profit-split-payout-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>

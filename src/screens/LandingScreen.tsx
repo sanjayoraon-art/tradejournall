@@ -24,6 +24,7 @@ interface LandingScreenProps {
     onOpenRiskRewardMatrix?: () => void;
     onOpenSessionClock?: () => void;
     onOpenCooldownTimer?: () => void;
+    onOpenPropFirmScalingCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -38,6 +39,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenRiskRewardMatrix,
     onOpenSessionClock,
     onOpenCooldownTimer,
+    onOpenPropFirmScalingCalculator,
     theme,
     isDarkMode
 }) => {
@@ -1721,6 +1723,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
                                         <span>Crypto Leverage Danger Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/prop-firm-scaling-plan-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmScalingCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmScalingCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <TrendingUp size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Prop Firm Scaling Calculator</span>
                                     </a>
                                 </li>
                                 <li>

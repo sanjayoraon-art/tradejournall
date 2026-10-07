@@ -14,6 +14,7 @@ import { PcrSentimentCalculatorScreen } from './screens/PcrSentimentCalculatorSc
 import { ApexConsistencyCalculatorScreen } from './screens/ApexConsistencyCalculatorScreen';
 import { CryptoFundingCalculatorScreen } from './screens/CryptoFundingCalculatorScreen';
 import { PropFirmPayoutCalculatorScreen } from './screens/PropFirmPayoutCalculatorScreen';
+import { PropFirmScalingCalculatorScreen } from './screens/PropFirmScalingCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -306,6 +307,18 @@ function getPropFirmPayoutRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Prop Firm Account Scaling Plan & Growth Roadmap Calculator
+function getPropFirmScalingRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/prop-firm-scaling-plan-calculator') ||
+        path.includes('/tools/ftmo-scaling-plan-calculator') ||
+        path.includes('/tools/topstep-scaling-calculator') ||
+        path.includes('/tools/apex-scaling-schedule-calculator') ||
+        path.includes('/calculators/prop-firm-scaling')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -322,6 +335,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getPropFirmScalingRouteFromUrl()) return 'prop-firm-scaling-calc';
         if (getPropFirmPayoutRouteFromUrl()) return 'prop-firm-payout-calc';
         if (getCryptoFundingRouteFromUrl()) return 'crypto-funding-calc';
         if (getApexConsistencyRouteFromUrl()) return 'apex-consistency-calc';
@@ -342,7 +356,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -394,7 +408,7 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getPropFirmPayoutRouteFromUrl() || getCryptoFundingRouteFromUrl() || getApexConsistencyRouteFromUrl() || getPcrRouteFromUrl() || getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (getPropFirmScalingRouteFromUrl() || getPropFirmPayoutRouteFromUrl() || getCryptoFundingRouteFromUrl() || getApexConsistencyRouteFromUrl() || getPcrRouteFromUrl() || getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
         return true;
     });
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
@@ -1000,6 +1014,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('cooldown-timer');
                     }}
+                    onOpenPropFirmScalingCalculator={() => {
+                        window.history.pushState({}, '', '/tools/prop-firm-scaling-plan-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('prop-firm-scaling-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1348,6 +1367,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'prop-firm-scaling-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <PropFirmScalingCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Prop Firm Scaling Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1391,6 +1445,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<TrendingUp size={17} className="text-emerald-400 font-bold" />} label="Prop Firm Scaling Roadmap" active={currentScreen === 'prop-firm-scaling-calc'} onClick={() => setCurrentScreen('prop-firm-scaling-calc')} badge="ROADMAP" />
                         <DeskNavButton icon={<Landmark size={17} className="text-purple-400 font-bold" />} label="Prop Firm Payout Tax" active={currentScreen === 'prop-firm-payout-calc'} onClick={() => setCurrentScreen('prop-firm-payout-calc')} badge="PAYOUT" />
                         <DeskNavButton icon={<Zap size={17} className="text-emerald-400 font-bold" />} label="Crypto Funding APR" active={currentScreen === 'crypto-funding-calc'} onClick={() => setCurrentScreen('crypto-funding-calc')} badge="APR" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400" />} label="Revenge Cooldown" active={currentScreen === 'cooldown-timer'} onClick={() => setCurrentScreen('cooldown-timer')} badge="RESET" />
@@ -2087,6 +2142,27 @@ const App = () => {
                                     pnl: tradeData.pnl,
                                     type: tradeData.type,
                                     strategy: 'Option Theta Calc Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'prop-firm-scaling-calc' && (
+                        <PropFirmScalingCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Prop Firm Scaling Import',
                                 });
                                 setShowAddTrade(true);
                             }}
