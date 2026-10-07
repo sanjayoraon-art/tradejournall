@@ -1019,6 +1019,16 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('prop-firm-scaling-calc');
                     }}
+                    onOpenPropFirmPayoutCalculator={() => {
+                        window.history.pushState({}, '', '/tools/prop-firm-profit-split-payout-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('prop-firm-payout-calc');
+                    }}
+                    onOpenApexConsistencyCalculator={() => {
+                        window.history.pushState({}, '', '/tools/apex-consistency-rule-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('apex-consistency-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />

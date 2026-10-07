@@ -25,6 +25,8 @@ interface LandingScreenProps {
     onOpenSessionClock?: () => void;
     onOpenCooldownTimer?: () => void;
     onOpenPropFirmScalingCalculator?: () => void;
+    onOpenPropFirmPayoutCalculator?: () => void;
+    onOpenApexConsistencyCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -40,6 +42,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenSessionClock,
     onOpenCooldownTimer,
     onOpenPropFirmScalingCalculator,
+    onOpenPropFirmPayoutCalculator,
+    onOpenApexConsistencyCalculator,
     theme,
     isDarkMode
 }) => {
@@ -325,11 +329,108 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                     {/* 3-Dot Categorized Dropdown Card */}
                     {isMenuOpen && (
                         <div className="absolute right-0 top-14 w-72 bg-[#0e1628]/95 backdrop-blur-2xl border border-slate-700/90 rounded-2xl shadow-2xl p-3.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200 space-y-3">
-                            {/* Category 1: Trading Tools */}
+                            {/* Category 1: 🏆 Prop Firm Calculators */}
                             <div>
                                 <div className="flex items-center justify-between px-2 mb-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
+                                        🏆 Prop Firm Calculators
+                                    </span>
+                                    <span className="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 py-0.5 rounded font-bold">4 TOOLS</span>
+                                </div>
+                                <a
+                                    href="/tools/prop-firm-scaling-plan-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenPropFirmScalingCalculator) onOpenPropFirmScalingCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-purple-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-purple-500/20 group"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-400 group-hover:scale-110 transition">
+                                        <TrendingUp size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Account Scaling Roadmap</span>
+                                            <span className="bg-purple-500/20 border border-purple-500/40 text-purple-200 text-[8px] font-black px-1.5 py-0.5 rounded">ROADMAP</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Plan $25k to $2M+ growth roadmap</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/prop-firm-profit-split-payout-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenPropFirmPayoutCalculator) onOpenPropFirmPayoutCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                        <Landmark size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Profit Split &amp; Net Tax</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-[8px] font-black px-1.5 py-0.5 rounded">PAYOUT</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Actual in-hand cash after split &amp; tax</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/apex-consistency-rule-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenApexConsistencyCalculator) onOpenApexConsistencyCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
+                                        <Award size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Apex 30% Consistency</span>
+                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-200 text-[8px] font-black px-1.5 py-0.5 rounded">APEX</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Single-day profit cap % calculator</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/ftmo-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-cyan-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-cyan-500/15 text-cyan-400 group-hover:scale-110 transition">
+                                        <ShieldAlert size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>FTMO Evaluation Calc</span>
+                                            <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 text-[8px] font-black px-1.5 py-0.5 rounded">FTMO</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Max drawdown &amp; challenge risk</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            {/* Category 2: 🛠️ Risk & Execution Tools */}
+                            <div className="border-t border-slate-800 pt-2">
+                                <div className="flex items-center justify-between px-2 mb-1.5">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        🛠️ Trading Tools
+                                        🛠️ Risk &amp; Market Tools
                                     </span>
                                     <span className="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold">5 TOOLS</span>
                                 </div>
@@ -340,7 +441,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         setIsMenuOpen(false);
                                         if (onOpenRiskRewardMatrix) onOpenRiskRewardMatrix();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
@@ -362,7 +463,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         setIsMenuOpen(false);
                                         if (onOpenSessionClock) onOpenSessionClock();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
@@ -384,7 +485,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         setIsMenuOpen(false);
                                         if (onOpenCooldownTimer) onOpenCooldownTimer();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
@@ -406,7 +507,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         setIsMenuOpen(false);
                                         if (onOpenLeverageCalculator) onOpenLeverageCalculator();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
@@ -422,35 +523,13 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </a>
 
                                 <a
-                                    href="/tools/ftmo-calculator"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setIsMenuOpen(false);
-                                        if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
-                                    }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
-                                    style={{ textDecoration: 'none' }}
-                                >
-                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
-                                        <ShieldAlert size={15} />
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <span>Prop Firm Calculator</span>
-                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">NEW</span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">Drawdown & target sizing</p>
-                                    </div>
-                                </a>
-
-                                <a
                                     href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setIsMenuOpen(false);
                                         if (onOpenCalculator) onOpenCalculator();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-cyan-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-cyan-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
@@ -462,28 +541,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[8px] font-black px-1.5 py-0.5 rounded">FREE</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">STT, GST & broker breakdown</p>
-                                    </div>
-                                </a>
-
-                                <a
-                                    href="/tools/drawdown-recovery-calculator"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setIsMenuOpen(false);
-                                        if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
-                                    }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
-                                    style={{ textDecoration: 'none' }}
-                                >
-                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
-                                        <Scale size={15} />
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <span>Drawdown & Goal Calc</span>
-                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">PRO</span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">Break-even math & compounding</p>
                                     </div>
                                 </a>
                             </div>
@@ -759,6 +816,164 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                     <div className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
                         <p className="text-3xl sm:text-4xl font-black text-emerald-400 font-mono">100% FREE</p>
                         <p className="text-xs sm:text-sm text-slate-400 font-medium mt-1">Zero Paywalls, Zero KYC</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* 🏆 Dedicated Prop Firm Traders Suite Section */}
+            <section className="w-full py-12 px-4 max-w-7xl mx-auto border-b border-slate-800/80">
+                <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-purple-950/30 via-slate-900/60 to-slate-950 border border-purple-500/30 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 relative z-10">
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-extrabold uppercase tracking-wider mb-2.5">
+                                <Landmark size={14} className="text-purple-400" />
+                                <span>Prop Firm Traders Suite</span>
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+                                Prop Firm Calculators &amp; Growth Tools 🏆
+                            </h2>
+                            <p className="text-slate-300 text-sm mt-1.5 max-w-2xl leading-relaxed">
+                                Built for <strong className="text-purple-300">FTMO, Topstep, Apex Trader Funding, FundedNext &amp; 5%ers</strong> funded traders. Calculate scaling roadmaps, net payouts after taxes, 30% consistency caps, and drawdown risk.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-mono text-purple-300 bg-purple-900/40 px-3 py-1.5 rounded-xl border border-purple-500/30 font-bold">
+                                4 Prop Firm Tools Live
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                        {/* Prop Firm Tool 1: Scaling Roadmap */}
+                        <a
+                            href="/tools/prop-firm-scaling-plan-calculator"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (onOpenPropFirmScalingCalculator) onOpenPropFirmScalingCalculator();
+                            }}
+                            className="p-5 rounded-2xl bg-slate-900/90 border border-purple-500/40 hover:border-purple-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <div>
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 group-hover:scale-110 transition">
+                                        <TrendingUp size={22} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/30 text-purple-200 border border-purple-400/40">
+                                        ROADMAP
+                                    </span>
+                                </div>
+                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
+                                    Account Scaling Roadmap
+                                </h3>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    Plan step-by-step scaling from $25k to $2M+ with lot size scaling &amp; compound growth schedule.
+                                </p>
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs font-bold text-purple-300">
+                                <span>Scale Account</span>
+                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                            </div>
+                        </a>
+
+                        {/* Prop Firm Tool 2: Profit Split & Tax */}
+                        <a
+                            href="/tools/prop-firm-profit-split-payout-calculator"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (onOpenPropFirmPayoutCalculator) onOpenPropFirmPayoutCalculator();
+                            }}
+                            className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <div>
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                        <Landmark size={22} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                        PAYOUT
+                                    </span>
+                                </div>
+                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                    Profit Split &amp; Net Tax
+                                </h3>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    Calculate actual in-hand bank cash ($) after 80/20 split, transfer fees, and US/UK/India taxes.
+                                </p>
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                <span>Calculate Payout</span>
+                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                            </div>
+                        </a>
+
+                        {/* Prop Firm Tool 3: Apex 30% Consistency */}
+                        <a
+                            href="/tools/apex-consistency-rule-calculator"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (onOpenApexConsistencyCalculator) onOpenApexConsistencyCalculator();
+                            }}
+                            className="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <div>
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 group-hover:scale-110 transition">
+                                        <Award size={22} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/40">
+                                        APEX
+                                    </span>
+                                </div>
+                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                    30% Consistency Rule
+                                </h3>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    Track single-day profit caps to pass Apex &amp; Topstep consistency payout rules safely.
+                                </p>
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs font-bold text-amber-300">
+                                <span>Check Rule</span>
+                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                            </div>
+                        </a>
+
+                        {/* Prop Firm Tool 4: FTMO Challenge Drawdown */}
+                        <a
+                            href="/tools/ftmo-calculator"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                            }}
+                            className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <div>
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 group-hover:scale-110 transition">
+                                        <ShieldAlert size={22} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/30 text-cyan-200 border border-cyan-400/40">
+                                        FTMO
+                                    </span>
+                                </div>
+                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
+                                    FTMO Evaluation Calc
+                                </h3>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    Daily drawdown limits &amp; lot size calculator for FTMO, FundedNext &amp; Funding Pips.
+                                </p>
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-xs font-bold text-cyan-300">
+                                <span>Calculate Risk</span>
+                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                            </div>
+                        </a>
                     </div>
                 </div>
             </section>
@@ -1623,58 +1838,95 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             </p>
                         </div>
 
-                        {/* Column 2: Trading Tools */}
+                        {/* Column 2: 🏆 Prop Firm Suite */}
                         <div className="space-y-2.5">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🛠️ Trading Tools</h4>
+                            <h4 className="text-xs font-black uppercase tracking-widest text-purple-400">🏆 Prop Firm Suite</h4>
                             <ul className="space-y-2 text-xs">
                                 <li>
                                     <a
-                                        href="/tools/prop-firm-profit-split-payout-calculator"
-                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        href="/tools/prop-firm-scaling-plan-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmScalingCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmScalingCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-purple-300 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <Landmark size={14} className="text-purple-400 group-hover:scale-110 transition" />
-                                        <span>Prop Firm Profit Split &amp; Net Payout Tax Calculator</span>
+                                        <TrendingUp size={14} className="text-purple-400 group-hover:scale-110 transition" />
+                                        <span>Account Scaling Roadmap</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        href="/tools/crypto-funding-rate-arbitrage-calculator"
+                                        href="/tools/prop-firm-profit-split-payout-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmPayoutCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmPayoutCalculator();
+                                            }
+                                        }}
                                         className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <Zap size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Crypto Funding Rate APR &amp; Arbitrage Calculator</span>
+                                        <Landmark size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Profit Split &amp; Net Tax Calc</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a
                                         href="/tools/apex-consistency-rule-calculator"
-                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Award size={14} className="text-purple-400 group-hover:scale-110 transition" />
-                                        <span>Apex &amp; Topstep Consistency Rule Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/nifty-pcr-calculator"
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Compass size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Nifty PCR Sentiment Bias Gauge</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/nifty-option-theta-decay-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenApexConsistencyCalculator) {
+                                                e.preventDefault();
+                                                onOpenApexConsistencyCalculator();
+                                            }
+                                        }}
                                         className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <Clock size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Option Theta Decay &amp; Time-Risk Clock</span>
+                                        <Award size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Apex 30% Consistency Rule</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/ftmo-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>FTMO Challenge Risk Calc</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Column 3: Market Risk & Execution Tools */}
+                        <div className="space-y-2.5">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🛠️ Risk &amp; Market Tools</h4>
+                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/risk-reward-win-rate-matrix"
+                                        onClick={(e) => {
+                                            if (onOpenRiskRewardMatrix) {
+                                                e.preventDefault();
+                                                onOpenRiskRewardMatrix();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Grid size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Risk-Reward vs Win Rate Matrix</span>
                                     </a>
                                 </li>
                                 <li>
@@ -1695,18 +1947,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
-                                        href="/tools/risk-reward-win-rate-matrix"
+                                        href="/tools/revenge-trading-cooldown-timer"
                                         onClick={(e) => {
-                                            if (onOpenRiskRewardMatrix) {
+                                            if (onOpenCooldownTimer) {
                                                 e.preventDefault();
-                                                onOpenRiskRewardMatrix();
+                                                onOpenCooldownTimer();
                                             }
                                         }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <Grid size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Risk-Reward vs Win Rate Matrix</span>
+                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Revenge Cooldown Timer</span>
                                     </a>
                                 </li>
                                 <li>
@@ -1723,38 +1975,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
                                         <span>Crypto Leverage Danger Calc</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/prop-firm-scaling-plan-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenPropFirmScalingCalculator) {
-                                                e.preventDefault();
-                                                onOpenPropFirmScalingCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <TrendingUp size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Prop Firm Scaling Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/ftmo-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenPropFirmCalculator) {
-                                                e.preventDefault();
-                                                onOpenPropFirmCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <ShieldAlert size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Prop Firm Calculator</span>
                                     </a>
                                 </li>
                                 <li>
@@ -1787,22 +2007,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Scale size={14} className="text-rose-400 group-hover:scale-110 transition" />
                                         <span>Drawdown &amp; Goal Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/revenge-trading-cooldown-timer"
-                                        onClick={(e) => {
-                                            if (onOpenCooldownTimer) {
-                                                e.preventDefault();
-                                                onOpenCooldownTimer();
-                                            }
-                                        }}
-                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
-                                        <span>Revenge Cooldown Timer</span>
                                     </a>
                                 </li>
                             </ul>
