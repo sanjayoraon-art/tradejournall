@@ -41,15 +41,23 @@
         },
         {
             "source": "/buy-the-dip",
-            "destination": "/game-page.html"
+            "destination": "/buy-the-dip.html"
         },
         {
             "source": "/blog/:slug",
             "destination": "/api/render-blog?slug=:slug"
         },
         {
-            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html|privacy\\.html|game|buy-the-dip|candle-clash).*)",
+            "source": "/tools/:path*",
+            "destination": "/api/render-tool?path=:path*"
+        },
+        {
+            "source": "/calculators/:path*",
+            "destination": "/api/render-tool?path=:path*"
+        },
+        {
+            "source": "/((?!api/|game-page\\.html|buy-the-dip\\.html|privacy\\.html|game|buy-the-dip|candle-clash|tools|calculators).*)",
             "destination": "/index.html"
         }
     ]
-}
+}

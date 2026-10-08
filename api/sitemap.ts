@@ -208,18 +208,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
-  <url>
-    <loc>${SITE_URL}/game-page.html</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>${SITE_URL}/buy-the-dip.html</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
 
   <!-- Trading Blog and Educational Articles Hub -->
   <url>
