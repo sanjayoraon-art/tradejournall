@@ -18,6 +18,7 @@ import { PropFirmScalingCalculatorScreen } from './screens/PropFirmScalingCalcul
 import { CrossVsIsolatedCalculatorScreen } from './screens/CrossVsIsolatedCalculatorScreen';
 import { CryptoProfitCalculatorScreen } from './screens/CryptoProfitCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
+import { IronCondorCalculatorScreen } from './screens/IronCondorCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -346,6 +347,18 @@ function getCryptoProfitRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Iron Condor Calculator
+function getIronCondorRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/iron-condor-calculator') ||
+        path.includes('/tools/iron-condor-max-loss-calculator') ||
+        path.includes('/tools/iron-condor-option-calculator') ||
+        path.includes('/tools/iron-condor-breakeven-calculator') ||
+        path.includes('/calculators/iron-condor')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -362,6 +375,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getIronCondorRouteFromUrl()) return 'iron-condor-calc';
         if (getCryptoProfitRouteFromUrl()) return 'crypto-profit-calc';
         if (getCrossVsIsolatedRouteFromUrl()) return 'cross-vs-isolated-calc';
         if (getPropFirmScalingRouteFromUrl()) return 'prop-firm-scaling-calc';
@@ -385,7 +399,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1068,6 +1082,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('crypto-profit-calc');
                     }}
+                    onOpenIronCondorCalculator={() => {
+                        window.history.pushState({}, '', '/tools/iron-condor-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('iron-condor-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1236,6 +1255,41 @@ const App = () => {
                         onSignIn={() => {
                             setShowLanding(false);
                             setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
+        if (currentScreen === 'iron-condor-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <IronCondorCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Iron Condor Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
                         }}
                     />
                 </div>

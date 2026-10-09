@@ -29,6 +29,7 @@ interface LandingScreenProps {
     onOpenApexConsistencyCalculator?: () => void;
     onOpenCrossVsIsolatedCalculator?: () => void;
     onOpenCryptoProfitCalculator?: () => void;
+    onOpenIronCondorCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -48,6 +49,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenApexConsistencyCalculator,
     onOpenCrossVsIsolatedCalculator,
     onOpenCryptoProfitCalculator,
+    onOpenIronCondorCalculator,
     theme,
     isDarkMode
 }) => {
@@ -2183,6 +2185,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Layers size={14} className="text-purple-400 group-hover:scale-110 transition" />
                                         <span>Crypto Exit Strategy Ladder</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/iron-condor-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenIronCondorCalculator) {
+                                                e.preventDefault();
+                                                onOpenIronCondorCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Sparkles size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Iron Condor Options Calculator</span>
                                     </a>
                                 </li>
                             </ul>
