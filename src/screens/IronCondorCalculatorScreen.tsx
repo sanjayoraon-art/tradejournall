@@ -200,8 +200,9 @@ export const IronCondorCalculatorScreen: React.FC<IronCondorCalculatorScreenProp
 
     // Payoff Diagram SVG Points Generator
     const payoffGraphPoints = useMemo(() => {
-        const minX = Math.max(0, longPutStrike - (maxSpreadWidth || 10) * 2);
-        const maxX = longCallStrike + (maxSpreadWidth || 10) * 2;
+        const spreadWidth = calculations.maxSpreadWidth || 10;
+        const minX = Math.max(0, longPutStrike - spreadWidth * 2);
+        const maxX = longCallStrike + spreadWidth * 2;
         const step = (maxX - minX) / 100;
 
         const points: { x: number; y: number }[] = [];
@@ -248,8 +249,6 @@ export const IronCondorCalculatorScreen: React.FC<IronCondorCalculatorScreenProp
 
         return { points, minX, maxX, minY, maxY };
     }, [longPutStrike, shortPutStrike, shortCallStrike, longCallStrike, netPremium, lotSize, numContracts, strategyType, calculations.maxSpreadWidth]);
-
-    const maxSpreadWidth = Math.max(shortPutStrike - longPutStrike, longCallStrike - shortCallStrike);
 
     // Copy Summary Handler
     const handleCopySummary = () => {
