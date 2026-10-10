@@ -5,7 +5,7 @@ import {
     DollarSign, Percent, RefreshCw, CheckCircle2, ChevronDown, HelpCircle,
     Sparkles, Scale, Layers, Award, Landmark, Lock, Plus, Share2, Check,
     Coins, Wallet, CircleDollarSign, ArrowUpRight, Info, AlertTriangle, ArrowLeft,
-    Clock, Calendar, Moon, Sun, AlertCircle
+    Clock, Calendar, Moon, Sun, AlertCircle, Globe, FileText, CheckCircle, BarChart3, Shield, BookOpen
 } from 'lucide-react';
 
 export interface ForexSwapFeeCalculatorScreenProps {
@@ -207,6 +207,62 @@ Calculated with TradeJournall (https://tradejournall.com/tools/forex-swap-fee-ca
                             '@type': 'Answer',
                             'text': 'A Swap-Free account (Islamic Account) does not pay or charge overnight interest or swap fees, complying with Sharia financial principles. Instead, brokers may charge a fixed administration fee for long-held positions.'
                         }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'Can you earn positive swap on trades?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Yes! If you buy a currency with a higher central bank interest rate and sell a currency with a lower interest rate (Carry Trade), your net swap rate will be positive, earning you daily interest payouts into your account.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'What time is Forex swap charged?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Forex swap fees are processed daily at server rollover time, which is 5:00 PM EST (22:00 UTC or 03:30 AM IST during daylight saving time). Any open position held past this exact minute incurs swap.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'How does Gold (XAUUSD) swap work?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Gold carries a high negative long swap rate because holding physical gold incurs storage, insurance, and leverage financing costs. Short Gold positions often earn positive or low negative swap depending on broker spreads.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'What is the difference between Forex Swap and Crypto Funding Rate?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Forex swap is an annual central bank interest differential charged once daily at 5 PM EST. Crypto funding rate is a peer-to-peer mechanism charged every 8 hours (00:00, 08:00, 16:00 UTC) to keep perpetual futures prices pegged to spot prices.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'How can swing traders avoid heavy negative swap charges?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Traders can avoid negative swap by closing positions before 5:00 PM EST, switching to Swap-Free Islamic accounts, trading futures contracts instead of spot CFDs, or structuring Carry Trades with positive swap.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'Does MetaTrader (MT4 / MT5) show swap rates automatically?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Yes! In MT4 or MT5, right-click any symbol in the Market Watch window, select Specification, and scroll down to view Swap Long and Swap Short in points/pips.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': 'Are Forex swap rates fixed or variable?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': 'Swap rates are variable. They adjust periodically whenever central banks (US Fed, ECB, BOE, BOJ) change benchmark interest rates or when market liquidity changes.'
+                        }
                     }
                 ]
             }
@@ -224,7 +280,7 @@ Calculated with TradeJournall (https://tradejournall.com/tools/forex-swap-fee-ca
         },
         {
             q: 'Can you earn positive swap on trades?',
-            a: 'Yes! If you buy a currency with a higher central bank interest rate and sell a currency with a lower interest rate (Carry Trade), your net swap rate will be positive, earning you daily interest payouts.'
+            a: 'Yes! If you buy a currency with a higher central bank interest rate and sell a currency with a lower interest rate (Carry Trade), your net swap rate will be positive, earning you daily interest payouts into your trading account.'
         },
         {
             q: 'How does Swap affect Gold (XAU/USD) swing trades?',
@@ -233,6 +289,26 @@ Calculated with TradeJournall (https://tradejournall.com/tools/forex-swap-fee-ca
         {
             q: 'What is an Islamic Swap-Free account?',
             a: 'An Islamic Swap-Free trading account waives all overnight interest charges to adhere to Sharia law principles prohibiting Riba (interest). Brokers may replace swap fees with a flat administration fee after a grace period.'
+        },
+        {
+            q: 'What exact time are Forex swap fees charged daily?',
+            a: 'Forex swap fees are processed daily at server rollover time, which is 5:00 PM EST (22:00 UTC or 03:30 AM IST during daylight saving time). Any open position held past this exact minute incurs overnight swap.'
+        },
+        {
+            q: 'What is the difference between Forex Swap and Crypto Funding Rate?',
+            a: 'Forex swap is an annual central bank interest differential charged once daily at 5 PM EST. Crypto funding rate is a peer-to-peer mechanism charged every 8 hours (00:00, 08:00, 16:00 UTC) to keep perpetual futures prices pegged to spot prices.'
+        },
+        {
+            q: 'How can swing traders avoid paying negative swap fees?',
+            a: 'Traders can avoid negative swap by closing positions before 5:00 PM EST, switching to Swap-Free Islamic accounts, trading futures contracts instead of spot CFDs, or structuring Carry Trades with positive swap.'
+        },
+        {
+            q: 'Where can I check live swap rates in MetaTrader 4 / MetaTrader 5?',
+            a: 'In MT4 or MT5, right-click any symbol in the Market Watch window, select Specification, and scroll down to view Swap Long and Swap Short rates in points or pips.'
+        },
+        {
+            q: 'Are Forex swap rates fixed or do brokers change them?',
+            a: 'Swap rates are variable. They adjust periodically whenever central banks (US Fed, ECB, BOE, BOJ) update interest rates or when broker liquidity conditions shift.'
         }
     ];
 
@@ -501,50 +577,214 @@ Calculated with TradeJournall (https://tradejournall.com/tools/forex-swap-fee-ca
                 </div>
 
                 {/* Comprehensive SEO Content & Educational Article */}
-                <article className="mt-16 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-10 max-w-5xl mx-auto space-y-8 text-slate-300 text-sm leading-relaxed">
-                    <header className="border-b border-slate-800 pb-6">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                            Complete Guide: How Forex Swap Fees & Overnight Rollover Rates Work
+                <article className="mt-16 bg-slate-900/60 border border-slate-800 rounded-3xl p-6 sm:p-10 max-w-5xl mx-auto space-y-10 text-slate-300 text-sm leading-relaxed shadow-2xl">
+                    <header className="border-b border-slate-800 pb-8">
+                        <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest mb-2">
+                            <BookOpen className="w-4 h-4" /> Comprehensive Trading Guide & Masterclass
+                        </div>
+                        <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4 tracking-tight">
+                            Mastering Forex Swap Fees, Rollover Rates & Wednesday 3x Multipliers
                         </h2>
-                        <p className="text-slate-400 text-base">
-                            In Forex & CFD trading, a Swap Fee (or Rollover Rate) is the interest paid or earned for holding a position overnight. Understanding swap charges is crucial for swing traders holding trades for days or weeks.
+                        <p className="text-slate-400 text-base leading-relaxed">
+                            In Forex, CFD, and Precious Metals (Gold/Silver) trading, a **Swap Fee** (also called a **Rollover Rate** or **Overnight Holding Fee**) is the interest paid or earned for maintaining an open position past 5:00 PM EST (22:00 UTC). Whether you are a swing trader holding positions for days or an institutional carry trader earning daily yields, understanding swap mechanics is essential to preserving your net trading profits.
                         </p>
                     </header>
 
-                    {/* Formula Section */}
+                    {/* Section 1: Swap Calculation Formula */}
                     <section className="space-y-4">
                         <h3 className="text-xl font-bold text-white flex items-center gap-2">
                             <Calculator className="w-5 h-5 text-emerald-400" />
-                            Forex Swap Calculation Formula
+                            1. Forex Swap Calculation Formulas Explained
                         </h3>
-                        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                            <code className="block bg-slate-900 p-3 rounded text-xs sm:text-sm text-emerald-400 mb-2 font-mono">
-                                Daily Swap Fee ($) = Lot Size × Swap Rate (in pips) × Pip Value per Lot
+                        <p className="text-slate-300">
+                            Brokers calculate swap fees based on the interest rate differential between the base currency and quote currency set by central banks (e.g., US Federal Reserve vs European Central Bank). Swap can be quoted in **Pips/Points** or **Percentage APR**.
+                        </p>
+                        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                            <div className="text-xs font-mono font-bold text-slate-400 uppercase">Standard Pip-Based Formula:</div>
+                            <code className="block bg-slate-900 p-3.5 rounded-xl text-xs sm:text-sm text-emerald-400 font-mono border border-slate-800">
+                                Daily Swap ($) = Lot Size × Swap Rate (in pips) × Pip Value per Lot
                             </code>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-slate-400">
+                                <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                    <strong className="text-white block mb-1">Example A: Long Gold (XAU/USD)</strong>
+                                    Holding 1.0 Lot Gold with -14.5 pips swap rate ($1 pip value per 0.1):<br />
+                                    1.0 × -14.5 × $1.00 = <span className="text-rose-400 font-bold">-$14.50 / night</span>
+                                </div>
+                                <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                    <strong className="text-white block mb-1">Example B: Short EUR/USD Carry</strong>
+                                    Holding 2.0 Lots EUR/USD with +2.1 pips swap rate ($10 pip value):<br />
+                                    2.0 × +2.1 × $10.00 = <span className="text-emerald-400 font-bold">+$42.00 earned / night</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Section 2: Wednesday 3x Triple Swap Rollover Settlement */}
+                    <section className="space-y-4 pt-6 border-t border-slate-800">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <Calendar className="w-5 h-5 text-amber-400" />
+                            2. Why is There a 3x Triple Swap Charged on Wednesday Night?
+                        </h3>
+                        <p className="text-slate-300">
+                            Standard Forex spot transactions operate under **T+2 Settlement** rules (trades take 2 business days to clear). Because global financial markets are closed on Saturday and Sunday, positions held overnight past 5:00 PM EST on **Wednesday** settle on Monday of the following week.
+                        </p>
+                        
+                        {/* Visual Settlement Flow */}
+                        <div className="bg-slate-950 p-5 rounded-2xl border border-amber-500/30 space-y-4">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                                📅 T+2 Settlement Timeline (Wednesday Night Rollover)
+                            </h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+                                <div className="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                                    <span className="text-slate-400 block font-mono mb-1">Wednesday 5:00 PM</span>
+                                    <strong className="text-white block">Trade Open</strong>
+                                    <span className="text-amber-400 text-[11px]">Rolls over</span>
+                                </div>
+                                <div className="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                                    <span className="text-slate-400 block font-mono mb-1">Thursday</span>
+                                    <strong className="text-white block">+1 Day Settlement</strong>
+                                </div>
+                                <div className="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                                    <span className="text-slate-400 block font-mono mb-1">Sat + Sun</span>
+                                    <strong className="text-amber-400 block">+2 Weekend Days</strong>
+                                </div>
+                                <div className="p-3 bg-slate-900 rounded-xl border border-amber-500/40 bg-amber-500/10">
+                                    <span className="text-amber-400 block font-mono mb-1">Monday</span>
+                                    <strong className="text-amber-300 block">3 Days Interest Settlement</strong>
+                                </div>
+                            </div>
                             <p className="text-xs text-slate-400 leading-relaxed">
-                                Example: Trading 1.0 Lot Gold (XAUUSD) with Long Swap of -14.5 pips ($10 pip value) = 1.0 × -14.5 × $1 = -$14.50 per night held.
+                                💡 <em>Note: Some CFDs (such as US30 or Crude Oil) charge triple swap on Friday instead of Wednesday depending on asset class settlement rules. Always check your broker’s contract specification.</em>
                             </p>
                         </div>
                     </section>
 
+                    {/* Section 3: Major Brokers Swap Benchmark Comparison */}
+                    <section className="space-y-4 pt-6 border-t border-slate-800">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <BarChart3 className="w-5 h-5 text-emerald-400" />
+                            3. Benchmark Swap Rates Across Popular Retail Brokers
+                        </h3>
+                        <p className="text-slate-300">
+                            Brokers add their own financing markup spread to central bank interest rates. Below is a benchmark comparison of standard swap charges across major global Forex brokers:
+                        </p>
+                        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950">
+                            <table className="w-full text-left text-xs">
+                                <thead className="bg-slate-900 text-slate-300 font-bold border-b border-slate-800 uppercase tracking-wider">
+                                    <tr>
+                                        <th className="p-3.5">Instrument</th>
+                                        <th className="p-3.5">Direction</th>
+                                        <th className="p-3.5">Exness / IC Markets</th>
+                                        <th className="p-3.5">Pepperstone / XM</th>
+                                        <th className="p-3.5">Net Impact per 1 Lot</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-amber-400">Gold (XAU/USD)</td>
+                                        <td className="p-3.5 font-semibold text-emerald-400">Long (Buy)</td>
+                                        <td className="p-3.5">-14.5 pips</td>
+                                        <td className="p-3.5">-18.2 pips</td>
+                                        <td className="p-3.5 text-rose-400 font-mono font-bold">-$14.50 to -$18.20 / night</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-amber-400">Gold (XAU/USD)</td>
+                                        <td className="p-3.5 font-semibold text-rose-400">Short (Sell)</td>
+                                        <td className="p-3.5">+8.2 pips</td>
+                                        <td className="p-3.5">+5.4 pips</td>
+                                        <td className="p-3.5 text-emerald-400 font-mono font-bold">+$5.40 to +$8.20 earned</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-slate-200">EUR/USD Forex</td>
+                                        <td className="p-3.5 font-semibold text-emerald-400">Long (Buy)</td>
+                                        <td className="p-3.5">-6.8 pips</td>
+                                        <td className="p-3.5">-7.5 pips</td>
+                                        <td className="p-3.5 text-rose-400 font-mono font-bold">-$6.80 to -$7.50 / night</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-slate-200">USD/JPY Forex</td>
+                                        <td className="p-3.5 font-semibold text-emerald-400">Long (Buy)</td>
+                                        <td className="p-3.5">+12.4 pips</td>
+                                        <td className="p-3.5">+10.8 pips</td>
+                                        <td className="p-3.5 text-emerald-400 font-mono font-bold">+$10.80 to +$12.40 earned</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-purple-400">Bitcoin (BTC/USD)</td>
+                                        <td className="p-3.5 font-semibold text-emerald-400">Long (Buy)</td>
+                                        <td className="p-3.5">-25.0 pips (or 0% Swap-Free)</td>
+                                        <td className="p-3.5">-30.0 pips</td>
+                                        <td className="p-3.5 text-rose-400 font-mono font-bold">-$25.00 / night</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    {/* Section 4: Positive Swap Carry Trade Strategy */}
+                    <section className="space-y-4 pt-6 border-t border-slate-800">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5 text-emerald-400" />
+                            4. Positive Swap Carry Trading Strategy: How Traders Earn Interest
+                        </h3>
+                        <p className="text-slate-300">
+                            A **Carry Trade** is an institutional trading strategy where a trader buys a currency with a high central bank interest rate (e.g., US Federal Reserve at 5.25%) while selling a currency with a low interest rate (e.g., Bank of Japan at 0.25%).
+                        </p>
+                        <div className="p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-500/30 rounded-2xl space-y-2">
+                            <h4 className="text-sm font-bold text-emerald-400">🟢 Real-World Carry Trade Example: Long USD/JPY</h4>
+                            <p className="text-xs text-slate-300 leading-relaxed">
+                                When holding a 5.0 Lot Long USD/JPY position over 30 days with a positive swap of +$12.00 per lot per night:<br />
+                                <strong>Net Monthly Interest Yield:</strong> 5 Lots × $12.00 × 30 Days = <span className="text-emerald-400 font-bold">$1,800 USD in passive swap income</span> credited directly to your trading account balance regardless of minor price fluctuations.
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Section 5: Swap-Free (Islamic Accounts) */}
+                    <section className="space-y-4 pt-6 border-t border-slate-800">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <Shield className="w-5 h-5 text-cyan-400" />
+                            5. Swap-Free (Islamic Accounts) vs Standard Accounts
+                        </h3>
+                        <p className="text-slate-300">
+                            In Islamic finance, receiving or paying overnight interest is strictly prohibited under **Sharia principles (Riba)**. Most modern brokers offer **Islamic Swap-Free Accounts** where swap charges are completely removed.
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl">
+                                <h4 className="font-bold text-emerald-400 mb-1">✅ Standard Trading Account</h4>
+                                <ul className="space-y-1 text-slate-400 list-disc pl-4">
+                                    <li>Earns positive swap on carry trades</li>
+                                    <li>Pays negative swap on high-rate currencies</li>
+                                    <li>Subject to Wednesday 3x triple rollover</li>
+                                </ul>
+                            </div>
+                            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl">
+                                <h4 className="font-bold text-cyan-400 mb-1">☪️ Islamic Swap-Free Account</h4>
+                                <ul className="space-y-1 text-slate-400 list-disc pl-4">
+                                    <li>Zero overnight interest debited or credited</li>
+                                    <li>Sharia-compliant for Muslim traders</li>
+                                    <li>Brokers may apply flat admin fee after 7-14 days</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
                     {/* FAQ Accordion Section */}
-                    <section className="space-y-4 pt-4 border-t border-slate-800">
+                    <section className="space-y-4 pt-6 border-t border-slate-800">
                         <h3 className="text-xl font-bold text-white flex items-center gap-2">
                             <HelpCircle className="w-5 h-5 text-emerald-400" />
-                            Frequently Asked Questions (FAQs)
+                            6. Frequently Asked Questions (FAQs)
                         </h3>
                         <div className="space-y-3">
                             {faqs.map((faq, index) => (
-                                <div key={index} className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
+                                <div key={index} className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
                                     <button
                                         onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
                                         className="w-full p-4 text-left font-semibold text-slate-200 flex items-center justify-between hover:bg-slate-900/50 transition-colors text-xs sm:text-sm"
                                     >
-                                        <span>{faq.q}</span>
-                                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openFaqIndex === index ? 'rotate-180 text-emerald-400' : ''}`} />
+                                        <span className="pr-4">{faq.q}</span>
+                                        <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${openFaqIndex === index ? 'rotate-180 text-emerald-400' : ''}`} />
                                     </button>
                                     {openFaqIndex === index && (
-                                        <div className="px-4 pb-4 text-xs text-slate-400 border-t border-slate-800/60 pt-3 leading-relaxed">
+                                        <div className="px-4 pb-4 text-xs text-slate-400 border-t border-slate-800/60 pt-3 leading-relaxed bg-slate-900/30">
                                             {faq.a}
                                         </div>
                                     )}
