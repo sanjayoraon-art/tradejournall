@@ -250,16 +250,19 @@ function getRevengeCooldownRouteFromUrl(): boolean {
     );
 }
 
-// Helper to check if URL path targets Option Buying Theta Decay & Time-Risk Clock (Nifty / BankNifty)
+// Helper to check if URL path targets Option Buying Theta Decay & 0DTE Profit Calculator
 function getOptionThetaRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
     return (
+        path.includes('/tools/0dte-option-profit-calculator') ||
+        path.includes('/tools/0dte-calculator') ||
         path.includes('/tools/option-theta-decay-calculator') ||
         path.includes('/tools/nifty-option-theta-decay-calculator') ||
         path.includes('/tools/bank-nifty-option-time-decay-holding-tool') ||
         path.includes('/tools/option-buying-hourly-decay-calculator') ||
         path.includes('/tools/option-holding-time-risk-clock') ||
         path.includes('/tools/0-dte-option-decay-risk-timer') ||
+        path.includes('/calculators/0dte-calculator') ||
         path.includes('/calculators/option-theta-decay')
     );
 }

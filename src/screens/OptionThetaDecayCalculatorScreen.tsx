@@ -313,23 +313,23 @@ Calculate option theta in Rupees: https://tradejournall.com/tools/option-theta-d
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
-        <title>Nifty Option Theta Decay Calculator & Time-Risk Clock — TradeJournall</title>
+        <title>0DTE Option Profit & Theta Decay Calculator | TradeJournall</title>
         <meta
           name="description"
-          content="Calculate exact option time decay (Theta) in Rupees for Nifty 50, Bank Nifty, and Sensex. Track hourly rupee leakage per lot, 0 DTE holding risk, and breakeven index move."
+          content="Free 0DTE Option Profit & Theta Decay Calculator. Compute hourly option time decay, 0DTE holding risk, breakeven move, and live holding clock timer for SPY, QQQ, Nifty, and Crypto options."
         />
         <meta
           name="keywords"
-          content="nifty option theta decay calculator, bank nifty option time decay holding tool, option buying hourly decay calculator in rupees, option holding time risk clock, 0 dte option decay risk timer, tradejournall"
+          content="0dte option profit calculator, 0dte calculator, option theta decay calculator, 0dte spy option calculator, hourly option decay calculator, 0 dte option decay risk timer, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/option-theta-decay-calculator" />
-        <meta property="og:title" content="Nifty & Bank Nifty Option Theta Decay & Time-Risk Clock" />
+        <link rel="canonical" href="https://tradejournall.com/tools/0dte-option-profit-calculator" />
+        <meta property="og:title" content="0DTE Option Profit & Theta Decay Calculator" />
         <meta
           property="og:description"
-          content="Translate option time decay into Rupees per lot. Live holding timer clock and 0 DTE expiry decay danger gauge."
+          content="Free 0DTE Option Profit & Theta Decay Calculator. Live holding timer clock and 0DTE expiry decay danger gauge."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradejournall.com/tools/option-theta-decay-calculator" />
+        <meta property="og:url" content="https://tradejournall.com/tools/0dte-option-profit-calculator" />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 

@@ -2205,6 +2205,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
+                                        href="/tools/0dte-option-profit-calculator"
+                                        onClick={(e) => {
+                                            window.history.pushState({}, '', '/tools/0dte-option-profit-calculator');
+                                        }}
+                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Clock size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>0DTE Option Profit & Theta Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="/tools/iron-condor-calculator"
                                         onClick={(e) => {
                                             if (onOpenIronCondorCalculator) {
