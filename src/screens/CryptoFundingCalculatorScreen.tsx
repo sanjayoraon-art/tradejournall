@@ -297,22 +297,23 @@ export const CryptoFundingCalculatorScreen: React.FC<CryptoFundingCalculatorScre
       {/* HELMET SEO META TAGS */}
       {/* --------------------------------------------------------------------- */}
       <Helmet>
-        <title>Crypto Funding Rate APR & Arbitrage Yield Calculator (Binance, Bybit, Hyperliquid) — TradeJournall</title>
+        <title>Crypto Funding Rate Calculator & Arbitrage Yield Tool | TradeJournall</title>
         <meta
           name="description"
-          content="Free Crypto Funding Rate APR & Delta-Neutral Arbitrage Yield Calculator. Convert 8h/1h funding rates to annual APR, compounded APY, and net profit after exchange fees for Binance, Bybit, OKX & Hyperliquid."
+          content="Free Crypto Funding Rate Calculator & Delta-Neutral Arbitrage Yield Tool. Convert 8h/1h funding rates to annual APR, compounded APY, and net profit after exchange fees for Binance, Bybit, OKX & Hyperliquid."
         />
         <meta
           name="keywords"
-          content="crypto funding rate apr calculator, binance funding rate calculator, bybit funding rate annual yield, delta neutral arbitrage calculator, hyperliquid hourly funding calculator, cash and carry arbitrage profit tool, tradejournall"
+          content="crypto funding rate calculator, funding rate calculator, binance funding rate calculator, bybit funding rate calculator, crypto funding rate apr calculator, delta neutral arbitrage calculator, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/crypto-funding-rate-arbitrage-calculator" />
-        <meta property="og:title" content="Crypto Funding Rate APR & Delta-Neutral Arbitrage Yield Calculator" />
+        <link rel="canonical" href="https://tradejournall.com/tools/crypto-funding-rate-calculator" />
+        <meta property="og:title" content="Crypto Funding Rate Calculator & Arbitrage Yield Tool" />
         <meta
           property="og:description"
-          content="Calculate 8-hour and 1-hour funding rates to annual APR & APY yield. Delta-neutral cash & carry arbitrage net profit calculator."
+          content="Free Crypto Funding Rate Calculator & Delta-Neutral Yield Tool. Calculate 8-hour and 1-hour funding rates to annual APR & APY yield."
         />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tradejournall.com/tools/crypto-funding-rate-calculator" />
         <script type="application/ld+json">{JSON.stringify(jsonLdSchema)}</script>
       </Helmet>
 

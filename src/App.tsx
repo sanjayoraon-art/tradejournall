@@ -295,10 +295,12 @@ function getApexConsistencyRouteFromUrl(): boolean {
 function getCryptoFundingRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
     return (
+        path.includes('/tools/crypto-funding-rate-calculator') ||
         path.includes('/tools/crypto-funding-rate-arbitrage-calculator') ||
         path.includes('/tools/funding-rate-calculator') ||
         path.includes('/tools/binance-funding-rate-calculator') ||
         path.includes('/tools/delta-neutral-arbitrage-calculator') ||
+        path.includes('/calculators/crypto-funding-rate') ||
         path.includes('/calculators/funding-rate')
     );
 }

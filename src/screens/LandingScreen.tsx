@@ -2205,6 +2205,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
+                                        href="/tools/crypto-funding-rate-calculator"
+                                        onClick={(e) => {
+                                            window.history.pushState({}, '', '/tools/crypto-funding-rate-calculator');
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Zap size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Funding Rate Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="/tools/0dte-option-profit-calculator"
                                         onClick={(e) => {
                                             window.history.pushState({}, '', '/tools/0dte-option-profit-calculator');
