@@ -279,9 +279,11 @@ function getPcrRouteFromUrl(): boolean {
 function getApexConsistencyRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
     return (
+        path.includes('/tools/apex-trailing-drawdown-calculator') ||
         path.includes('/tools/apex-consistency-rule-calculator') ||
         path.includes('/tools/topstep-trailing-drawdown-calculator') ||
         path.includes('/tools/prop-firm-consistency-calculator') ||
+        path.includes('/calculators/apex-trailing-drawdown') ||
         path.includes('/calculators/apex-consistency-rule')
     );
 }

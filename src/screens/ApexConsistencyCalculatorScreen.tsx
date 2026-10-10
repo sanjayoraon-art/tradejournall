@@ -314,23 +314,23 @@ Track Prop Firm Trailing Thresholds: https://tradejournall.com/tools/apex-consis
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
-        <title>Apex & Topstep Prop Firm Consistency Rule & Trailing Drawdown Calculator — TradeJournall</title>
+        <title>Apex Trailing Drawdown Calculator & Consistency Rule Tool | TradeJournall</title>
         <meta
           name="description"
-          content="Free Apex Trader Funding 30% consistency rule calculator & Topstep trailing threshold peak equity calculator. Check payout qualification, max single-day profit, and trailing drawdown safety."
+          content="Free Apex Trailing Drawdown Calculator & 30% consistency rule tool for Apex Trader Funding & Topstep. Calculate live trailing threshold, peak equity high water mark, max loss level, and payout safety."
         />
         <meta
           name="keywords"
-          content="apex consistency rule calculator, topstep trailing drawdown calculator, apex 30 percent rule calculator, trailing threshold calculator apex, prop firm consistency rule tool, apex payout calculator, tradejournall"
+          content="apex trailing drawdown calculator, apex trailing threshold calculator, apex drawdown calculator, apex consistency rule calculator, topstep trailing drawdown calculator, prop firm drawdown calculator, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/apex-consistency-rule-calculator" />
-        <meta property="og:title" content="Apex & Topstep Prop Firm Consistency Rule & Trailing Drawdown Calculator" />
+        <link rel="canonical" href="https://tradejournall.com/tools/apex-trailing-drawdown-calculator" />
+        <meta property="og:title" content="Apex Trailing Drawdown Calculator & Consistency Rule Tool" />
         <meta
           property="og:description"
-          content="Verify 30% consistency rule compliance for Apex Trader Funding & Topstep. Live trailing threshold peak equity calculator."
+          content="Free Apex Trailing Drawdown Calculator & 30% consistency rule tool. Live trailing threshold peak equity calculator for Apex Trader Funding."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradejournall.com/tools/apex-consistency-rule-calculator" />
+        <meta property="og:url" content="https://tradejournall.com/tools/apex-trailing-drawdown-calculator" />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 

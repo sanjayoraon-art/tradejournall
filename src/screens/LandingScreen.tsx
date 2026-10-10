@@ -2189,6 +2189,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
+                                        href="/tools/apex-trailing-drawdown-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenApexConsistencyCalculator) {
+                                                e.preventDefault();
+                                                onOpenApexConsistencyCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Apex Trailing Drawdown Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="/tools/iron-condor-calculator"
                                         onClick={(e) => {
                                             if (onOpenIronCondorCalculator) {
