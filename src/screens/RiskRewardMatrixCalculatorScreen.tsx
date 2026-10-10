@@ -770,22 +770,22 @@ export const RiskRewardMatrixCalculatorScreen: React.FC<RiskRewardMatrixCalculat
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
-        <title>Risk Reward vs Win Rate Matrix & Trading Expectancy Calculator | TradeJournal</title>
+        <title>Trading Expectancy Calculator & Risk Reward Matrix | TradeJournall</title>
         <meta
           name="description"
-          content="Interactive 2D Risk-Reward vs Win-Rate Heatmap Matrix and Expectancy Calculator. Discover the minimum win rate for 1:2 risk reward, breakeven formulas, and avoid mathematical traps."
+          content="Free Trading Expectancy Calculator & 2D Risk-Reward vs Win-Rate Heatmap Matrix. Calculate mathematical expectancy per trade, minimum win rate for 1:2 RRR, and breakeven win rate."
         />
         <meta
           name="keywords"
-          content="minimum win rate for 1 to 2 risk reward ratio, risk reward vs win rate matrix tool, interactive trading win rate matrix, trading expectancy matrix calculator, breakeven win rate calculator for traders, risk reward ratio heatmap chart, positive expectancy trading strategy tool"
+          content="trading expectancy calculator, expectancy calculator, trading expectancy matrix calculator, risk reward win rate matrix, breakeven win rate calculator, positive expectancy trading tool, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/risk-reward-win-rate-matrix" />
-        <meta property="og:title" content="Risk Reward vs Win Rate Matrix & Expectancy Calculator - TradeJournal" />
+        <link rel="canonical" href="https://tradejournall.com/tools/trading-expectancy-calculator" />
+        <meta property="og:title" content="Trading Expectancy Calculator & Risk Reward Matrix" />
         <meta
           property="og:description"
-          content="Visualize the mathematical relationship between Win Rate (%) and Risk-to-Reward Ratio (RRR) with our dynamic 2D heatmap matrix."
+          content="Free Trading Expectancy Calculator & 2D Heatmap Matrix. Calculate mathematical expectancy per trade and breakeven win rate."
         />
-        <meta property="og:url" content="https://tradejournall.com/tools/risk-reward-win-rate-matrix" />
+        <meta property="og:url" content="https://tradejournall.com/tools/trading-expectancy-calculator" />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 
