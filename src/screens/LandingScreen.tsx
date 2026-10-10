@@ -1954,10 +1954,42 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             </p>
                         </div>
 
-                        {/* Column 2: 🏆 Prop Firm Suite */}
+                        {/* Column 2: 🏆 Prop Firm Suite (Dedicated Category) */}
                         <div className="space-y-2.5">
                             <h4 className="text-xs font-black uppercase tracking-widest text-purple-400">🏆 Prop Firm Suite</h4>
                             <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/prop-firm-challenge-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Calculator size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Prop Firm Challenge Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/ftmo-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>FTMO Challenge Risk Calc</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <a
                                         href="/tools/prop-firm-scaling-plan-calculator"
@@ -2008,18 +2040,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
-                                        href="/tools/ftmo-calculator"
+                                        href="/tools/apex-trailing-drawdown-calculator"
                                         onClick={(e) => {
-                                            if (onOpenPropFirmCalculator) {
+                                            if (onOpenApexConsistencyCalculator) {
                                                 e.preventDefault();
-                                                onOpenPropFirmCalculator();
+                                                onOpenApexConsistencyCalculator();
                                             }
                                         }}
-                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <ShieldAlert size={14} className="text-cyan-400 group-hover:scale-110 transition" />
-                                        <span>FTMO Challenge Risk Calc</span>
+                                        <ShieldAlert size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Apex Trailing Drawdown Calculator</span>
                                     </a>
                                 </li>
                             </ul>
@@ -2187,38 +2219,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Layers size={14} className="text-purple-400 group-hover:scale-110 transition" />
                                         <span>Crypto Exit Strategy Ladder</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/prop-firm-challenge-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenPropFirmCalculator) {
-                                                e.preventDefault();
-                                                onOpenPropFirmCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Calculator size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Prop Firm Challenge Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/apex-trailing-drawdown-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenApexConsistencyCalculator) {
-                                                e.preventDefault();
-                                                onOpenApexConsistencyCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <ShieldAlert size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Apex Trailing Drawdown Calculator</span>
                                     </a>
                                 </li>
                                 <li>
