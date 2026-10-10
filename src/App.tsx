@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass, Landmark, CircleDollarSign } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass, Landmark, CircleDollarSign, RefreshCw } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -19,6 +19,7 @@ import { CrossVsIsolatedCalculatorScreen } from './screens/CrossVsIsolatedCalcul
 import { CryptoProfitCalculatorScreen } from './screens/CryptoProfitCalculatorScreen';
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { IronCondorCalculatorScreen } from './screens/IronCondorCalculatorScreen';
+import { ForexSwapFeeCalculatorScreen } from './screens/ForexSwapFeeCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -369,6 +370,19 @@ function getIronCondorRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Forex Swap Fee & Rollover Calculator
+function getForexSwapRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/forex-swap-fee-calculator') ||
+        path.includes('/tools/swap-fee-calculator') ||
+        path.includes('/tools/forex-rollover-calculator') ||
+        path.includes('/tools/forex-swap-calculator') ||
+        path.includes('/calculators/swap-fee') ||
+        path.includes('/calculators/forex-swap')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -385,6 +399,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getForexSwapRouteFromUrl()) return 'forex-swap-calc';
         if (getIronCondorRouteFromUrl()) return 'iron-condor-calc';
         if (getCryptoProfitRouteFromUrl()) return 'crypto-profit-calc';
         if (getCrossVsIsolatedRouteFromUrl()) return 'cross-vs-isolated-calc';
@@ -409,7 +424,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1097,6 +1112,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('iron-condor-calc');
                     }}
+                    onOpenForexSwapCalculator={() => {
+                        window.history.pushState({}, '', '/tools/forex-swap-fee-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('forex-swap-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1585,6 +1605,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'forex-swap-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <ForexSwapFeeCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Forex Swap Calc Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1628,6 +1683,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<RefreshCw size={17} className="text-amber-400 font-bold" />} label="Forex Swap Fee Calc" active={currentScreen === 'forex-swap-calc'} onClick={() => setCurrentScreen('forex-swap-calc')} badge="SWAP" />
                         <DeskNavButton icon={<TrendingUp size={17} className="text-emerald-400 font-bold" />} label="Prop Firm Scaling Roadmap" active={currentScreen === 'prop-firm-scaling-calc'} onClick={() => setCurrentScreen('prop-firm-scaling-calc')} badge="ROADMAP" />
                         <DeskNavButton icon={<Landmark size={17} className="text-purple-400 font-bold" />} label="Prop Firm Payout Tax" active={currentScreen === 'prop-firm-payout-calc'} onClick={() => setCurrentScreen('prop-firm-payout-calc')} badge="PAYOUT" />
                         <DeskNavButton icon={<Scale size={17} className="text-amber-400 font-bold" />} label="Cross vs Isolated Liq" active={currentScreen === 'cross-vs-isolated-calc'} onClick={() => setCurrentScreen('cross-vs-isolated-calc')} badge="LIQ" />
@@ -2432,6 +2488,27 @@ const App = () => {
                                     pnl: tradeData.pnl,
                                     type: tradeData.type,
                                     strategy: 'Prop Firm Payout Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
+                        />
+                    )}
+
+                    {currentScreen === 'forex-swap-calc' && (
+                        <ForexSwapFeeCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Forex Swap Calc Import',
                                 });
                                 setShowAddTrade(true);
                             }}

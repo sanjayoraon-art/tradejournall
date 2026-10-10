@@ -4,7 +4,7 @@ import {
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
-    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign
+    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign, RefreshCw
 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
@@ -30,6 +30,7 @@ interface LandingScreenProps {
     onOpenCrossVsIsolatedCalculator?: () => void;
     onOpenCryptoProfitCalculator?: () => void;
     onOpenIronCondorCalculator?: () => void;
+    onOpenForexSwapCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -50,6 +51,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenCrossVsIsolatedCalculator,
     onOpenCryptoProfitCalculator,
     onOpenIronCondorCalculator,
+    onOpenForexSwapCalculator,
     theme,
     isDarkMode
 }) => {
@@ -2259,6 +2261,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Sparkles size={14} className="text-emerald-400 group-hover:scale-110 transition" />
                                         <span>Iron Condor Options Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/forex-swap-fee-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenForexSwapCalculator) {
+                                                e.preventDefault();
+                                                onOpenForexSwapCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <RefreshCw size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Forex Swap Fee & Rollover Calculator</span>
                                     </a>
                                 </li>
                             </ul>
