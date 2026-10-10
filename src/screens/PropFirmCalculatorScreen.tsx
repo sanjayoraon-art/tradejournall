@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Calculator,
   ShieldAlert,
@@ -465,6 +466,25 @@ Calculated live on TradeJournal.com 🚀`;
 
   return (
     <div className="px-3 md:px-6 pb-24 pt-4 max-w-7xl mx-auto animate-in fade-in duration-500 font-sans">
+      <Helmet>
+        <title>Prop Firm Challenge Calculator & Pass Rate Simulator | TradeJournall</title>
+        <meta
+          name="description"
+          content="Free Prop Firm Challenge Calculator & Pass Rate Simulator. Calculate daily drawdown limit, max overall loss, and safe lot sizes for FTMO, Funding Pips, Topstep, FundedNext & Apex."
+        />
+        <meta
+          name="keywords"
+          content="prop firm challenge calculator, prop firm pass rate calculator, ftmo challenge calculator, prop firm challenge simulator, funding pips calculator, topstep challenge calculator, tradejournall"
+        />
+        <link rel="canonical" href="https://tradejournall.com/tools/prop-firm-challenge-calculator" />
+        <meta property="og:title" content="Prop Firm Challenge Calculator & Pass Rate Simulator" />
+        <meta
+          property="og:description"
+          content="Free Prop Firm Challenge Calculator. Daily drawdown buffer, max loss threshold, and safe lot sizes for FTMO, Funding Pips, Topstep & Apex."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tradejournall.com/tools/prop-firm-challenge-calculator" />
+      </Helmet>
       
       {/* 1. PUBLIC GUEST HEADER BAR */}
       {onBackToLanding && (

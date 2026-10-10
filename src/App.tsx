@@ -177,11 +177,14 @@ function getLeverageRouteFromUrl(): boolean {
 function getPropFirmRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
     return (
+        path.includes('/tools/prop-firm-challenge-calculator') ||
+        path.includes('/tools/prop-firm-challenge-pass-rate-calculator') ||
         path.includes('/tools/ftmo-calculator') ||
         path.includes('/tools/funding-pips-calculator') ||
         path.includes('/tools/fundednext-calculator') ||
         path.includes('/tools/e8-calculator') ||
         path.includes('/tools/prop-firm-calculator') ||
+        path.includes('/calculators/prop-firm-challenge') ||
         path.includes('/calculators/prop-firm')
     );
 }

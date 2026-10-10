@@ -2189,6 +2189,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
+                                        href="/tools/prop-firm-challenge-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPropFirmCalculator) {
+                                                e.preventDefault();
+                                                onOpenPropFirmCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Calculator size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Prop Firm Challenge Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
                                         href="/tools/apex-trailing-drawdown-calculator"
                                         onClick={(e) => {
                                             if (onOpenApexConsistencyCalculator) {
