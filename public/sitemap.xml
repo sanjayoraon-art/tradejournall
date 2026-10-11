@@ -120,20 +120,74 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://tradejournall.com/tools/forex-swap-fee-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/swap-fee-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/iron-condor-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/0dte-option-profit-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/crypto-funding-rate-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/prop-firm-challenge-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/apex-trailing-drawdown-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/risk-reward-win-rate-matrix</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://tradejournall.com/tools/trading-expectancy-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://tradejournall.com/tools/crypto-funding-rate-arbitrage-calculator</loc>
-    <lastmod>2026-10-05</lastmod>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://tradejournall.com/tools/nifty-pcr-calculator</loc>
-    <lastmod>2026-10-05</lastmod>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://tradejournall.com/tools/nifty-option-theta-decay-calculator</loc>
-    <lastmod>2026-10-05</lastmod>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>

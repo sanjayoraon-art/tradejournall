@@ -198,6 +198,86 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'crypto profit calculator, crypto exit strategy ladder, crypto take profit calculator',
         h1: 'Crypto Profit & Staged Exit Strategy Calculator',
         summary: 'Design multi-target exit ladders while accounting for exchange fees and tax liabilities.',
+    },
+    'forex-swap-fee-calculator': {
+        title: 'Forex Swap Fee Calculator & Overnight Rollover Tool | TradeJournall',
+        description: 'Free Forex Swap Fee & Gold Rollover Calculator. Calculate overnight holding swap costs in USD/Rupees, Wednesday 3x triple swap warning, and net profit impact for XAUUSD, EURUSD, and Crypto.',
+        category: 'Forex Risk Management',
+        keywords: 'forex swap fee calculator, swap fee calculator, overnight swap calculator gold, exness swap fee calculator, rollover interest calculator, tradejournall',
+        h1: 'Forex & Gold Swap Fee & Rollover Calculator',
+        summary: 'Calculate exact overnight holding swap fees, Wednesday 3x triple swap multipliers, and net interest costs for Gold (XAUUSD), Forex pairs & Crypto.',
+        faq: [
+            { q: 'What is a Forex Swap Fee?', a: 'A Forex Swap Fee is the interest paid or earned for holding a trading position overnight past 5:00 PM EST based on central bank interest rate differentials.' },
+            { q: 'Why is there a 3x Triple Swap on Wednesday night?', a: 'Because Forex spot trades settle in 2 business days (T+2), positions held over Wednesday night rollover into Monday, covering Saturday and Sunday weekend interest.' }
+        ]
+    },
+    'swap-fee-calculator': {
+        title: 'Forex Swap Fee Calculator — Overnight Rollover Interest | TradeJournall',
+        description: 'Free swap fee calculator for Forex and CFDs. Estimate daily and weekly holding costs and Wednesday 3x rollover multipliers.',
+        category: 'Forex Risk Management',
+        keywords: 'swap fee calculator, forex swap calculator, gold swap rate calculator',
+        h1: 'Forex Swap Fee & Overnight Interest Calculator',
+        summary: 'Calculate real overnight financing charges before holding swing trades across major brokers.',
+    },
+    'iron-condor-calculator': {
+        title: 'Iron Condor Calculator — Max Profit, Loss & Breakeven Range | TradeJournall',
+        description: 'Free Iron Condor Options Calculator. Calculate maximum profit, maximum loss, risk-to-reward ratio, call & put breakeven points, and probability of profit for 4-leg credit spreads.',
+        category: 'Options Strategies',
+        keywords: 'iron condor calculator, iron condor max loss calculator, iron condor option calculator, iron condor breakeven calculator, options trading calculator',
+        h1: 'Iron Condor Options Max Profit & Breakeven Calculator',
+        summary: 'Model 4-leg options market neutral iron condor credit spreads with exact risk-to-reward ratios and dual breakeven boundaries.',
+        faq: [
+            { q: 'How is Max Loss calculated on an Iron Condor?', a: 'Max Loss = (Wing Width - Net Credit Received) × Multiplier (e.g., 100 shares for US stocks).' },
+            { q: 'What are the two breakeven points for an Iron Condor?', a: 'Upper Breakeven = Short Call Strike + Net Credit. Lower Breakeven = Short Put Strike - Net Credit.' }
+        ]
+    },
+    '0dte-option-profit-calculator': {
+        title: '0DTE Option Profit & Theta Decay Calculator | TradeJournall',
+        description: 'Calculate 0DTE option profit, hourly theta time decay erosion, and holding risk for intraday SPX, Nifty, and BankNifty option buyers.',
+        category: 'Options Risk',
+        keywords: '0dte option profit calculator, 0dte calculator, option theta decay calculator, 0-dte option decay risk timer',
+        h1: '0DTE Option Profit & Theta Decay Risk Calculator',
+        summary: 'Quantify exponential hourly theta decay and breakeven holding windows for same-day expiring options.',
+    },
+    'crypto-funding-rate-calculator': {
+        title: 'Crypto Funding Rate APR & Arbitrage Yield Calculator | TradeJournall',
+        description: 'Calculate real-time funding fee charges and annualized APR/APY yields across Binance, Bybit, and OKX perpetual futures contracts.',
+        category: 'Crypto Yield',
+        keywords: 'crypto funding rate calculator, funding rate calculator, binance funding fee calculator, perpetual futures funding rate',
+        h1: 'Crypto Perpetual Funding Rate APR Calculator',
+        summary: 'Calculate 8-hour funding payments and delta-neutral cash-and-carry yields on perpetual contracts.',
+    },
+    'prop-firm-challenge-calculator': {
+        title: 'Prop Firm Challenge Pass Rate & Risk Calculator | TradeJournall',
+        description: 'Calculate lot sizes, daily drawdown limits, and challenge pass probability for FTMO, Funding Pips, FundedNext, and E8 evaluations.',
+        category: 'Prop Trading',
+        keywords: 'prop firm challenge calculator, prop firm calculator, ftmo challenge calculator, prop firm pass rate calculator',
+        h1: 'Prop Firm Challenge Evaluation & Drawdown Calculator',
+        summary: 'Plan your risk per trade and maximum allowable daily loss to pass prop firm evaluations with mathematical certainty.',
+    },
+    'apex-trailing-drawdown-calculator': {
+        title: 'Apex Trailing Drawdown & 30% Consistency Calculator | TradeJournall',
+        description: 'Track Apex Trader Funding trailing drawdown high-water mark thresholds and 30% single-day consistency profit limits to guarantee payouts.',
+        category: 'Prop Trading',
+        keywords: 'apex trailing drawdown calculator, apex consistency calculator, topstep trailing drawdown calculator',
+        h1: 'Apex Trailing Drawdown & Consistency Rule Calculator',
+        summary: 'Protect your funded account by tracking the intraday trailing high-water mark drawdown and payout consistency rules.',
+    },
+    'risk-reward-win-rate-matrix': {
+        title: 'Risk Reward vs Win Rate Expectancy Matrix Calculator | TradeJournall',
+        description: '2D interactive trading expectancy heatmap. Calculate required breakeven win rate across risk-to-reward ratios from 1:1 to 1:5.',
+        category: 'Risk Management',
+        keywords: 'risk reward win rate matrix, trading expectancy calculator, breakeven win rate calculator, risk reward calculator',
+        h1: 'Risk-Reward vs Win-Rate Expectancy Matrix',
+        summary: 'Visualize mathematical trading expectancy and minimum required win rates to ensure your trading system has a statistical edge.',
+    },
+    'trading-expectancy-calculator': {
+        title: 'Trading Expectancy & Edge Calculator | TradeJournall',
+        description: 'Calculate average dollar expectancy per trade, statistical edge, and profit factor from win rate and risk-to-reward metrics.',
+        category: 'Risk Management',
+        keywords: 'trading expectancy calculator, expectancy calculator, trading edge calculator',
+        h1: 'Trading Statistical Edge & Expectancy Calculator',
+        summary: 'Calculate mathematical edge per trade to avoid unprofitable negative expectancy trading systems.',
     }
 };
 
