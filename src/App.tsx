@@ -22,6 +22,7 @@ import { IronCondorCalculatorScreen } from './screens/IronCondorCalculatorScreen
 import { ForexSwapFeeCalculatorScreen } from './screens/ForexSwapFeeCalculatorScreen';
 import { WashSaleCalculatorScreen } from './screens/WashSaleCalculatorScreen';
 import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen';
+import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -397,6 +398,19 @@ function getWashSaleRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Dollar-Cost Averaging (DCA) Calculator
+function getDcaRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/dca-calculator') ||
+        path.includes('/tools/bitcoin-dca-calculator') ||
+        path.includes('/tools/crypto-dca-calculator') ||
+        path.includes('/tools/stock-dca-calculator') ||
+        path.includes('/calculators/dca-calculator') ||
+        path.includes('/calculators/dca')
+    );
+}
+
 // Helper to check if URL path targets Risk of Ruin Calculator & Poker Variance
 function getRiskOfRuinRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
@@ -425,6 +439,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getDcaRouteFromUrl()) return 'dca-calc';
         if (getRiskOfRuinRouteFromUrl()) return 'risk-of-ruin-calc';
         if (getWashSaleRouteFromUrl()) return 'wash-sale-calc';
         if (getForexSwapRouteFromUrl()) return 'forex-swap-calc';
@@ -452,7 +467,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1155,6 +1170,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('risk-of-ruin-calc');
                     }}
+                    onOpenDcaCalculator={() => {
+                        window.history.pushState({}, '', '/tools/dca-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('dca-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1702,6 +1722,26 @@ const App = () => {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
                     <RiskOfRuinCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
+        if (currentScreen === 'dca-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <DcaCalculatorScreen
                         theme={theme}
                         isDarkMode={isDarkMode}
                         primaryCurrencySymbol={globalCurrency}
@@ -2607,6 +2647,16 @@ const App = () => {
 
                     {currentScreen === 'risk-of-ruin-calc' && (
                         <RiskOfRuinCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
+                        />
+                    )}
+
+                    {currentScreen === 'dca-calc' && (
+                        <DcaCalculatorScreen
                             theme={theme}
                             isDarkMode={isDarkMode}
                             primaryCurrencySymbol={globalCurrency}

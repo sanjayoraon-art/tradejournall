@@ -35,6 +35,17 @@ export interface ToolItem {
 
 export const ALL_TOOLS_REGISTRY: ToolItem[] = [
     {
+        id: 'dca-calc',
+        title: 'Dollar-Cost Averaging (DCA) Calculator',
+        path: '/tools/dca-calculator',
+        category: 'crypto',
+        categoryLabel: 'Wealth & Accumulation',
+        badge: 'Bitcoin & Stocks KD 0%',
+        badgeColor: 'emerald',
+        description: 'Simulate recurring DCA growth for Bitcoin, crypto, and stocks, track multi-buy average entry price including fees, and export CSV.',
+        icon: TrendingUp
+    },
+    {
         id: 'risk-of-ruin',
         title: 'Risk of Ruin Calculator (Monte Carlo)',
         path: '/tools/risk-of-ruin-calculator',

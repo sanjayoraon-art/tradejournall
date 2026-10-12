@@ -33,6 +33,7 @@ interface LandingScreenProps {
     onOpenForexSwapCalculator?: () => void;
     onOpenWashSaleCalculator?: () => void;
     onOpenRiskOfRuinCalculator?: () => void;
+    onOpenDcaCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -56,6 +57,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenForexSwapCalculator,
     onOpenWashSaleCalculator,
     onOpenRiskOfRuinCalculator,
+    onOpenDcaCalculator,
     theme,
     isDarkMode
 }) => {
@@ -1466,6 +1468,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         </div>
                         <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
                             <span>Run 150 Simulations</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card: Dollar-Cost Averaging (DCA) Calculator */}
+                    <a
+                        href="/tools/dca-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenDcaCalculator) onOpenDcaCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                    <TrendingUp size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    BITCOIN & STOCKS
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                DCA Calculator & Multi-Buy Tracker
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Simulate recurring Bitcoin, crypto & stock growth, calculate weighted average entry price including fees, and export CSV spreadsheet.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
+                            <span>Simulate DCA Strategy</span>
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
                         </div>
                     </a>
