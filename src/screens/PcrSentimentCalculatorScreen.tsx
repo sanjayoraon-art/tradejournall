@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   Zap
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface PcrSentimentCalculatorScreenProps {
   theme?: any;
@@ -676,6 +677,14 @@ Calculate Nifty & BankNifty PCR Sentiment: https://tradejournall.com/tools/nifty
 
           </div>
         </article>
+
+        {/* Related Options & Derivatives Calculators */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/nifty-pcr-calculator"
+          category="options"
+          title="Related Options & Volatility Tools"
+          subtitle="Simulate Iron Condor boundaries, 0DTE hourly theta decay, and trade expectancy matrices."
+        />
       </div>
 
     </div>

@@ -278,6 +278,64 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'trading expectancy calculator, expectancy calculator, trading edge calculator',
         h1: 'Trading Statistical Edge & Expectancy Calculator',
         summary: 'Calculate mathematical edge per trade to avoid unprofitable negative expectancy trading systems.',
+    },
+    'wash-sale-calculator': {
+        title: 'Wash Sale Calculator 2026 — Disallowed Loss & Adjusted Cost Basis Tool | TradeJournall',
+        description: 'Free IRS 30-day wash sale calculator. Calculate disallowed loss, adjusted cost basis per share, 61-day calendar window, and IRS Form 8949 adjustments for US stocks and options.',
+        category: 'Tax & Compliance',
+        keywords: 'wash sale calculator, wash sale rule calculator, calculate wash sale, cost basis adjustment calculator, 30 day wash sale calculator, irs form 8949 wash sale',
+        h1: 'IRS 30-Day Wash Sale Rule & Cost Basis Calculator',
+        summary: 'Avoid IRS penalties. Calculate your exact disallowed loss amount, allowed deductible loss, and adjusted cost basis per share under IRC Section 1091.',
+        faq: [
+            { q: 'What is the 30-Day Wash Sale Rule (IRC Section 1091)?', a: 'Under IRS rules, you cannot claim a tax deduction for a security sold at a loss if you buy a substantially identical security within 30 days before or after the sale date (a 61-day window).' },
+            { q: 'Is my disallowed loss lost forever?', a: 'No, the disallowed loss is added to the cost basis of the replacement shares you repurchased, reducing future capital gains tax when sold.' },
+            { q: 'Does the wash sale rule apply to cryptocurrency?', a: 'Currently under IRS rules, crypto is classified as property and is not yet subject to the wash sale rule, unlike stocks, ETFs, and options.' }
+        ]
+    },
+    'wash-sale-rule-calculator': {
+        title: 'Wash Sale Rule Calculator — 61-Day Window & Cost Basis Adjustments | TradeJournall',
+        description: 'Calculate disallowed loss, adjusted cost basis, and 61-day trading safe window under IRS Rule 1091.',
+        category: 'Tax & Compliance',
+        keywords: 'wash sale rule calculator, wash sale calculator, 30 day wash sale rule, cost basis adjustment',
+        h1: 'IRS Wash Sale Rule Window & Disallowed Loss Calculator',
+        summary: 'Track 30 days before and after sale dates to prevent disallowed capital losses.',
+    },
+    '30-day-wash-sale-calculator': {
+        title: '30 Day Wash Sale Calculator & Date Calendar | TradeJournall',
+        description: 'Visualize the 30-day before and after wash sale safe trading window and calculate exact replacement share cost basis.',
+        category: 'Tax & Compliance',
+        keywords: '30 day wash sale calculator, wash sale calendar, wash sale date calculator',
+        h1: '30-Day Wash Sale Window & Calendar Calculator',
+        summary: 'Check safe re-entry dates to ensure your stock and option losses remain 100% tax deductible.',
+    },
+    'risk-of-ruin-calculator': {
+        title: 'Risk of Ruin Calculator — Monte Carlo Trading & Poker Variance Tool 2026',
+        description: 'Free Risk of Ruin Calculator and Monte Carlo Variance Simulator. Calculate account blowout probability, Primedope poker bankroll variance, and prop firm drawdown limits.',
+        category: 'Risk Management',
+        keywords: 'risk of ruin calculator, primedope poker variance calculator risk of ruin formula, how to calculate risk of ruin in trading, gamblers ruin calculator, monte carlo trading simulator, risk of ruin trader roi position size',
+        h1: 'Risk of Ruin Calculator & Monte Carlo Variance Simulator',
+        summary: 'Calculate exact risk of ruin probability, run 150+ Monte Carlo simulated equity curves, and determine safe lot sizing for FTMO, Topstep, and poker bankroll management.',
+        faq: [
+            { q: 'How to calculate risk of ruin in trading?', a: 'Risk of ruin is calculated using Perry Kaufman and Ralph Vince’s formula: Ruin = ((1 - A) / (1 + A)) ^ U, where A is your statistical edge and U is your drawdown buffer units.' },
+            { q: 'What is the Primedope poker variance calculator risk of ruin formula?', a: 'Primedope uses the continuous variance formula: Ruin = exp(-2 * WinRate * Bankroll / StdDev^2).' },
+            { q: 'What is a safe risk of ruin for Prop Firm challenges?', a: 'For prop firms like FTMO or Topstep, your Risk of Ruin must be under 1% (ideally under 0.1%) by risking 0.5% to 1.0% per trade.' }
+        ]
+    },
+    'poker-variance-calculator': {
+        title: 'Poker Variance & Risk of Ruin Calculator | Primedope Math Alternative',
+        description: 'Calculate poker bankroll downswing probability and risk of ruin using the Primedope variance formula.',
+        category: 'Probability & Gaming',
+        keywords: 'primedope poker variance calculator risk of ruin, poker variance calculator, bankroll ruin calculator',
+        h1: 'Poker Bankroll Variance & Risk of Ruin Calculator',
+        summary: 'Model win rates and standard deviation across cash games and tournaments to prevent bankroll depletion.',
+    },
+    'gamblers-ruin-calculator': {
+        title: 'Gambler\'s Ruin Probability Calculator | TradeJournall',
+        description: 'Calculate the mathematical probability of gambler\'s ruin given starting capital and win/loss probabilities.',
+        category: 'Probability & Math',
+        keywords: 'gamblers ruin calculator, probability of ruin, random walk ruin',
+        h1: 'Gambler\'s Ruin Theorem & Probability Calculator',
+        summary: 'Explore the classical Gambler\'s Ruin theorem and understand why negative expectancy systems guarantee eventual ruin.',
     }
 };
 

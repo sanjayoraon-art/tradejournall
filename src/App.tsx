@@ -20,6 +20,8 @@ import { CryptoProfitCalculatorScreen } from './screens/CryptoProfitCalculatorSc
 import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen';
 import { IronCondorCalculatorScreen } from './screens/IronCondorCalculatorScreen';
 import { ForexSwapFeeCalculatorScreen } from './screens/ForexSwapFeeCalculatorScreen';
+import { WashSaleCalculatorScreen } from './screens/WashSaleCalculatorScreen';
+import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -383,6 +385,30 @@ function getForexSwapRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Wash Sale Rule Calculator
+function getWashSaleRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/wash-sale-calculator') ||
+        path.includes('/tools/wash-sale-rule-calculator') ||
+        path.includes('/tools/30-day-wash-sale-calculator') ||
+        path.includes('/tools/wash-sale-date-calculator') ||
+        path.includes('/calculators/wash-sale')
+    );
+}
+
+// Helper to check if URL path targets Risk of Ruin Calculator & Poker Variance
+function getRiskOfRuinRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/risk-of-ruin-calculator') ||
+        path.includes('/tools/poker-variance-calculator') ||
+        path.includes('/tools/monte-carlo-risk-of-ruin-calculator') ||
+        path.includes('/tools/gamblers-ruin-calculator') ||
+        path.includes('/calculators/risk-of-ruin')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -399,6 +425,8 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getRiskOfRuinRouteFromUrl()) return 'risk-of-ruin-calc';
+        if (getWashSaleRouteFromUrl()) return 'wash-sale-calc';
         if (getForexSwapRouteFromUrl()) return 'forex-swap-calc';
         if (getIronCondorRouteFromUrl()) return 'iron-condor-calc';
         if (getCryptoProfitRouteFromUrl()) return 'crypto-profit-calc';
@@ -424,7 +452,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1117,6 +1145,16 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('forex-swap-calc');
                     }}
+                    onOpenWashSaleCalculator={() => {
+                        window.history.pushState({}, '', '/tools/wash-sale-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('wash-sale-calc');
+                    }}
+                    onOpenRiskOfRuinCalculator={() => {
+                        window.history.pushState({}, '', '/tools/risk-of-ruin-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('risk-of-ruin-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />
@@ -1640,6 +1678,46 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'wash-sale-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <WashSaleCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
+        if (currentScreen === 'risk-of-ruin-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <RiskOfRuinCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1683,6 +1761,8 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
+                        <DeskNavButton icon={<Scale size={17} className="text-emerald-400 font-bold" />} label="Wash Sale Tax Calc" active={currentScreen === 'wash-sale-calc'} onClick={() => setCurrentScreen('wash-sale-calc')} badge="IRS" />
                         <DeskNavButton icon={<RefreshCw size={17} className="text-amber-400 font-bold" />} label="Forex Swap Fee Calc" active={currentScreen === 'forex-swap-calc'} onClick={() => setCurrentScreen('forex-swap-calc')} badge="SWAP" />
                         <DeskNavButton icon={<TrendingUp size={17} className="text-emerald-400 font-bold" />} label="Prop Firm Scaling Roadmap" active={currentScreen === 'prop-firm-scaling-calc'} onClick={() => setCurrentScreen('prop-firm-scaling-calc')} badge="ROADMAP" />
                         <DeskNavButton icon={<Landmark size={17} className="text-purple-400 font-bold" />} label="Prop Firm Payout Tax" active={currentScreen === 'prop-firm-payout-calc'} onClick={() => setCurrentScreen('prop-firm-payout-calc')} badge="PAYOUT" />
@@ -2512,6 +2592,26 @@ const App = () => {
                                 });
                                 setShowAddTrade(true);
                             }}
+                        />
+                    )}
+
+                    {currentScreen === 'wash-sale-calc' && (
+                        <WashSaleCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
+                        />
+                    )}
+
+                    {currentScreen === 'risk-of-ruin-calc' && (
+                        <RiskOfRuinCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
                         />
                     )}
 

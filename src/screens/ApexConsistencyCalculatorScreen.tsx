@@ -24,6 +24,7 @@ import {
   Unlock,
   Percent
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface ApexConsistencyCalculatorScreenProps {
   theme?: any;
@@ -1136,6 +1137,14 @@ Track Prop Firm Trailing Thresholds: https://tradejournall.com/tools/apex-consis
 
           </div>
         </article>
+
+        {/* Related Prop Firm & Risk Calculators Interlinking */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/apex-consistency-rule-calculator"
+          category="prop-firm"
+          title="Related Prop Firm & Risk Calculators"
+          subtitle="Explore Prop Firm Drawdown Lot sizing, Profit Split Payout estimators, and Risk of Ruin simulations."
+        />
       </div>
 
     </div>

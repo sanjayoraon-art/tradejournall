@@ -23,6 +23,7 @@ import {
   Layers,
   Timer
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface OptionThetaDecayCalculatorScreenProps {
   theme?: any;
@@ -904,6 +905,14 @@ Calculate option theta in Rupees: https://tradejournall.com/tools/option-theta-d
 
           </div>
         </article>
+
+        {/* Related Options & Derivatives Calculators */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/0dte-option-profit-calculator"
+          category="options"
+          title="Related Options & Derivatives Calculators"
+          subtitle="Explore Iron Condor breakevens, Nifty PCR sentiment indicators, and Drawdown recovery plans."
+        />
       </div>
 
     </div>

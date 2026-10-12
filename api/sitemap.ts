@@ -153,6 +153,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/wash-sale-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/wash-sale-rule-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/risk-of-ruin-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/poker-variance-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/iron-condor-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>

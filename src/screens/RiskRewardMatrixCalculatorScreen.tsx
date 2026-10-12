@@ -37,6 +37,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { formatNumber } from '../utils/helpers';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface RiskRewardMatrixCalculatorScreenProps {
   theme?: any;
@@ -2398,6 +2399,14 @@ export const RiskRewardMatrixCalculatorScreen: React.FC<RiskRewardMatrixCalculat
             ))}
           </div>
         </div>
+
+        {/* Related Tools Interlinking */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/risk-reward-win-rate-matrix"
+          category="risk"
+          title="Related Expectancy & Risk Calculators"
+          subtitle="Model Monte Carlo risk of ruin scenarios, drawdown recovery curves, and prop firm lot sizing."
+        />
       </div>
     </div>
   );

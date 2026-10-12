@@ -5,6 +5,7 @@ import {
     ArrowRight, Info, CheckCircle2, RefreshCw, Calculator, BookOpen, ChevronDown,
     HelpCircle, DollarSign, Percent, Layers, Award, Landmark, Lock, Sparkles, Plus
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 interface CrossVsIsolatedCalculatorScreenProps {
     theme?: any;
@@ -738,6 +739,14 @@ export const CrossVsIsolatedCalculatorScreen: React.FC<CrossVsIsolatedCalculator
                         ))}
                     </div>
                 </div>
+
+                {/* Related Tools Interlinking */}
+                <RelatedToolsGrid
+                    currentToolSlug="/tools/cross-vs-isolated-margin-calculator"
+                    category="crypto"
+                    title="Related Crypto & Futures Risk Calculators"
+                    subtitle="Calculate liquidation buffers, funding rate arbitrage APRs, and staged exit ladders."
+                />
             </div>
         </div>
     );

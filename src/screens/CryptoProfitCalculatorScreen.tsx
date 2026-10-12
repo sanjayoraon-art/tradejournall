@@ -6,6 +6,7 @@ import {
     Sparkles, Scale, Layers, Award, Landmark, Lock, Plus, Share2, Check,
     Coins, Wallet, CircleDollarSign, ArrowUpRight, Info
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 interface CryptoProfitCalculatorScreenProps {
     theme?: any;
@@ -952,6 +953,14 @@ export const CryptoProfitCalculatorScreen: React.FC<CryptoProfitCalculatorScreen
                         ))}
                     </div>
                 </div>
+
+                {/* Related Tools Interlinking */}
+                <RelatedToolsGrid
+                    currentToolSlug="/tools/crypto-profit-calculator"
+                    category="crypto"
+                    title="Related Crypto & Tax Calculators"
+                    subtitle="Compute Wash Sale adjustments, perpetual funding yields, and Cross vs Isolated liquidation limits."
+                />
             </div>
         </div>
     );

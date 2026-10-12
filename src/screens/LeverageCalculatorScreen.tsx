@@ -26,6 +26,7 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import { formatNumber } from '../utils/helpers';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 interface LeverageCalculatorScreenProps {
   theme: any;
@@ -1126,6 +1127,14 @@ https://tradejournall.com/tools/leverage-danger-calculator`;
             </div>
           </div>
         </div>
+
+        {/* Related Risk & Liquidation Calculators */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/leverage-danger-calculator"
+          category="risk"
+          title="Related Risk & Margin Calculators"
+          subtitle="Model Monte Carlo risk of ruin, Cross vs Isolated liquidations, and drawdown recovery curves."
+        />
       </div>
 
     </div>

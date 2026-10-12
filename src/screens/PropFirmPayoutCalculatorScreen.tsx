@@ -30,6 +30,7 @@ import {
   Landmark,
   Sparkles
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface PropFirmPayoutCalculatorScreenProps {
   theme?: any;
@@ -793,6 +794,14 @@ export const PropFirmPayoutCalculatorScreen: React.FC<PropFirmPayoutCalculatorSc
 
           </div>
         </article>
+
+        {/* Related Prop Firm & Risk Calculators Interlinking */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/prop-firm-profit-split-payout-calculator"
+          category="prop-firm"
+          title="Related Prop Firm & Risk Calculators"
+          subtitle="Simulate Apex consistency rules, FTMO challenge drawdown limits, and capital growth roadmaps."
+        />
       </div>
 
     </div>

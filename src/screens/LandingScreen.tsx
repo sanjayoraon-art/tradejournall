@@ -31,6 +31,8 @@ interface LandingScreenProps {
     onOpenCryptoProfitCalculator?: () => void;
     onOpenIronCondorCalculator?: () => void;
     onOpenForexSwapCalculator?: () => void;
+    onOpenWashSaleCalculator?: () => void;
+    onOpenRiskOfRuinCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -52,6 +54,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenCryptoProfitCalculator,
     onOpenIronCondorCalculator,
     onOpenForexSwapCalculator,
+    onOpenWashSaleCalculator,
+    onOpenRiskOfRuinCalculator,
     theme,
     isDarkMode
 }) => {
@@ -311,6 +315,32 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                     >
                         <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
                         <span>Brokerage &amp; Tax</span>
+                    </a>
+                    <a
+                        href="/tools/wash-sale-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-emerald-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                        <span>Wash Sale</span>
+                        <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black border border-emerald-500/30">IRS</span>
+                    </a>
+                    <a
+                        href="/tools/risk-of-ruin-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-rose-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                        <span>Risk of Ruin</span>
+                        <span className="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black border border-rose-500/30">KD 8%</span>
                     </a>
                 </div>
 
@@ -584,15 +614,56 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-cyan-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Brokerage &amp; Tax Calc</span>
+                                            <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[8px] font-black px-1.5 py-0.5 rounded">FREE</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">STT, GST &amp; broker breakdown</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/wash-sale-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
                                         <Scale size={15} />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span>Brokerage & Tax Calc</span>
-                                            <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[8px] font-black px-1.5 py-0.5 rounded">FREE</span>
+                                            <span>Wash Sale Calculator</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">IRS</span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">STT, GST & broker breakdown</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">61-day window & Form 8949 loss tracker</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/risk-of-ruin-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
+                                        <ShieldAlert size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Risk of Ruin Calculator</span>
+                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">RUIN</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">150 Monte Carlo equity simulations</p>
                                     </div>
                                 </a>
                             </div>
@@ -1330,6 +1401,102 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             </p>
                         </div>
                         <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
+                            <span>Open Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 7: Wash Sale Rule Calculator (IRS § 1091) */}
+                    <a
+                        href="/tools/wash-sale-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                    <Scale size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    IRS § 1091 TAX
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                Wash Sale Rule Calculator
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Calculate disallowed tax losses, adjusted cost basis, and 61-day wash sale window dates for Form 8949 compliance.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
+                            <span>Launch Calculator</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 8: Risk of Ruin & Monte Carlo Simulator */}
+                    <a
+                        href="/tools/risk-of-ruin-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-rose-500/40 hover:border-rose-500/80 transition-all duration-300 shadow-lg shadow-rose-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
+                                    <ShieldAlert size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                    MONTE CARLO (KD 8%)
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
+                                Risk of Ruin Calculator
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Simulate 150 equity curve paths, Ralph Vince ruin formulas, Prop Firm 10% drawdown failure math, and Primedope poker variance.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
+                            <span>Run 150 Simulations</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                        </div>
+                    </a>
+
+                    {/* Card 9: Forex Swap Fee & Rollover Calculator */}
+                    <a
+                        href="/tools/forex-swap-fee-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenForexSwapCalculator) onOpenForexSwapCalculator();
+                        }}
+                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-amber-500/40 hover:border-amber-500/80 transition-all duration-300 shadow-lg shadow-amber-500/10 group text-left cursor-pointer flex flex-col justify-between"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
+                                    <RefreshCw size={22} />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                    OVERNIGHT SWAP
+                                </span>
+                            </div>
+                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                Forex Swap &amp; Rollover
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Calculate overnight rollover financing, pip charges, triple swap Wednesday math, and Islamic swap-free account fees.
+                            </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
                             <span>Open Calculator</span>
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
                         </div>
@@ -2277,6 +2444,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <RefreshCw size={14} className="text-amber-400 group-hover:scale-110 transition" />
                                         <span>Forex Swap Fee & Rollover Calculator</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/wash-sale-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenWashSaleCalculator) {
+                                                e.preventDefault();
+                                                onOpenWashSaleCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Wash Sale Rule Calculator (IRS § 1091)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/risk-of-ruin-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenRiskOfRuinCalculator) {
+                                                e.preventDefault();
+                                                onOpenRiskOfRuinCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Risk of Ruin Calculator (Monte Carlo)</span>
                                     </a>
                                 </li>
                             </ul>

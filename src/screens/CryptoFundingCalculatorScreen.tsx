@@ -26,6 +26,7 @@ import {
   RefreshCw,
   Info
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface CryptoFundingCalculatorScreenProps {
   theme?: any;
@@ -872,6 +873,14 @@ export const CryptoFundingCalculatorScreen: React.FC<CryptoFundingCalculatorScre
 
           </div>
         </article>
+
+        {/* Related Crypto & Risk Calculators Interlinking */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/crypto-funding-rate-calculator"
+          category="crypto"
+          title="Related Crypto & Futures Calculators"
+          subtitle="Explore Cross vs Isolated margin liquidations, staged exit ladders, and leverage safety limits."
+        />
       </div>
 
     </div>

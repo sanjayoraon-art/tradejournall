@@ -7,6 +7,7 @@ import {
     Coins, Wallet, CircleDollarSign, ArrowUpRight, Info, AlertTriangle, ArrowLeft,
     Clock, Calendar, Moon, Sun, AlertCircle, Globe, FileText, CheckCircle, BarChart3, Shield, BookOpen
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface ForexSwapFeeCalculatorScreenProps {
     theme?: any;
@@ -792,6 +793,14 @@ Calculated with TradeJournall (https://tradejournall.com/tools/forex-swap-fee-ca
                             ))}
                         </div>
                     </section>
+
+                    {/* Related Tools Interlinking */}
+                    <RelatedToolsGrid
+                        currentToolSlug="/tools/forex-swap-fee-calculator"
+                        category="forex"
+                        title="Related Forex & Risk Management Calculators"
+                        subtitle="Calculate overnight carry fees alongside position risk, account drawdown limits, and market session overlaps."
+                    />
                 </article>
             </main>
         </div>

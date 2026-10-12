@@ -32,6 +32,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { formatNumber } from '../utils/helpers';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 interface DrawdownRecoveryCalculatorScreenProps {
   theme?: any;
@@ -2044,6 +2045,14 @@ Plan your growth on TradeJournal: https://tradejournall.com/tools/drawdown-recov
             ))}
           </div>
         </div>
+
+        {/* Related Tools Interlinking */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/drawdown-recovery-calculator"
+          category="risk"
+          title="Related Drawdown & Risk Management Calculators"
+          subtitle="Explore Risk of Ruin Monte Carlo simulations, Risk Reward expectancy matrices, and prop firm drawdown limits."
+        />
       </div>
     </div>
   );

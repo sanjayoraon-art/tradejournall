@@ -7,6 +7,7 @@ import {
     Coins, Wallet, CircleDollarSign, ArrowUpRight, Info, AlertTriangle, ArrowLeft,
     Clock, ShieldAlert, BarChart2, BookOpen, Activity
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface IronCondorCalculatorScreenProps {
     theme?: any;
@@ -938,6 +939,14 @@ Calculated with TradeJournall (https://tradejournall.com/tools/iron-condor-calcu
                             ))}
                         </div>
                     </section>
+
+                    {/* Related Tools Interlinking */}
+                    <RelatedToolsGrid
+                        currentToolSlug="/tools/iron-condor-calculator"
+                        category="options"
+                        title="Related Options & Volatility Calculators"
+                        subtitle="Calculate 0DTE option theta decay curves, Nifty PCR sentiment extremes, and Risk Reward expectancy."
+                    />
                 </article>
             </main>
         </div>

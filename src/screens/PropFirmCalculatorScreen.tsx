@@ -26,6 +26,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { formatNumber } from '../utils/helpers';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 interface PropFirmCalculatorScreenProps {
   theme: any;
@@ -1290,6 +1291,14 @@ Calculated live on TradeJournal.com 🚀`;
           <ArrowRight size={18} />
         </button>
       </div>
+
+      {/* Related Prop Firm & Risk Calculators Interlinking */}
+      <RelatedToolsGrid
+        currentToolSlug="/tools/prop-firm-challenge-calculator"
+        category="prop-firm"
+        title="Related Prop Firm & Risk Management Calculators"
+        subtitle="Simulate Apex consistency rules, profit split net payouts, FTMO scaling milestones, and Risk of Ruin drawdowns."
+      />
 
     </div>
   );

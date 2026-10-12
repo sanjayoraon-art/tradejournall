@@ -33,6 +33,7 @@ import {
   Calendar,
   Compass
 } from 'lucide-react';
+import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
 export interface PropFirmScalingCalculatorScreenProps {
   theme?: any;
@@ -854,6 +855,14 @@ export const PropFirmScalingCalculatorScreen: React.FC<PropFirmScalingCalculator
 
           </div>
         </article>
+
+        {/* Related Prop Firm & Risk Calculators Interlinking */}
+        <RelatedToolsGrid
+          currentToolSlug="/tools/prop-firm-scaling-plan-calculator"
+          category="prop-firm"
+          title="Related Prop Firm & Capital Calculators"
+          subtitle="Simulate FTMO evaluation rules, Apex consistency caps, and net payout profit splits."
+        />
       </div>
 
     </div>
