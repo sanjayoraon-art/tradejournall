@@ -249,7 +249,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
             {/* Frosted Glass Sticky Navbar */}
             <nav className="w-full px-4 sm:px-8 py-3.5 flex justify-between items-center sticky top-0 z-50 backdrop-blur-xl bg-[#0a0f1d]/85 border-b border-slate-800/80 transition-all">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 shrink-0">
                     <div className="relative group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-30 group-hover:opacity-75 transition duration-300"></div>
                         <img src="/logo.png" alt="Trade Journal Logo" className="relative w-10 h-10 object-contain rounded-xl bg-slate-900 border border-slate-700/80 p-1" />
@@ -264,7 +264,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                 </div>
 
                 {/* Desktop Center Links for Risk Tools */}
-                <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+                <div className="hidden xl:flex items-center gap-1 xl:gap-2">
                     <a
                         href="/tools/risk-reward-win-rate-matrix"
                         onClick={(e) => {
@@ -356,19 +356,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <span className="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black border border-rose-500/30">KD 8%</span>
                     </a>
                     <a
-                        href="/tools/dividend-snowball-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenDividendSnowballCalculator) onOpenDividendSnowballCalculator();
-                        }}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-emerald-500/30 group"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <Coins size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                        <span>Dividend Snowball</span>
-                        <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black border border-emerald-500/30">SCHD KD 0</span>
-                    </a>
-                    <a
                         href="/tools/futures-position-size-calculator"
                         onClick={(e) => {
                             e.preventDefault();
@@ -383,7 +370,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                     </a>
                 </div>
 
-                <div className="flex items-center gap-2.5 sm:gap-4 relative">
+                <div className="flex items-center gap-2.5 sm:gap-4 relative shrink-0">
                     {/* Directly visible High-Impact Sign In Button */}
                     <button
                         onClick={onSignIn}
@@ -509,8 +496,30 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">
                                         🪙 Crypto &amp; Futures Suite
                                     </span>
-                                    <span className="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">5 TOOLS</span>
+                                    <span className="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">6 TOOLS</span>
                                 </div>
+
+                                <a
+                                    href="/tools/futures-position-size-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenFuturesPositionSizeCalculator) onOpenFuturesPositionSizeCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-cyan-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
+                                        <Scale size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Futures Position Size</span>
+                                            <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 text-[8px] font-black px-1.5 py-0.5 rounded">FUTURES</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">ES, MES, NQ, Gold &amp; Micro contract math</p>
+                                    </div>
+                                </a>
 
                                 <a
                                     href="/tools/dca-calculator"
@@ -803,8 +812,30 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     <span className="text-[10px] font-black uppercase tracking-widest text-teal-400">
                                         🌍 Forex &amp; Tax Compliance
                                     </span>
-                                    <span className="text-[9px] bg-teal-500/20 text-teal-300 border border-teal-500/30 px-1.5 py-0.5 rounded font-bold">4 TOOLS</span>
+                                    <span className="text-[9px] bg-teal-500/20 text-teal-300 border border-teal-500/30 px-1.5 py-0.5 rounded font-bold">5 TOOLS</span>
                                 </div>
+
+                                <a
+                                    href="/tools/dividend-snowball-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenDividendSnowballCalculator) onOpenDividendSnowballCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                                        <Coins size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Dividend Snowball Calculator</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-[8px] font-black px-1.5 py-0.5 rounded">DRIP</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">SCHD compounding &amp; passive income</p>
+                                    </div>
+                                </a>
 
                                 <a
                                     href="/tools/wash-sale-calculator"
@@ -813,7 +844,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         setIsMenuOpen(false);
                                         if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
