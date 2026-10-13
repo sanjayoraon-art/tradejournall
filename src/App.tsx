@@ -1175,6 +1175,21 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('dca-calc');
                     }}
+                    onOpenCryptoFundingCalculator={() => {
+                        window.history.pushState({}, '', '/tools/crypto-funding-rate-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('crypto-funding-calc');
+                    }}
+                    onOpenOptionThetaCalculator={() => {
+                        window.history.pushState({}, '', '/tools/0dte-option-profit-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('option-theta-calc');
+                    }}
+                    onOpenPcrCalculator={() => {
+                        window.history.pushState({}, '', '/tools/nifty-pcr-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('pcr-calc');
+                    }}
                     theme={theme}
                     isDarkMode={isDarkMode}
                 />

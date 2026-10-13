@@ -4,7 +4,7 @@ import {
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
-    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign, RefreshCw
+    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign, RefreshCw, Coins, Percent
 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
@@ -34,6 +34,9 @@ interface LandingScreenProps {
     onOpenWashSaleCalculator?: () => void;
     onOpenRiskOfRuinCalculator?: () => void;
     onOpenDcaCalculator?: () => void;
+    onOpenCryptoFundingCalculator?: () => void;
+    onOpenOptionThetaCalculator?: () => void;
+    onOpenPcrCalculator?: () => void;
     theme: any;
     isDarkMode: boolean;
 }
@@ -58,6 +61,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenWashSaleCalculator,
     onOpenRiskOfRuinCalculator,
     onOpenDcaCalculator,
+    onOpenCryptoFundingCalculator,
+    onOpenOptionThetaCalculator,
+    onOpenPcrCalculator,
     theme,
     isDarkMode
 }) => {
@@ -65,6 +71,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     const [loadingBlogs, setLoadingBlogs] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+    const [selectedToolCategory, setSelectedToolCategory] = useState<'all' | 'prop-firm' | 'crypto' | 'risk' | 'options' | 'forex-tax'>('all');
 
     // Fetch published blogs in real time and sort by newest first (merging with defaults)
     useEffect(() => {
@@ -368,8 +375,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
                     {/* 3-Dot Categorized Dropdown Card */}
                     {isMenuOpen && (
-                        <div className="absolute right-0 top-14 w-72 bg-[#0e1628]/95 backdrop-blur-2xl border border-slate-700/90 rounded-2xl shadow-2xl p-3.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200 space-y-3">
-                            {/* Category 1: 🏆 Prop Firm Calculators */}
+                        <div className="absolute right-0 top-14 w-80 max-h-[82vh] overflow-y-auto bg-[#0e1628]/95 backdrop-blur-2xl border border-slate-700/90 rounded-2xl shadow-2xl p-3.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200 space-y-3.5 scrollbar-thin scrollbar-thumb-slate-700">
+                            {/* Category 1: 🏆 Prop Firm Suite */}
                             <div>
                                 <div className="flex items-center justify-between px-2 mb-1.5">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
@@ -466,14 +473,135 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </a>
                             </div>
 
-                            {/* Category 2: 🛠️ Risk & Execution Tools */}
+                            {/* Category 2: 🪙 Crypto & Futures */}
                             <div className="border-t border-slate-800 pt-2">
                                 <div className="flex items-center justify-between px-2 mb-1.5">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        🛠️ Risk &amp; Market Tools
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">
+                                        🪙 Crypto &amp; Futures Suite
                                     </span>
-                                    <span className="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold">5 TOOLS</span>
+                                    <span className="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">5 TOOLS</span>
                                 </div>
+
+                                <a
+                                    href="/tools/dca-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenDcaCalculator) onOpenDcaCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                        <TrendingUp size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>DCA &amp; Multi-Buy Tracker</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-[8px] font-black px-1.5 py-0.5 rounded">DCA</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Average entry price with fee math</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/leverage-danger-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenLeverageCalculator) onOpenLeverageCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
+                                        <Zap size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Crypto Leverage Danger</span>
+                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">100X</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Calculate liquidation &amp; margin danger</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/cross-vs-isolated-margin-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenCrossVsIsolatedCalculator) onOpenCrossVsIsolatedCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-purple-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-purple-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-400 group-hover:scale-110 transition">
+                                        <Scale size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Cross vs Isolated Liq</span>
+                                            <span className="bg-purple-500/20 border border-purple-500/40 text-purple-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIQ</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Buffer % &amp; wallet wipeout risk</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/crypto-profit-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenCryptoProfitCalculator) onOpenCryptoProfitCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                                        <CircleDollarSign size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Crypto Profit &amp; Exit Ladder</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">PROFIT</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Net profit &amp; staged exit ladder</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/crypto-funding-rate-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenCryptoFundingCalculator) onOpenCryptoFundingCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-cyan-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
+                                        <Coins size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Crypto Funding Rate APR</span>
+                                            <span className="bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[8px] font-black px-1.5 py-0.5 rounded">8H APR</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Swap costs &amp; funding arbitrage</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            {/* Category 3: 🛡️ Risk & Psychology */}
+                            <div className="border-t border-slate-800 pt-2">
+                                <div className="flex items-center justify-between px-2 mb-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
+                                        🛡️ Risk &amp; Psychology
+                                    </span>
+                                    <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded font-bold">4 TOOLS</span>
+                                </div>
+
                                 <a
                                     href="/tools/risk-reward-win-rate-matrix"
                                     onClick={(e) => {
@@ -489,7 +617,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span>Risk-Reward vs Win Rate Matrix</span>
+                                            <span>Risk-Reward Matrix</span>
                                             <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">MATRIX</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">2D Heatmap &amp; Expectancy edge</p>
@@ -497,24 +625,46 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </a>
 
                                 <a
-                                    href="/tools/session-clock-ist"
+                                    href="/tools/risk-of-ruin-calculator"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setIsMenuOpen(false);
-                                        if (onOpenSessionClock) onOpenSessionClock();
+                                        if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
-                                        <Clock size={15} />
+                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
+                                        <ShieldAlert size={15} />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span>IST Session Clock</span>
-                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIVE</span>
+                                            <span>Risk of Ruin Calculator</span>
+                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">RUIN</span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">US market open &amp; Forex overlap in IST</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">150 Monte Carlo simulations</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/drawdown-recovery-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
+                                        <TrendingDown size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Drawdown Recovery &amp; Goal</span>
+                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">RECOVERY</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Trades needed to recover losses</p>
                                     </div>
                                 </a>
 
@@ -539,70 +689,156 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         <p className="text-[10px] text-slate-400 font-normal">Stop-loss reset &amp; tilt breaker</p>
                                     </div>
                                 </a>
+                            </div>
+
+                            {/* Category 4: 📊 Options & Greeks */}
+                            <div className="border-t border-slate-800 pt-2">
+                                <div className="flex items-center justify-between px-2 mb-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
+                                        📊 Options &amp; Greeks
+                                    </span>
+                                    <span className="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">3 TOOLS</span>
+                                </div>
 
                                 <a
-                                    href="/tools/leverage-danger-calculator"
+                                    href="/tools/iron-condor-calculator"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setIsMenuOpen(false);
-                                        if (onOpenLeverageCalculator) onOpenLeverageCalculator();
+                                        if (onOpenIronCondorCalculator) onOpenIronCondorCalculator();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-purple-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-purple-500/20 group"
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
-                                        <Zap size={15} />
+                                    <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-400 group-hover:scale-110 transition">
+                                        <Layers size={15} />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span>Crypto Leverage Danger</span>
-                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">HOT</span>
+                                            <span>Iron Condor Greeks Calc</span>
+                                            <span className="bg-purple-500/20 border border-purple-500/40 text-purple-200 text-[8px] font-black px-1.5 py-0.5 rounded">CONDOR</span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">Calculate liquidation & risk</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">Max risk, breakevens &amp; POP</p>
                                     </div>
                                 </a>
 
                                 <a
-                                    href="/tools/cross-vs-isolated-margin-calculator"
+                                    href="/tools/0dte-option-profit-calculator"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setIsMenuOpen(false);
-                                        if (onOpenCrossVsIsolatedCalculator) onOpenCrossVsIsolatedCalculator();
+                                        if (onOpenOptionThetaCalculator) onOpenOptionThetaCalculator();
                                     }}
-                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
+                                    <div className="p-1.5 rounded-lg bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
+                                        <Clock size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>0DTE Theta Decay Calc</span>
+                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-200 text-[8px] font-black px-1.5 py-0.5 rounded">THETA</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Hourly decay &amp; breakeven move</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/nifty-pcr-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenPcrCalculator) onOpenPcrCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-300 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
+                                        <Percent size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Put Call Ratio (PCR) Gauge</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-[8px] font-black px-1.5 py-0.5 rounded">PCR</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Market reversal &amp; OI sentiment</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            {/* Category 5: 🌍 Forex & Tax Compliance */}
+                            <div className="border-t border-slate-800 pt-2">
+                                <div className="flex items-center justify-between px-2 mb-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-teal-400">
+                                        🌍 Forex &amp; Tax Compliance
+                                    </span>
+                                    <span className="text-[9px] bg-teal-500/20 text-teal-300 border border-teal-500/30 px-1.5 py-0.5 rounded font-bold">4 TOOLS</span>
+                                </div>
+
+                                <a
+                                    href="/tools/wash-sale-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
                                         <Scale size={15} />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span>Cross vs Isolated Liq</span>
-                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIQ</span>
+                                            <span>Wash Sale Calculator</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">IRS</span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">Liquidation risk & wallet wipeout</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">61-day window &amp; Form 8949 loss tracker</p>
                                     </div>
                                 </a>
 
                                 <a
-                                    href="/tools/crypto-profit-calculator"
+                                    href="/tools/forex-swap-fee-calculator"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setIsMenuOpen(false);
-                                        if (onOpenCryptoProfitCalculator) onOpenCryptoProfitCalculator();
+                                        if (onOpenForexSwapCalculator) onOpenForexSwapCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-amber-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-amber-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
+                                        <RefreshCw size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Forex Swap &amp; Rollover</span>
+                                            <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">SWAP</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Overnight financing &amp; Triple swap</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/session-clock-ist"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenSessionClock) onOpenSessionClock();
                                     }}
                                     className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
                                     <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
-                                        <CircleDollarSign size={15} />
+                                        <Clock size={15} />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span>Crypto Profit &amp; Exit</span>
-                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">PROFIT</span>
+                                            <span>IST Session Clock</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">LIVE</span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">Net in-hand profit &amp; staged exit ladder</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">US market open &amp; Forex overlap</p>
                                     </div>
                                 </a>
 
@@ -616,6 +852,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-cyan-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-cyan-500/20 group mt-1"
                                     style={{ textDecoration: 'none' }}
                                 >
+                                    <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
+                                        <Scale size={15} />
+                                    </div>
                                     <div>
                                         <div className="flex items-center gap-2">
                                             <span>Brokerage &amp; Tax Calc</span>
@@ -624,53 +863,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         <p className="text-[10px] text-slate-400 font-normal">STT, GST &amp; broker breakdown</p>
                                     </div>
                                 </a>
-
-                                <a
-                                    href="/tools/wash-sale-calculator"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setIsMenuOpen(false);
-                                        if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
-                                    }}
-                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
-                                    style={{ textDecoration: 'none' }}
-                                >
-                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
-                                        <Scale size={15} />
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <span>Wash Sale Calculator</span>
-                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">IRS</span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">61-day window & Form 8949 loss tracker</p>
-                                    </div>
-                                </a>
-
-                                <a
-                                    href="/tools/risk-of-ruin-calculator"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setIsMenuOpen(false);
-                                        if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
-                                    }}
-                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-rose-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-rose-500/20 group mt-1"
-                                    style={{ textDecoration: 'none' }}
-                                >
-                                    <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 group-hover:scale-110 transition">
-                                        <ShieldAlert size={15} />
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <span>Risk of Ruin Calculator</span>
-                                            <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[8px] font-black px-1.5 py-0.5 rounded">RUIN</span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-400 font-normal">150 Monte Carlo equity simulations</p>
-                                    </div>
-                                </a>
                             </div>
 
-                            {/* Category 2: Interactive Games */}
+                            {/* Category 6: Interactive Games & Practice */}
                             <div className="border-t border-slate-800 pt-2">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 block mb-1">
                                     🎮 Games & Practice
@@ -945,596 +1140,884 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                 </div>
             </section>
 
-            {/* 🏆 Dedicated Prop Firm Traders Suite Section */}
-            <section className="w-full py-12 px-4 max-w-7xl mx-auto border-b border-slate-800/80">
-                <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-purple-950/30 via-slate-900/60 to-slate-950 border border-purple-500/30 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 relative z-10">
-                        <div>
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-extrabold uppercase tracking-wider mb-2.5">
-                                <Landmark size={14} className="text-purple-400" />
-                                <span>Prop Firm Traders Suite</span>
-                            </div>
-                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-                                Prop Firm Calculators &amp; Growth Tools 🏆
-                            </h2>
-                            <p className="text-slate-300 text-sm mt-1.5 max-w-2xl leading-relaxed">
-                                Built for <strong className="text-purple-300">FTMO, Topstep, Apex Trader Funding, FundedNext &amp; 5%ers</strong> funded traders. Calculate scaling roadmaps, net payouts after taxes, 30% consistency caps, and drawdown risk.
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono text-purple-300 bg-purple-900/40 px-3 py-1.5 rounded-xl border border-purple-500/30 font-bold">
-                                4 Prop Firm Tools Live
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
-                        {/* Prop Firm Tool 1: Scaling Roadmap */}
-                        <a
-                            href="/tools/prop-firm-scaling-plan-calculator"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (onOpenPropFirmScalingCalculator) onOpenPropFirmScalingCalculator();
-                            }}
-                            className="p-5 rounded-2xl bg-slate-900/90 border border-purple-500/40 hover:border-purple-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
-                            style={{ textDecoration: 'none' }}
-                        >
-                            <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 group-hover:scale-110 transition">
-                                        <TrendingUp size={22} />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/30 text-purple-200 border border-purple-400/40">
-                                        ROADMAP
-                                    </span>
-                                </div>
-                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
-                                    Account Scaling Roadmap
-                                </h3>
-                                <p className="text-xs text-slate-300 leading-relaxed">
-                                    Plan step-by-step scaling from $25k to $2M+ with lot size scaling &amp; compound growth schedule.
-                                </p>
-                            </div>
-                            <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs font-bold text-purple-300">
-                                <span>Scale Account</span>
-                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                            </div>
-                        </a>
-
-                        {/* Prop Firm Tool 2: Profit Split & Tax */}
-                        <a
-                            href="/tools/prop-firm-profit-split-payout-calculator"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (onOpenPropFirmPayoutCalculator) onOpenPropFirmPayoutCalculator();
-                            }}
-                            className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
-                            style={{ textDecoration: 'none' }}
-                        >
-                            <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
-                                        <Landmark size={22} />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
-                                        PAYOUT
-                                    </span>
-                                </div>
-                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                    Profit Split &amp; Net Tax
-                                </h3>
-                                <p className="text-xs text-slate-300 leading-relaxed">
-                                    Calculate actual in-hand bank cash ($) after 80/20 split, transfer fees, and US/UK/India taxes.
-                                </p>
-                            </div>
-                            <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
-                                <span>Calculate Payout</span>
-                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                            </div>
-                        </a>
-
-                        {/* Prop Firm Tool 3: Apex 30% Consistency */}
-                        <a
-                            href="/tools/apex-consistency-rule-calculator"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (onOpenApexConsistencyCalculator) onOpenApexConsistencyCalculator();
-                            }}
-                            className="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
-                            style={{ textDecoration: 'none' }}
-                        >
-                            <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 group-hover:scale-110 transition">
-                                        <Award size={22} />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/40">
-                                        APEX
-                                    </span>
-                                </div>
-                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
-                                    30% Consistency Rule
-                                </h3>
-                                <p className="text-xs text-slate-300 leading-relaxed">
-                                    Track single-day profit caps to pass Apex &amp; Topstep consistency payout rules safely.
-                                </p>
-                            </div>
-                            <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs font-bold text-amber-300">
-                                <span>Check Rule</span>
-                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                            </div>
-                        </a>
-
-                        {/* Prop Firm Tool 4: FTMO Challenge Drawdown */}
-                        <a
-                            href="/tools/ftmo-calculator"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
-                            }}
-                            className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
-                            style={{ textDecoration: 'none' }}
-                        >
-                            <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 group-hover:scale-110 transition">
-                                        <ShieldAlert size={22} />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/30 text-cyan-200 border border-cyan-400/40">
-                                        FTMO
-                                    </span>
-                                </div>
-                                <h3 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
-                                    FTMO Evaluation Calc
-                                </h3>
-                                <p className="text-xs text-slate-300 leading-relaxed">
-                                    Daily drawdown limits &amp; lot size calculator for FTMO, FundedNext &amp; Funding Pips.
-                                </p>
-                            </div>
-                            <div className="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-xs font-bold text-cyan-300">
-                                <span>Calculate Risk</span>
-                                <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            {/* Direct Tool Showcase Section: Highly Visible to All Users */}
-            <section className="w-full py-12 px-4 max-w-7xl mx-auto border-b border-slate-800/80">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            {/* 🧮 Interactive Trading Tools & Calculators Hub */}
+            <section id="tools-hub" className="w-full py-16 px-4 max-w-7xl mx-auto border-b border-slate-800/80">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
-                            <Calculator size={13} /> Free Risk &amp; Performance Tools
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3">
+                            <Calculator size={13} /> 20+ Free Quantitative Edge Tools
                         </div>
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-                            Essential Trading Tools &amp; Calculators
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+                            Trading Tools &amp; Calculators Hub
                         </h2>
-                        <p className="text-slate-400 text-sm mt-1 max-w-xl">
-                            Instant mathematical precision before executing high-risk trades. 100% free, no login or signup required.
+                        <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+                            Institutional-grade mathematical models organized by trading market. 100% free, client-side, zero signup or KYC required.
                         </p>
                     </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-emerald-400 bg-emerald-950/60 px-3.5 py-2 rounded-xl border border-emerald-500/30 font-bold flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            20 Free Calculators Live
+                        </span>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {/* Card 0: Shift & Night-Trader Session Volatility Clock */}
-                    <a
-                        href="/tools/session-clock-ist"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenSessionClock) onOpenSessionClock();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
+                {/* Category Filter Pills Bar */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-10 scrollbar-thin scrollbar-thumb-slate-800">
+                    <button
+                        onClick={() => setSelectedToolCategory('all')}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer border ${
+                            selectedToolCategory === 'all'
+                                ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/25 font-black'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+                        }`}
                     >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
-                                    <Clock size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    LIVE IST
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                Session Volatility Clock
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Live visual progress bars for Sydney, Tokyo, London &amp; New York in IST. Golden Volatility Overlap, US market open alerts &amp; audio chimes.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>Launch Clock</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                        <span>All Tools</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${selectedToolCategory === 'all' ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'}`}>20</span>
+                    </button>
 
-                    {/* Card: Revenge Trade Cooldown Clock */}
-                    <a
-                        href="/tools/revenge-trading-cooldown-timer"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenCooldownTimer) onOpenCooldownTimer();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-rose-500/40 hover:border-rose-500/80 transition-all duration-300 shadow-lg shadow-rose-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
+                    <button
+                        onClick={() => setSelectedToolCategory('prop-firm')}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer border ${
+                            selectedToolCategory === 'prop-firm'
+                                ? 'bg-purple-500 text-white border-purple-400 shadow-lg shadow-purple-500/25 font-black'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-purple-500/40 hover:text-purple-300'
+                        }`}
                     >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
-                                    <ShieldAlert size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                    RESET TILT
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
-                                Revenge Cooldown Clock
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Halt emotional revenge trading after hitting a stop-loss. Interactive 15-minute cooldown timer, discipline quotes &amp; position sizing check.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
-                            <span>Start Cooldown</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                        <Landmark size={15} />
+                        <span>🏆 Prop Firm &amp; Funded</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${selectedToolCategory === 'prop-firm' ? 'bg-purple-900/60 text-purple-200 font-bold' : 'bg-slate-800 text-slate-400'}`}>4</span>
+                    </button>
 
-                    {/* Card 1: Risk-Reward vs Win-Rate Matrix */}
-                    <a
-                        href="/tools/risk-reward-win-rate-matrix"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenRiskRewardMatrix) onOpenRiskRewardMatrix();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
+                    <button
+                        onClick={() => setSelectedToolCategory('crypto')}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer border ${
+                            selectedToolCategory === 'crypto'
+                                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/25 font-black'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-amber-500/40 hover:text-amber-300'
+                        }`}
                     >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
-                                    <Grid size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    PRO EDGE
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                Risk-Reward Matrix
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                2D Heatmap &amp; Expectancy Calculator. Analyze exact minimum win rates, 1:2 RRR hurdles, and avoid mathematical traps.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>Open Matrix</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                        <Zap size={15} />
+                        <span>🪙 Crypto, DCA &amp; Futures</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${selectedToolCategory === 'crypto' ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'}`}>5</span>
+                    </button>
 
-                    {/* Card 1: Drawdown Recovery & Compounding */}
-                    <a
-                        href="/tools/drawdown-recovery-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-rose-500/30 hover:border-rose-500/70 transition-all duration-300 shadow-lg shadow-rose-500/5 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
+                    <button
+                        onClick={() => setSelectedToolCategory('risk')}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer border ${
+                            selectedToolCategory === 'risk'
+                                ? 'bg-rose-500 text-white border-rose-400 shadow-lg shadow-rose-500/25 font-black'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-rose-500/40 hover:text-rose-300'
+                        }`}
                     >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
-                                    <TrendingDown size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                    PRO TOOL
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
-                                Drawdown Recovery &amp; Goal
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Calculate exact percentage return, RRR, and winning trades needed to recover losses and plan account compounding.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
-                            <span>Open Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                        <ShieldAlert size={15} />
+                        <span>🛡️ Risk &amp; Psychology</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${selectedToolCategory === 'risk' ? 'bg-rose-950/60 text-rose-200 font-bold' : 'bg-slate-800 text-slate-400'}`}>4</span>
+                    </button>
 
-                    {/* Card 2: Prop Firm Challenge Calculator */}
-                    <a
-                        href="/tools/ftmo-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/30 hover:border-emerald-500/70 transition-all duration-300 shadow-lg shadow-emerald-500/5 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
+                    <button
+                        onClick={() => setSelectedToolCategory('options')}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer border ${
+                            selectedToolCategory === 'options'
+                                ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-lg shadow-cyan-500/25 font-black'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-cyan-500/40 hover:text-cyan-300'
+                        }`}
                     >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
-                                    <ShieldAlert size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    NEW
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                Prop Firm Calculator
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Max daily drawdown &amp; lot size calculator for FTMO, Funding Pips, FundedNext, and E8 evaluation challenges.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>Open Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                        <Layers size={15} />
+                        <span>📊 Options &amp; Greeks</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${selectedToolCategory === 'options' ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'}`}>3</span>
+                    </button>
 
-                    {/* Card 3: Crypto Leverage Danger Calculator */}
-                    <a
-                        href="/tools/leverage-danger-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenLeverageCalculator) onOpenLeverageCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-amber-500/30 hover:border-amber-500/70 transition-all duration-300 shadow-lg shadow-amber-500/5 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
+                    <button
+                        onClick={() => setSelectedToolCategory('forex-tax')}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shrink-0 flex items-center gap-2 cursor-pointer border ${
+                            selectedToolCategory === 'forex-tax'
+                                ? 'bg-teal-500 text-slate-950 border-teal-400 shadow-lg shadow-teal-500/25 font-black'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-teal-500/40 hover:text-teal-300'
+                        }`}
                     >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
-                                    <Zap size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                    HOT
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
-                                Leverage Danger &amp; Liquidation
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Exact liquidation price and margin danger calculator for Binance, Bybit, BTC, and 100x futures contracts.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
-                            <span>Open Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                        <Scale size={15} />
+                        <span>🌍 Forex &amp; Tax Compliance</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${selectedToolCategory === 'forex-tax' ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'}`}>4</span>
+                    </button>
+                </div>
 
-                    {/* Card 4: Brokerage & Tax Calculator */}
-                    <a
-                        href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenCalculator) onOpenCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-cyan-500/30 hover:border-cyan-500/70 transition-all duration-300 shadow-lg shadow-cyan-500/5 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-cyan-500/15 text-cyan-400 group-hover:scale-110 transition">
-                                    <Scale size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                                    FREE
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
-                                Brokerage &amp; Tax Calculator
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Zerodha vs Groww, STT, GST, SEBI fee comparison and Indian 30% crypto tax &amp; 1% TDS breakdowns.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400">
-                            <span>Open Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                <div className="space-y-12">
+                    {/* CATEGORY 1: 🏆 Prop Firm Traders Suite */}
+                    {(selectedToolCategory === 'all' || selectedToolCategory === 'prop-firm') && (
+                        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-purple-950/30 via-slate-900/60 to-slate-950 border border-purple-500/30 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                    {/* Card 5: Cross vs Isolated Margin Liquidation Risk Calculator */}
-                    <a
-                        href="/tools/cross-vs-isolated-margin-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenCrossVsIsolatedCalculator) onOpenCrossVsIsolatedCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-purple-500/40 hover:border-purple-500/80 transition-all duration-300 shadow-lg shadow-purple-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-purple-500/15 text-purple-400 group-hover:scale-110 transition">
-                                    <Scale size={22} />
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 relative z-10">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+                                        <Landmark size={14} className="text-purple-400" />
+                                        <span>Category 1 &bull; Prop Firm Suite</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
+                                        🏆 Prop Firm Calculators &amp; Growth Tools
+                                    </h3>
+                                    <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                                        Engineered for <strong className="text-purple-300">FTMO, Topstep, Apex Trader Funding, FundedNext &amp; 5%ers</strong> funded accounts. Calculate scaling roadmaps, net cash payouts after taxes, 30% consistency caps, and drawdown risk.
+                                    </p>
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                                    CRYPTO LIQ
+                                <span className="text-xs font-mono text-purple-300 bg-purple-900/40 px-3 py-1.5 rounded-xl border border-purple-500/30 font-bold self-start sm:self-auto">
+                                    4 Tools
                                 </span>
                             </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
-                                Cross vs Isolated Liquidation
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Binance &amp; Bybit futures liquidation price simulator. Compare safety buffer %, isolated contagion walls &amp; total wallet wipeout danger.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-purple-400">
-                            <span>Open Simulator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
 
-                    {/* Card 6: Crypto Profit Calculator & Staged Exit Ladder */}
-                    <a
-                        href="/tools/crypto-profit-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenCryptoProfitCalculator) onOpenCryptoProfitCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
-                                    <CircleDollarSign size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    PROFIT LADDER
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                Crypto Profit &amp; Exit Ladder
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Exact net profit after exchange fees &amp; 30% taxes. Model 4-tier staged exit ladders (DCA Out) and lock in risk-free free rides.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>Open Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                                {/* Prop Tool 1: Scaling Roadmap */}
+                                <a
+                                    href="/tools/prop-firm-scaling-plan-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenPropFirmScalingCalculator) onOpenPropFirmScalingCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-purple-500/40 hover:border-purple-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 group-hover:scale-110 transition">
+                                                <TrendingUp size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/30 text-purple-200 border border-purple-400/40">
+                                                ROADMAP
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
+                                            Account Scaling Roadmap
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Plan step-by-step scaling from $25k to $2M+ with lot size scaling &amp; compound growth schedule.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs font-bold text-purple-300">
+                                        <span>Scale Account</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
 
-                    {/* Card 7: Wash Sale Rule Calculator (IRS § 1091) */}
-                    <a
-                        href="/tools/wash-sale-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
-                                    <Scale size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    IRS § 1091 TAX
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                Wash Sale Rule Calculator
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Calculate disallowed tax losses, adjusted cost basis, and 61-day wash sale window dates for Form 8949 compliance.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>Launch Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                                {/* Prop Tool 2: Profit Split & Tax */}
+                                <a
+                                    href="/tools/prop-firm-profit-split-payout-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenPropFirmPayoutCalculator) onOpenPropFirmPayoutCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <Landmark size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                PAYOUT
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Profit Split &amp; Net Tax
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Calculate actual in-hand bank cash ($) after 80/20 split, transfer fees, and US/UK/India taxes.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Calculate Payout</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
 
-                    {/* Card 8: Risk of Ruin & Monte Carlo Simulator */}
-                    <a
-                        href="/tools/risk-of-ruin-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-rose-500/40 hover:border-rose-500/80 transition-all duration-300 shadow-lg shadow-rose-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-rose-500/15 text-rose-400 group-hover:scale-110 transition">
-                                    <ShieldAlert size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                    MONTE CARLO (KD 8%)
-                                </span>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
-                                Risk of Ruin Calculator
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Simulate 150 equity curve paths, Ralph Vince ruin formulas, Prop Firm 10% drawdown failure math, and Primedope poker variance.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-rose-400">
-                            <span>Run 150 Simulations</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                                {/* Prop Tool 3: Apex 30% Consistency */}
+                                <a
+                                    href="/tools/apex-consistency-rule-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenApexConsistencyCalculator) onOpenApexConsistencyCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 group-hover:scale-110 transition">
+                                                <Award size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/40">
+                                                APEX
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                            30% Consistency Rule
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Track single-day profit caps to pass Apex &amp; Topstep consistency payout rules safely.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs font-bold text-amber-300">
+                                        <span>Check Rule</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
 
-                    {/* Card: Dollar-Cost Averaging (DCA) Calculator */}
-                    <a
-                        href="/tools/dca-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenDcaCalculator) onOpenDcaCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-emerald-500/40 hover:border-emerald-500/80 transition-all duration-300 shadow-lg shadow-emerald-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 transition">
-                                    <TrendingUp size={22} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    BITCOIN & STOCKS
-                                </span>
+                                {/* Prop Tool 4: FTMO Challenge Drawdown */}
+                                <a
+                                    href="/tools/ftmo-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenPropFirmCalculator) onOpenPropFirmCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 group-hover:scale-110 transition">
+                                                <ShieldAlert size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/30 text-cyan-200 border border-cyan-400/40">
+                                                FTMO
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
+                                            FTMO Evaluation Calc
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Daily drawdown limits &amp; lot size calculator for FTMO, FundedNext &amp; Funding Pips.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-xs font-bold text-cyan-300">
+                                        <span>Calculate Risk</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
                             </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
-                                DCA Calculator & Multi-Buy Tracker
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Simulate recurring Bitcoin, crypto & stock growth, calculate weighted average entry price including fees, and export CSV spreadsheet.
-                            </p>
                         </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>Simulate DCA Strategy</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-                        </div>
-                    </a>
+                    )}
 
-                    {/* Card 9: Forex Swap Fee & Rollover Calculator */}
-                    <a
-                        href="/tools/forex-swap-fee-calculator"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (onOpenForexSwapCalculator) onOpenForexSwapCalculator();
-                        }}
-                        className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-amber-500/40 hover:border-amber-500/80 transition-all duration-300 shadow-lg shadow-amber-500/10 group text-left cursor-pointer flex flex-col justify-between"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 group-hover:scale-110 transition">
-                                    <RefreshCw size={22} />
+                    {/* CATEGORY 2: 🪙 Crypto, DCA & Futures Margin */}
+                    {(selectedToolCategory === 'all' || selectedToolCategory === 'crypto') && (
+                        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-amber-950/20 via-slate-900/60 to-slate-950 border border-amber-500/30 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 relative z-10">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+                                        <Zap size={14} className="text-amber-400" />
+                                        <span>Category 2 &bull; Crypto &amp; Futures Suite</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
+                                        🪙 Crypto, DCA &amp; Futures Margin Tools
+                                    </h3>
+                                    <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                                        Designed for <strong className="text-amber-300">Binance, Bybit, OKX &amp; Coinbase</strong> traders. Model recurring DCA purchases, 100x liquidation price traps, cross vs isolated margin wipeouts, staged exit ladders, and 8h funding APR arbitrage.
+                                    </p>
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                    OVERNIGHT SWAP
+                                <span className="text-xs font-mono text-amber-300 bg-amber-900/40 px-3 py-1.5 rounded-xl border border-amber-500/30 font-bold self-start sm:self-auto">
+                                    5 Tools
                                 </span>
                             </div>
-                            <h3 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
-                                Forex Swap &amp; Rollover
-                            </h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Calculate overnight rollover financing, pip charges, triple swap Wednesday math, and Islamic swap-free account fees.
-                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
+                                {/* Crypto Tool 1: DCA Calculator & Multi-Buy Tracker */}
+                                <a
+                                    href="/tools/dca-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenDcaCalculator) onOpenDcaCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <TrendingUp size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                BITCOIN &amp; STOCKS
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            DCA Calculator &amp; Multi-Buy Tracker
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Simulate recurring Bitcoin, crypto &amp; stock growth, calculate weighted average entry price including fees, and export CSV spreadsheet.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Simulate DCA Strategy</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Crypto Tool 2: Leverage Danger & Liquidation */}
+                                <a
+                                    href="/tools/leverage-danger-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenLeverageCalculator) onOpenLeverageCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 group-hover:scale-110 transition">
+                                                <Zap size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/40">
+                                                HOT 100X
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                            Leverage Danger &amp; Liquidation
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Exact liquidation price and margin danger calculator for Binance, Bybit, BTC, and 100x futures contracts.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs font-bold text-amber-300">
+                                        <span>Check Danger</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Crypto Tool 3: Cross vs Isolated Margin */}
+                                <a
+                                    href="/tools/cross-vs-isolated-margin-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenCrossVsIsolatedCalculator) onOpenCrossVsIsolatedCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-purple-500/40 hover:border-purple-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 group-hover:scale-110 transition">
+                                                <Scale size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/30 text-purple-200 border border-purple-400/40">
+                                                CRYPTO LIQ
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
+                                            Cross vs Isolated Liquidation
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Binance &amp; Bybit futures liquidation simulator. Compare safety buffer %, isolated contagion walls &amp; total wallet wipeout danger.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs font-bold text-purple-300">
+                                        <span>Compare Margin</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Crypto Tool 4: Crypto Profit & Exit Ladder */}
+                                <a
+                                    href="/tools/crypto-profit-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenCryptoProfitCalculator) onOpenCryptoProfitCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <CircleDollarSign size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                PROFIT LADDER
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Crypto Profit &amp; Exit Ladder
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Exact net profit after exchange fees &amp; taxes. Model 4-tier staged exit ladders (DCA Out) and lock in risk-free moon bags.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Model Exits</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Crypto Tool 5: Crypto Funding Rate APR & Arbitrage */}
+                                <a
+                                    href="/tools/crypto-funding-rate-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenCryptoFundingCalculator) onOpenCryptoFundingCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 group-hover:scale-110 transition">
+                                                <Coins size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/30 text-cyan-200 border border-cyan-400/40">
+                                                8H APR
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
+                                            Crypto Funding Rate APR Calc
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Annualized APR/APY rates, 8h perpetual swap fee costs, and delta-neutral cash-and-carry funding arbitrage returns.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-xs font-bold text-cyan-300">
+                                        <span>Calculate APR</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
-                            <span>Open Calculator</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                    )}
+
+                    {/* CATEGORY 3: 🛡️ Risk Management & Trading Psychology */}
+                    {(selectedToolCategory === 'all' || selectedToolCategory === 'risk') && (
+                        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-rose-950/20 via-slate-900/60 to-slate-950 border border-rose-500/30 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 relative z-10">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+                                        <ShieldAlert size={14} className="text-rose-400" />
+                                        <span>Category 3 &bull; Risk &amp; Psychology Suite</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
+                                        🛡️ Risk Management &amp; Psychology Tools
+                                    </h3>
+                                    <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                                        Prevent blown accounts, conquer emotional tilt, and protect capital with mathematical expectancy, Ralph Vince ruin formulas, and cooling protocols.
+                                    </p>
+                                </div>
+                                <span className="text-xs font-mono text-rose-300 bg-rose-900/40 px-3 py-1.5 rounded-xl border border-rose-500/30 font-bold self-start sm:self-auto">
+                                    4 Tools
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                                {/* Risk Tool 1: Risk-Reward vs Win-Rate Matrix */}
+                                <a
+                                    href="/tools/risk-reward-win-rate-matrix"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenRiskRewardMatrix) onOpenRiskRewardMatrix();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <Grid size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                PRO EDGE
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Risk-Reward Matrix
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            2D Heatmap &amp; Expectancy Calculator. Analyze exact minimum win rates, 1:2 RRR hurdles, and avoid math traps.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Open Matrix</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Risk Tool 2: Risk of Ruin & Monte Carlo Simulator */}
+                                <a
+                                    href="/tools/risk-of-ruin-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenRiskOfRuinCalculator) onOpenRiskOfRuinCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-rose-500/40 hover:border-rose-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-rose-500/20 text-rose-300 group-hover:scale-110 transition">
+                                                <ShieldAlert size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/30 text-rose-200 border border-rose-400/40">
+                                                MONTE CARLO
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
+                                            Risk of Ruin Calculator
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Simulate 150 equity curves, Ralph Vince ruin formulas, Prop Firm 10% drawdown failure math &amp; poker variance.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-rose-500/20 flex items-center justify-between text-xs font-bold text-rose-300">
+                                        <span>Run 150 Sims</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Risk Tool 3: Drawdown Recovery & Compounding Goal */}
+                                <a
+                                    href="/tools/drawdown-recovery-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenDrawdownCalculator) onOpenDrawdownCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-rose-500/40 hover:border-rose-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-rose-500/20 text-rose-300 group-hover:scale-110 transition">
+                                                <TrendingDown size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/30 text-rose-200 border border-rose-400/40">
+                                                RECOVERY
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
+                                            Drawdown Recovery &amp; Goal
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Calculate exact percentage return, RRR, and winning trades needed to recover losses and plan account compounding.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-rose-500/20 flex items-center justify-between text-xs font-bold text-rose-300">
+                                        <span>Calculate Recovery</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Risk Tool 4: Revenge Trade Cooldown Clock */}
+                                <a
+                                    href="/tools/revenge-trading-cooldown-timer"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenCooldownTimer) onOpenCooldownTimer();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-rose-500/40 hover:border-rose-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-rose-500/20 text-rose-300 group-hover:scale-110 transition">
+                                                <ShieldAlert size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-500/30 text-rose-200 border border-rose-400/40">
+                                                RESET TILT
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-rose-300 transition">
+                                            Revenge Cooldown Clock
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Halt emotional revenge trading after hitting a stop-loss. Interactive 15-minute cooldown timer, discipline quotes &amp; sizing check.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-rose-500/20 flex items-center justify-between text-xs font-bold text-rose-300">
+                                        <span>Start Cooldown</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </a>
+                    )}
+
+                    {/* CATEGORY 4: 📊 Options & Greeks Analytics */}
+                    {(selectedToolCategory === 'all' || selectedToolCategory === 'options') && (
+                        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-cyan-950/20 via-slate-900/60 to-slate-950 border border-cyan-500/30 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 relative z-10">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+                                        <Layers size={14} className="text-cyan-400" />
+                                        <span>Category 4 &bull; Options &amp; Derivatives Suite</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
+                                        📊 Options &amp; Greeks Analytics Tools
+                                    </h3>
+                                    <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                                        Quantitative tools for index and stock option traders. Model 4-leg Iron Condor payout tables, 0DTE intraday theta burn, and Put-Call Ratio (PCR) market sentiment reversals.
+                                    </p>
+                                </div>
+                                <span className="text-xs font-mono text-cyan-300 bg-cyan-900/40 px-3 py-1.5 rounded-xl border border-cyan-500/30 font-bold self-start sm:self-auto">
+                                    3 Tools
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
+                                {/* Option Tool 1: Iron Condor Profit & Greeks */}
+                                <a
+                                    href="/tools/iron-condor-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenIronCondorCalculator) onOpenIronCondorCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-purple-500/40 hover:border-purple-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 group-hover:scale-110 transition">
+                                                <Layers size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/30 text-purple-200 border border-purple-400/40">
+                                                4-LEG SPREAD
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition">
+                                            Iron Condor Max Loss &amp; Greeks
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Model 4-leg option spreads, credit received, upper/lower breakevens, max risk loss, and probability of profit (POP).
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs font-bold text-purple-300">
+                                        <span>Analyze Condor</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Option Tool 2: Option Buying Theta Decay & 0DTE */}
+                                <a
+                                    href="/tools/0dte-option-profit-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenOptionThetaCalculator) onOpenOptionThetaCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 group-hover:scale-110 transition">
+                                                <Clock size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/40">
+                                                0DTE THETA
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                            Option Buying Theta Decay (0DTE)
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Intraday decay simulator for SPY, QQQ &amp; Nifty 0DTE options. Calculate hourly premium erosion and breakeven move required.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs font-bold text-amber-300">
+                                        <span>Simulate Theta</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Option Tool 3: Put Call Ratio (PCR) Sentiment Gauge */}
+                                <a
+                                    href="/tools/nifty-pcr-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenPcrCalculator) onOpenPcrCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <Percent size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                SENTIMENT GAUGE
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Put Call Ratio (PCR) Gauge
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Calculate Open Interest Put-Call Ratio for indices &amp; stocks. Detect oversold/overbought reversal zones and smart money setups.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Check Sentiment</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CATEGORY 5: 🌍 Forex, Market Hours & Tax Compliance */}
+                    {(selectedToolCategory === 'all' || selectedToolCategory === 'forex-tax') && (
+                        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-teal-950/20 via-slate-900/60 to-slate-950 border border-teal-500/30 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 relative z-10">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-500/40 text-teal-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+                                        <Scale size={14} className="text-teal-400" />
+                                        <span>Category 5 &bull; Forex &amp; Tax Suite</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
+                                        🌍 Forex, Market Hours &amp; Tax Compliance Tools
+                                    </h3>
+                                    <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                                        Track global market overlaps in IST, overnight rollover financing swaps, US IRS § 1091 Wash Sale basis adjustments, and Indian STT/GST brokerage fees.
+                                    </p>
+                                </div>
+                                <span className="text-xs font-mono text-teal-300 bg-teal-900/40 px-3 py-1.5 rounded-xl border border-teal-500/30 font-bold self-start sm:self-auto">
+                                    4 Tools
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                                {/* Forex/Tax Tool 1: Wash Sale Rule Calculator */}
+                                <a
+                                    href="/tools/wash-sale-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenWashSaleCalculator) onOpenWashSaleCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <Scale size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                IRS § 1091
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Wash Sale Rule Calculator
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Calculate disallowed tax losses, adjusted cost basis, and 61-day wash sale window dates for Form 8949 compliance.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Launch Tax Calc</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Forex/Tax Tool 2: Forex Swap Fee & Rollover */}
+                                <a
+                                    href="/tools/forex-swap-fee-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenForexSwapCalculator) onOpenForexSwapCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 group-hover:scale-110 transition">
+                                                <RefreshCw size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/40">
+                                                OVERNIGHT SWAP
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-amber-300 transition">
+                                            Forex Swap &amp; Rollover
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Calculate overnight rollover financing, pip charges, triple swap Wednesday math, and swap-free fees.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs font-bold text-amber-300">
+                                        <span>Check Rollover</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Forex/Tax Tool 3: Market Session Volatility Clock */}
+                                <a
+                                    href="/tools/session-clock-ist"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenSessionClock) onOpenSessionClock();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <Clock size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                LIVE IST
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Session Volatility Clock
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Live visual progress bars for Sydney, Tokyo, London &amp; New York in IST. Golden Volatility Overlap &amp; alerts.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Launch Clock</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
+                                {/* Forex/Tax Tool 4: Brokerage & Tax Calculator */}
+                                <a
+                                    href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenCalculator) onOpenCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 group-hover:scale-110 transition">
+                                                <Scale size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/30 text-cyan-200 border border-cyan-400/40">
+                                                FEES &amp; TAX
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
+                                            Brokerage &amp; Tax Calculator
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Zerodha vs Groww, STT, GST, SEBI fee comparison and Indian 30% crypto tax &amp; 1% TDS breakdowns.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-xs font-bold text-cyan-300">
+                                        <span>Compare Fees</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -2142,8 +2625,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
             {/* Categorized Footer (Strictly Maintaining Categories) */}
             <footer className="w-full py-12 text-sm border-t border-slate-800/90 bg-[#050811]">
-                <div className="max-w-6xl mx-auto px-4 space-y-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="max-w-7xl mx-auto px-4 space-y-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                         {/* Column 1: Brand */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
@@ -2155,42 +2638,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             </p>
                         </div>
 
-                        {/* Column 2: 🏆 Prop Firm Suite (Dedicated Category) */}
+                        {/* Column 2: 🏆 Prop Firm Suite */}
                         <div className="space-y-2.5">
                             <h4 className="text-xs font-black uppercase tracking-widest text-purple-400">🏆 Prop Firm Suite</h4>
                             <ul className="space-y-2 text-xs">
-                                <li>
-                                    <a
-                                        href="/tools/prop-firm-challenge-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenPropFirmCalculator) {
-                                                e.preventDefault();
-                                                onOpenPropFirmCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Calculator size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Prop Firm Challenge Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/ftmo-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenPropFirmCalculator) {
-                                                e.preventDefault();
-                                                onOpenPropFirmCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <ShieldAlert size={14} className="text-cyan-400 group-hover:scale-110 transition" />
-                                        <span>FTMO Challenge Risk Calc</span>
-                                    </a>
-                                </li>
                                 <li>
                                     <a
                                         href="/tools/prop-firm-scaling-plan-calculator"
@@ -2241,27 +2692,36 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
-                                        href="/tools/apex-trailing-drawdown-calculator"
+                                        href="/tools/ftmo-calculator"
                                         onClick={(e) => {
-                                            if (onOpenApexConsistencyCalculator) {
+                                            if (onOpenPropFirmCalculator) {
                                                 e.preventDefault();
-                                                onOpenApexConsistencyCalculator();
+                                                onOpenPropFirmCalculator();
                                             }
                                         }}
-                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <ShieldAlert size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Apex Trailing Drawdown Calculator</span>
+                                        <ShieldAlert size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>FTMO Challenge Risk Calc</span>
                                     </a>
                                 </li>
-                            </ul>
-                        </div>
-
-                        {/* Column 3: Market Risk & Execution Tools */}
-                        <div className="space-y-2.5">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🛠️ Risk &amp; Market Tools</h4>
-                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/risk-of-ruin-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenRiskOfRuinCalculator) {
+                                                e.preventDefault();
+                                                onOpenRiskOfRuinCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Risk of Ruin (Monte Carlo)</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <a
                                         href="/tools/risk-reward-win-rate-matrix"
@@ -2275,7 +2735,213 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         style={{ textDecoration: 'none' }}
                                     >
                                         <Grid size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Risk-Reward vs Win Rate Matrix</span>
+                                        <span>Risk-Reward vs Win Rate</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/drawdown-recovery-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenDrawdownCalculator) {
+                                                e.preventDefault();
+                                                onOpenDrawdownCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <TrendingDown size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Drawdown Recovery Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/revenge-trading-cooldown-timer"
+                                        onClick={(e) => {
+                                            if (onOpenCooldownTimer) {
+                                                e.preventDefault();
+                                                onOpenCooldownTimer();
+                                            }
+                                        }}
+                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
+                                        <span>Revenge Cooldown Timer</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Column 3: 🪙 Crypto & Futures */}
+                        <div className="space-y-2.5">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-amber-400">🪙 Crypto &amp; Futures</h4>
+                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/dca-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenDcaCalculator) {
+                                                e.preventDefault();
+                                                onOpenDcaCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <TrendingUp size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>DCA &amp; Multi-Buy Tracker</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/leverage-danger-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenLeverageCalculator) {
+                                                e.preventDefault();
+                                                onOpenLeverageCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Leverage Danger (100x)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/cross-vs-isolated-margin-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCrossVsIsolatedCalculator) {
+                                                e.preventDefault();
+                                                onOpenCrossVsIsolatedCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-purple-400 group-hover:scale-110 transition" />
+                                        <span>Cross vs Isolated Liq Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/crypto-profit-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCryptoProfitCalculator) {
+                                                e.preventDefault();
+                                                onOpenCryptoProfitCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <CircleDollarSign size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Profit &amp; Exit Ladder</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/crypto-funding-rate-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenCryptoFundingCalculator) {
+                                                e.preventDefault();
+                                                onOpenCryptoFundingCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Coins size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>Crypto Funding Rate APR Calc</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Column 4: 📊 Options & Forex/Tax */}
+                        <div className="space-y-2.5">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-cyan-400">📊 Options, Forex &amp; Tax</h4>
+                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/iron-condor-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenIronCondorCalculator) {
+                                                e.preventDefault();
+                                                onOpenIronCondorCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Layers size={14} className="text-purple-400 group-hover:scale-110 transition" />
+                                        <span>Iron Condor Greeks Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/0dte-option-profit-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenOptionThetaCalculator) {
+                                                e.preventDefault();
+                                                onOpenOptionThetaCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Clock size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>0DTE Option Theta Decay Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/nifty-pcr-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenPcrCalculator) {
+                                                e.preventDefault();
+                                                onOpenPcrCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Percent size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Put Call Ratio (PCR) Gauge</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/wash-sale-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenWashSaleCalculator) {
+                                                e.preventDefault();
+                                                onOpenWashSaleCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Wash Sale Rule (IRS § 1091)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/forex-swap-fee-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenForexSwapCalculator) {
+                                                e.preventDefault();
+                                                onOpenForexSwapCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <RefreshCw size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>Forex Swap Fee &amp; Rollover</span>
                                     </a>
                                 </li>
                                 <li>
@@ -2296,38 +2962,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                                 <li>
                                     <a
-                                        href="/tools/revenge-trading-cooldown-timer"
-                                        onClick={(e) => {
-                                            if (onOpenCooldownTimer) {
-                                                e.preventDefault();
-                                                onOpenCooldownTimer();
-                                            }
-                                        }}
-                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
-                                        <span>Revenge Cooldown Timer</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/leverage-danger-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenLeverageCalculator) {
-                                                e.preventDefault();
-                                                onOpenLeverageCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Crypto Leverage Danger Calc</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
                                         href="/calculators/stocks/zerodha-vs-groww-brokerage-calculator"
                                         onClick={(e) => {
                                             if (onOpenCalculator) {
@@ -2342,182 +2976,12 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         <span>Brokerage &amp; Tax Calculator</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a
-                                        href="/tools/drawdown-recovery-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenDrawdownCalculator) {
-                                                e.preventDefault();
-                                                onOpenDrawdownCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Scale size={14} className="text-rose-400 group-hover:scale-110 transition" />
-                                        <span>Drawdown &amp; Goal Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/cross-vs-isolated-margin-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenCrossVsIsolatedCalculator) {
-                                                e.preventDefault();
-                                                onOpenCrossVsIsolatedCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Scale size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Cross vs Isolated Liq Calc</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/cross-margin-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenCrossVsIsolatedCalculator) {
-                                                e.preventDefault();
-                                                onOpenCrossVsIsolatedCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Zap size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Cross Margin Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/crypto-profit-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenCryptoProfitCalculator) {
-                                                e.preventDefault();
-                                                onOpenCryptoProfitCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <CircleDollarSign size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Crypto Profit Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/crypto-exit-strategy-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenCryptoProfitCalculator) {
-                                                e.preventDefault();
-                                                onOpenCryptoProfitCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-purple-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Layers size={14} className="text-purple-400 group-hover:scale-110 transition" />
-                                        <span>Crypto Exit Strategy Ladder</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/crypto-funding-rate-calculator"
-                                        onClick={(e) => {
-                                            window.history.pushState({}, '', '/tools/crypto-funding-rate-calculator');
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Zap size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Crypto Funding Rate Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/0dte-option-profit-calculator"
-                                        onClick={(e) => {
-                                            window.history.pushState({}, '', '/tools/0dte-option-profit-calculator');
-                                        }}
-                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Clock size={14} className="text-cyan-400 group-hover:scale-110 transition" />
-                                        <span>0DTE Option Profit & Theta Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/iron-condor-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenIronCondorCalculator) {
-                                                e.preventDefault();
-                                                onOpenIronCondorCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Sparkles size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Iron Condor Options Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/forex-swap-fee-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenForexSwapCalculator) {
-                                                e.preventDefault();
-                                                onOpenForexSwapCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-amber-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <RefreshCw size={14} className="text-amber-400 group-hover:scale-110 transition" />
-                                        <span>Forex Swap Fee & Rollover Calculator</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/wash-sale-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenWashSaleCalculator) {
-                                                e.preventDefault();
-                                                onOpenWashSaleCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
-                                        <span>Wash Sale Rule Calculator (IRS § 1091)</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="/tools/risk-of-ruin-calculator"
-                                        onClick={(e) => {
-                                            if (onOpenRiskOfRuinCalculator) {
-                                                e.preventDefault();
-                                                onOpenRiskOfRuinCalculator();
-                                            }
-                                        }}
-                                        className="hover:text-rose-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
-                                        <span>Risk of Ruin Calculator (Monte Carlo)</span>
-                                    </a>
-                                </li>
                             </ul>
                         </div>
 
-                        {/* Column 3: Games & Learning */}
+                        {/* Column 5: 🎮 Games, Learning & Company */}
                         <div className="space-y-2.5">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🎮 Games &amp; Learning</h4>
+                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">🎮 Learning &amp; Legal</h4>
                             <ul className="space-y-2 text-xs">
                                 <li>
                                     <a
@@ -2539,17 +3003,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         <span>Trading Blog &amp; Guides</span>
                                     </a>
                                 </li>
-                            </ul>
-                        </div>
-
-                        {/* Column 4: Company & Legal */}
-                        <div className="space-y-2.5">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">ℹ️ Company</h4>
-                            <ul className="space-y-1.5 text-xs text-slate-400">
-                                <li><button onClick={() => onOpenInfo('about')} className="hover:text-white transition-colors cursor-pointer">About Us</button></li>
-                                <li><button onClick={() => onOpenInfo('contact')} className="hover:text-white transition-colors cursor-pointer">Contact Support</button></li>
-                                <li><button onClick={() => onOpenInfo('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</button></li>
-                                <li><button onClick={() => onOpenInfo('terms')} className="hover:text-white transition-colors cursor-pointer">Terms &amp; Conditions</button></li>
+                                <li className="pt-2 border-t border-slate-800/80">
+                                    <button onClick={() => onOpenInfo('about')} className="hover:text-white transition-colors cursor-pointer text-slate-400">About Us</button>
+                                </li>
+                                <li>
+                                    <button onClick={() => onOpenInfo('contact')} className="hover:text-white transition-colors cursor-pointer text-slate-400">Contact Support</button>
+                                </li>
+                                <li>
+                                    <button onClick={() => onOpenInfo('privacy')} className="hover:text-white transition-colors cursor-pointer text-slate-400">Privacy Policy</button>
+                                </li>
+                                <li>
+                                    <button onClick={() => onOpenInfo('terms')} className="hover:text-white transition-colors cursor-pointer text-slate-400">Terms &amp; Conditions</button>
+                                </li>
                             </ul>
                         </div>
                     </div>
