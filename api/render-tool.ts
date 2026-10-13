@@ -336,6 +336,35 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'gamblers ruin calculator, probability of ruin, random walk ruin',
         h1: 'Gambler\'s Ruin Theorem & Probability Calculator',
         summary: 'Explore the classical Gambler\'s Ruin theorem and understand why negative expectancy systems guarantee eventual ruin.',
+    },
+    'futures-position-size-calculator': {
+        title: 'Futures Position Size Calculator Free | Position Size Calculator for Futures & Gold',
+        description: 'Free Futures Position Size Calculator for ES, NQ, MES, MNQ, Crude Oil, and Gold futures. Calculate exact contract quantities, tick values, and dollar risk per trade.',
+        category: 'Futures Risk Management',
+        keywords: 'futures position size calculator, position size calculator futures, future position size calculator, futures calculator position size, futures position size calculator free, position size calculator for futures, gold futures position size calculator',
+        h1: 'Futures Position Size Calculator (Free)',
+        summary: 'Calculate exact contract quantities for E-mini S&P (ES), Nasdaq (NQ), Micro contracts (MES/MNQ), and Gold futures (GC). Strictly round down to protect your capital and eliminate over-leveraged blowouts.',
+        faq: [
+            { q: 'How do you calculate position size in futures?', a: 'Futures position size = Allowed Dollar Risk / (Stop Distance in Points × Point Multiplier). Always round down to the nearest whole integer.' },
+            { q: 'Why is rounding down mandatory in futures sizing?', a: 'Futures contracts are non-fractional. Rounding up causes you to exceed your maximum risk budget when a stop loss is executed.' },
+            { q: 'How do you calculate position size for Gold Futures (GC & MGC)?', a: 'Standard COMEX Gold (GC) has a $100 per point multiplier ($10/tick). Micro Gold (MGC) is 1/10th the size with a $10 per point multiplier ($1/tick).' }
+        ]
+    },
+    'position-size-calculator-futures': {
+        title: 'Position Size Calculator Futures | Free Contract Sizer | TradeJournall',
+        description: 'Free position size calculator for futures trading. Calculate contract risk for E-mini, Micro, and Commodity futures.',
+        category: 'Futures Risk Management',
+        keywords: 'position size calculator futures, futures position size calculator, futures calculator position size',
+        h1: 'Position Size Calculator for Futures Contracts',
+        summary: 'Determine safe contract sizing based on your predefined risk percentage and stop-loss distance in ticks or points.'
+    },
+    'gold-futures-position-size-calculator': {
+        title: 'Gold Futures Position Size Calculator (GC & Micro MGC) | TradeJournall',
+        description: 'Calculate position size for COMEX Gold futures (GC) and Micro Gold futures (MGC) with custom dollar risk and stop loss points.',
+        category: 'Metals & Commodities',
+        keywords: 'gold futures position size calculator, gc futures position size, micro gold futures calculator',
+        h1: 'Gold Futures Position Size Calculator (GC & MGC)',
+        summary: 'Precision contract sizing for standard Gold (100 oz) and Micro Gold (10 oz) futures based on tick value and volatility stops.'
     }
 };
 

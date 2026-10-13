@@ -35,6 +35,17 @@ export interface ToolItem {
 
 export const ALL_TOOLS_REGISTRY: ToolItem[] = [
     {
+        id: 'futures-position-size',
+        title: 'Futures Position Size Calculator (Free)',
+        path: '/tools/futures-position-size-calculator',
+        category: 'risk',
+        categoryLabel: 'Futures Risk',
+        badge: 'ES, NQ, Gold KD 29',
+        badgeColor: 'cyan',
+        description: 'Calculate exact contract quantities for E-mini ES, Nasdaq NQ, Micro MES/MNQ, and Gold futures with tick-based risk budgets.',
+        icon: Scale
+    },
+    {
         id: 'dca-calc',
         title: 'Dollar-Cost Averaging (DCA) Calculator',
         path: '/tools/dca-calculator',

@@ -23,6 +23,7 @@ import { ForexSwapFeeCalculatorScreen } from './screens/ForexSwapFeeCalculatorSc
 import { WashSaleCalculatorScreen } from './screens/WashSaleCalculatorScreen';
 import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen';
 import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
+import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -423,6 +424,21 @@ function getRiskOfRuinRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Futures Position Size Calculator (and keyword aliases)
+function getFuturesPositionSizeRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/futures-position-size-calculator') ||
+        path.includes('/tools/position-size-calculator-futures') ||
+        path.includes('/tools/future-position-size-calculator') ||
+        path.includes('/tools/futures-calculator-position-size') ||
+        path.includes('/tools/futures-position-size-calculator-free') ||
+        path.includes('/tools/position-size-calculator-for-futures') ||
+        path.includes('/tools/gold-futures-position-size-calculator') ||
+        path.includes('/calculators/futures-position-size')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -439,6 +455,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getFuturesPositionSizeRouteFromUrl()) return 'futures-position-size-calc';
         if (getDcaRouteFromUrl()) return 'dca-calc';
         if (getRiskOfRuinRouteFromUrl()) return 'risk-of-ruin-calc';
         if (getWashSaleRouteFromUrl()) return 'wash-sale-calc';
@@ -467,7 +484,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1170,6 +1187,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('risk-of-ruin-calc');
                     }}
+                    onOpenFuturesPositionSizeCalculator={() => {
+                        window.history.pushState({}, '', '/tools/futures-position-size-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('futures-position-size-calc');
+                    }}
                     onOpenDcaCalculator={() => {
                         window.history.pushState({}, '', '/tools/dca-calculator');
                         setShowLanding(false);
@@ -1773,6 +1795,41 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'futures-position-size-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <FuturesPositionSizeCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onLogTrade={(tradeData) => {
+                            setPendingTrade({
+                                id: Date.now().toString(),
+                                symbol: tradeData.symbol,
+                                date: new Date().toISOString().split('T')[0],
+                                entryPrice: tradeData.entryPrice,
+                                exitPrice: tradeData.exitPrice,
+                                pnl: tradeData.pnl,
+                                type: tradeData.type,
+                                strategy: 'Futures Position Size Calc Import',
+                            });
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                            setShowAddTrade(true);
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1816,6 +1873,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<Scale size={17} className="text-cyan-400 font-bold" />} label="Futures Position Sizer" active={currentScreen === 'futures-position-size-calc'} onClick={() => setCurrentScreen('futures-position-size-calc')} badge="FUTURES" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
                         <DeskNavButton icon={<Scale size={17} className="text-emerald-400 font-bold" />} label="Wash Sale Tax Calc" active={currentScreen === 'wash-sale-calc'} onClick={() => setCurrentScreen('wash-sale-calc')} badge="IRS" />
                         <DeskNavButton icon={<RefreshCw size={17} className="text-amber-400 font-bold" />} label="Forex Swap Fee Calc" active={currentScreen === 'forex-swap-calc'} onClick={() => setCurrentScreen('forex-swap-calc')} badge="SWAP" />
@@ -2677,6 +2735,29 @@ const App = () => {
                             primaryCurrencySymbol={globalCurrency}
                             onBackToLanding={() => setCurrentScreen('dashboard')}
                             onSignIn={() => setCurrentScreen('dashboard')}
+                        />
+                    )}
+
+                    {currentScreen === 'futures-position-size-calc' && (
+                        <FuturesPositionSizeCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
+                            onLogTrade={(tradeData) => {
+                                setPendingTrade({
+                                    id: Date.now().toString(),
+                                    symbol: tradeData.symbol,
+                                    date: new Date().toISOString().split('T')[0],
+                                    entryPrice: tradeData.entryPrice,
+                                    exitPrice: tradeData.exitPrice,
+                                    pnl: tradeData.pnl,
+                                    type: tradeData.type,
+                                    strategy: 'Futures Position Size Calc Import',
+                                });
+                                setShowAddTrade(true);
+                            }}
                         />
                     )}
 

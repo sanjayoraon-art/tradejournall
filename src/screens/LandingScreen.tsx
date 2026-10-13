@@ -33,6 +33,7 @@ interface LandingScreenProps {
     onOpenForexSwapCalculator?: () => void;
     onOpenWashSaleCalculator?: () => void;
     onOpenRiskOfRuinCalculator?: () => void;
+    onOpenFuturesPositionSizeCalculator?: () => void;
     onOpenDcaCalculator?: () => void;
     onOpenCryptoFundingCalculator?: () => void;
     onOpenOptionThetaCalculator?: () => void;
@@ -60,6 +61,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenForexSwapCalculator,
     onOpenWashSaleCalculator,
     onOpenRiskOfRuinCalculator,
+    onOpenFuturesPositionSizeCalculator,
     onOpenDcaCalculator,
     onOpenCryptoFundingCalculator,
     onOpenOptionThetaCalculator,
@@ -350,6 +352,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
                         <span>Risk of Ruin</span>
                         <span className="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black border border-rose-500/30">KD 8%</span>
+                    </a>
+                    <a
+                        href="/tools/futures-position-size-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenFuturesPositionSizeCalculator) onOpenFuturesPositionSizeCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-cyan-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                        <span>Futures Sizer</span>
+                        <span className="text-[9px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-black border border-cyan-500/30">ES • NQ • GOLD</span>
                     </a>
                 </div>
 
@@ -1642,6 +1657,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     </div>
                                 </a>
 
+                                {/* Risk Tool: Futures Position Size Calculator */}
+                                <a
+                                    href="/tools/futures-position-size-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenFuturesPositionSizeCalculator) onOpenFuturesPositionSizeCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 group-hover:scale-110 transition">
+                                                <Scale size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/30 text-cyan-200 border border-cyan-400/40">
+                                                ES • NQ • GOLD
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-cyan-300 transition">
+                                            Futures Position Size Calculator
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Calculate exact contract quantities for E-mini, Micro (MES/MNQ), and Gold futures with tick-based risk budgets.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-xs font-bold text-cyan-300">
+                                        <span>Size Contracts Free</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
                                 {/* Risk Tool 2: Risk of Ruin & Monte Carlo Simulator */}
                                 <a
                                     href="/tools/risk-of-ruin-calculator"
@@ -2704,6 +2751,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <ShieldAlert size={14} className="text-cyan-400 group-hover:scale-110 transition" />
                                         <span>FTMO Challenge Risk Calc</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/futures-position-size-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenFuturesPositionSizeCalculator) {
+                                                e.preventDefault();
+                                                onOpenFuturesPositionSizeCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>Futures Position Size Calculator</span>
                                     </a>
                                 </li>
                                 <li>
