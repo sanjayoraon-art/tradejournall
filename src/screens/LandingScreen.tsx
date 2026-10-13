@@ -33,6 +33,7 @@ interface LandingScreenProps {
     onOpenForexSwapCalculator?: () => void;
     onOpenWashSaleCalculator?: () => void;
     onOpenRiskOfRuinCalculator?: () => void;
+    onOpenDividendSnowballCalculator?: () => void;
     onOpenFuturesPositionSizeCalculator?: () => void;
     onOpenDcaCalculator?: () => void;
     onOpenCryptoFundingCalculator?: () => void;
@@ -61,6 +62,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenForexSwapCalculator,
     onOpenWashSaleCalculator,
     onOpenRiskOfRuinCalculator,
+    onOpenDividendSnowballCalculator,
     onOpenFuturesPositionSizeCalculator,
     onOpenDcaCalculator,
     onOpenCryptoFundingCalculator,
@@ -352,6 +354,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <ShieldAlert size={14} className="text-rose-400 group-hover:scale-110 transition" />
                         <span>Risk of Ruin</span>
                         <span className="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black border border-rose-500/30">KD 8%</span>
+                    </a>
+                    <a
+                        href="/tools/dividend-snowball-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenDividendSnowballCalculator) onOpenDividendSnowballCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-emerald-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Coins size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                        <span>Dividend Snowball</span>
+                        <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black border border-emerald-500/30">SCHD KD 0</span>
                     </a>
                     <a
                         href="/tools/futures-position-size-calculator"
@@ -1438,6 +1453,38 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
+                                {/* Wealth Tool: Dividend Snowball Calculator */}
+                                <a
+                                    href="/tools/dividend-snowball-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (onOpenDividendSnowballCalculator) onOpenDividendSnowballCalculator();
+                                    }}
+                                    className="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-xl group text-left cursor-pointer flex flex-col justify-between"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition">
+                                                <Coins size={22} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">
+                                                SCHD &amp; DRIP FIRE
+                                            </span>
+                                        </div>
+                                        <h4 className="text-base font-bold text-white mb-1 group-hover:text-emerald-300 transition">
+                                            Dividend Snowball Calculator
+                                        </h4>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Model DRIP dividend compounding, SCHD ETF growth rate, yield on cost (YOC), and calculate your exact FIRE retirement date.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between text-xs font-bold text-emerald-300">
+                                        <span>Model Snowball Free</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                                    </div>
+                                </a>
+
                                 {/* Crypto Tool 1: DCA Calculator & Multi-Buy Tracker */}
                                 <a
                                     href="/tools/dca-calculator"
@@ -2840,6 +2887,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <div className="space-y-2.5">
                             <h4 className="text-xs font-black uppercase tracking-widest text-amber-400">🪙 Crypto &amp; Futures</h4>
                             <ul className="space-y-2 text-xs">
+                                <li>
+                                    <a
+                                        href="/tools/dividend-snowball-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenDividendSnowballCalculator) {
+                                                e.preventDefault();
+                                                onOpenDividendSnowballCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Coins size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Dividend Snowball &amp; FIRE</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <a
                                         href="/tools/dca-calculator"

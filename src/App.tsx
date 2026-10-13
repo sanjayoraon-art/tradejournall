@@ -24,6 +24,7 @@ import { WashSaleCalculatorScreen } from './screens/WashSaleCalculatorScreen';
 import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen';
 import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
+import { DividendSnowballCalculatorScreen } from './screens/DividendSnowballCalculatorScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -439,6 +440,19 @@ function getFuturesPositionSizeRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Dividend Snowball Calculator (and keyword aliases)
+function getDividendSnowballRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/dividend-snowball-calculator') ||
+        path.includes('/tools/schd-dividend-snowball-calculator') ||
+        path.includes('/tools/dividend-snowball-effect-calculator') ||
+        path.includes('/tools/snowball-dividend-calculator') ||
+        path.includes('/tools/schd-dividend-calculator') ||
+        path.includes('/calculators/dividend-snowball')
+    );
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -455,6 +469,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getDividendSnowballRouteFromUrl()) return 'dividend-snowball-calc';
         if (getFuturesPositionSizeRouteFromUrl()) return 'futures-position-size-calc';
         if (getDcaRouteFromUrl()) return 'dca-calc';
         if (getRiskOfRuinRouteFromUrl()) return 'risk-of-ruin-calc';
@@ -484,7 +499,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -1187,6 +1202,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('risk-of-ruin-calc');
                     }}
+                    onOpenDividendSnowballCalculator={() => {
+                        window.history.pushState({}, '', '/tools/dividend-snowball-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('dividend-snowball-calc');
+                    }}
                     onOpenFuturesPositionSizeCalculator={() => {
                         window.history.pushState({}, '', '/tools/futures-position-size-calculator');
                         setShowLanding(false);
@@ -1830,6 +1850,26 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'dividend-snowball-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <DividendSnowballCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -1873,6 +1913,7 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<Coins size={17} className="text-emerald-400 font-bold" />} label="Dividend Snowball & FIRE" active={currentScreen === 'dividend-snowball-calc'} onClick={() => setCurrentScreen('dividend-snowball-calc')} badge="SNOWBALL" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400 font-bold" />} label="Futures Position Sizer" active={currentScreen === 'futures-position-size-calc'} onClick={() => setCurrentScreen('futures-position-size-calc')} badge="FUTURES" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
                         <DeskNavButton icon={<Scale size={17} className="text-emerald-400 font-bold" />} label="Wash Sale Tax Calc" active={currentScreen === 'wash-sale-calc'} onClick={() => setCurrentScreen('wash-sale-calc')} badge="IRS" />
@@ -2758,6 +2799,16 @@ const App = () => {
                                 });
                                 setShowAddTrade(true);
                             }}
+                        />
+                    )}
+
+                    {currentScreen === 'dividend-snowball-calc' && (
+                        <DividendSnowballCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
                         />
                     )}
 

@@ -35,6 +35,17 @@ export interface ToolItem {
 
 export const ALL_TOOLS_REGISTRY: ToolItem[] = [
     {
+        id: 'dividend-snowball',
+        title: 'Dividend Snowball & DRIP FIRE Calculator',
+        path: '/tools/dividend-snowball-calculator',
+        category: 'crypto',
+        categoryLabel: 'Dividend Wealth',
+        badge: 'SCHD & DRIP KD 22',
+        badgeColor: 'emerald',
+        description: 'Simulate exponential dividend snowball growth, DRIP compounding, SCHD ETF yield on cost (YOC), and FIRE milestone dates.',
+        icon: TrendingUp
+    },
+    {
         id: 'futures-position-size',
         title: 'Futures Position Size Calculator (Free)',
         path: '/tools/futures-position-size-calculator',

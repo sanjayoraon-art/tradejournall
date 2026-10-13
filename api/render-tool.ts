@@ -365,6 +365,35 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'gold futures position size calculator, gc futures position size, micro gold futures calculator',
         h1: 'Gold Futures Position Size Calculator (GC & MGC)',
         summary: 'Precision contract sizing for standard Gold (100 oz) and Micro Gold (10 oz) futures based on tick value and volatility stops.'
+    },
+    'dividend-snowball-calculator': {
+        title: 'Dividend Snowball Calculator | Free DRIP & SCHD Growth Tool | TradeJournall',
+        description: 'Free Dividend Snowball Calculator and DRIP compounding tool. Project annual and monthly dividend income, SCHD ETF growth, yield on cost (YOC), and your Financial Independence (FIRE) milestone date.',
+        category: 'Wealth & Dividend Investing',
+        keywords: 'dividend snowball calculator, schd dividend snowball calculator, dividend snowball effect calculator, snowball dividend calculator, drip return calculator, yield on cost calculator',
+        h1: 'Dividend Snowball Calculator & DRIP Compounding Visualizer',
+        summary: 'Simulate exponential dividend growth with DRIP reinvestment and annual dividend increases. Watch how monthly contributions and reinvested dividends snowball into full financial independence.',
+        faq: [
+            { q: 'What is the dividend snowball effect?', a: 'The dividend snowball effect happens when reinvested dividends buy more shares, which generate even larger dividends in future cycles, creating an exponential compounding curve.' },
+            { q: 'How does the SCHD dividend snowball calculator work?', a: 'Schwab U.S. Dividend Equity ETF (SCHD) historically provides a ~3.5% starting yield and ~8% to 11% dividend growth CAGR. Our tool models both share price growth and payout growth to project future cash flows.' },
+            { q: 'What is Yield on Cost (YOC)?', a: 'Yield on Cost measures your current annual dividend income divided by your original out-of-pocket capital invested, rather than today’s market price.' }
+        ]
+    },
+    'schd-dividend-snowball-calculator': {
+        title: 'SCHD Dividend Snowball Calculator (Free ETF DRIP Tool) | TradeJournall',
+        description: 'Free SCHD Dividend Snowball Calculator. Model Schwab US Dividend Equity ETF compounding, dividend CAGR, and retirement income milestones.',
+        category: 'Dividend Investing',
+        keywords: 'schd dividend snowball calculator, schd dividend calculator, schd drip calculator',
+        h1: 'SCHD Dividend Snowball & Compounding Calculator',
+        summary: 'Calculate your long-term passive income trajectory with Schwab U.S. Dividend Equity ETF (SCHD) using historical dividend growth rates.'
+    },
+    'dividend-snowball-effect-calculator': {
+        title: 'Dividend Snowball Effect Calculator | Model Compounding DRIP | TradeJournall',
+        description: 'Model the compounding dividend snowball effect with regular contributions, dividend reinvestment, and annual payout increases.',
+        category: 'Wealth Building',
+        keywords: 'dividend snowball effect calculator, snowball dividend calculator, dividend compounding calculator',
+        h1: 'Dividend Snowball Effect Compounding Calculator',
+        summary: 'Calculate when your reinvested dividends surpass your annual cash contributions and achieve financial freedom.'
     }
 };
 

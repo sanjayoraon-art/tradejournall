@@ -99,6 +99,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.90</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/dividend-snowball-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/schd-dividend-snowball-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/futures-position-size-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
