@@ -357,6 +357,21 @@ export const TOOLS_MASTER_LIST: ToolDefinition[] = [
 
     // 📑 Brokerage & Tax
     {
+        id: 'tax-loss-harvesting',
+        title: 'Tax Loss Harvesting Calculator (Free)',
+        shortTitle: 'Tax Loss Harvesting Calc',
+        path: '/tools/tax-loss-harvesting-calculator',
+        screenKey: 'tax-loss-harvesting-calc',
+        category: 'tax',
+        categoryLabel: 'Brokerage & Tax',
+        badge: 'Fidelity Alternative KD 28',
+        badgeColor: 'emerald',
+        description: 'Calculate tax loss harvesting savings, offset STCG/LTCG capital gains, claim up to $3,000 IRS salary deduction, and avoid 30-day wash sales.',
+        icon: Scale,
+        tags: ['tax loss harvesting', 'fidelity tax loss harvesting calculator', 'calculate tax loss harvesting', 'how to calculate tax loss harvesting', 'tax loss harvest calculator', 'tax-loss harvesting calculator', 'capital gains offset', 'irs schedule d'],
+        featured: true
+    },
+    {
         id: 'wash-sale',
         title: 'Wash Sale Rule Calculator (IRS § 1091)',
         shortTitle: 'Wash Sale Rule Calc',

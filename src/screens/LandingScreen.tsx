@@ -33,6 +33,7 @@ interface LandingScreenProps {
     onOpenIronCondorCalculator?: () => void;
     onOpenForexSwapCalculator?: () => void;
     onOpenWashSaleCalculator?: () => void;
+    onOpenTaxLossHarvestingCalculator?: () => void;
     onOpenRiskOfRuinCalculator?: () => void;
     onOpenDividendSnowballCalculator?: () => void;
     onOpenFuturesPositionSizeCalculator?: () => void;
@@ -63,6 +64,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     onOpenIronCondorCalculator,
     onOpenForexSwapCalculator,
     onOpenWashSaleCalculator,
+    onOpenTaxLossHarvestingCalculator,
     onOpenRiskOfRuinCalculator,
     onOpenDividendSnowballCalculator,
     onOpenFuturesPositionSizeCalculator,
@@ -343,6 +345,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                         <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
                         <span>Wash Sale</span>
                         <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black border border-emerald-500/30">IRS</span>
+                    </a>
+                    <a
+                        href="/tools/tax-loss-harvesting-calculator"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onOpenTaxLossHarvestingCalculator) onOpenTaxLossHarvestingCalculator();
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 transition flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-emerald-500/30 group"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                        <span>Tax Loss Harvest</span>
+                        <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black border border-emerald-500/30">KD 28</span>
                     </a>
                     <a
                         href="/tools/risk-of-ruin-calculator"
@@ -858,6 +873,28 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                             <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">IRS</span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-normal">61-day window &amp; Form 8949 loss tracker</p>
+                                    </div>
+                                </a>
+
+                                <a
+                                    href="/tools/tax-loss-harvesting-calculator"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenTaxLossHarvestingCalculator) onOpenTaxLossHarvestingCalculator();
+                                    }}
+                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800/80 text-emerald-400 font-bold text-xs transition text-left cursor-pointer border border-transparent hover:border-emerald-500/20 group mt-1"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                                        <Scale size={15} />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span>Tax Loss Harvesting</span>
+                                            <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[8px] font-black px-1.5 py-0.5 rounded">KD 28</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-normal">Calculate savings &amp; offset $3k salary</p>
                                     </div>
                                 </a>
 
@@ -3134,6 +3171,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
                                         <span>Wash Sale Rule (IRS § 1091)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="/tools/tax-loss-harvesting-calculator"
+                                        onClick={(e) => {
+                                            if (onOpenTaxLossHarvestingCalculator) {
+                                                e.preventDefault();
+                                                onOpenTaxLossHarvestingCalculator();
+                                            }
+                                        }}
+                                        className="hover:text-emerald-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Scale size={14} className="text-emerald-400 group-hover:scale-110 transition" />
+                                        <span>Tax Loss Harvesting (Fidelity Alt)</span>
                                     </a>
                                 </li>
                                 <li>

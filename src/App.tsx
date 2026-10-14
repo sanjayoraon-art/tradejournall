@@ -21,6 +21,7 @@ import { RevengeTradeCooldownScreen } from './screens/RevengeTradeCooldownScreen
 import { IronCondorCalculatorScreen } from './screens/IronCondorCalculatorScreen';
 import { ForexSwapFeeCalculatorScreen } from './screens/ForexSwapFeeCalculatorScreen';
 import { WashSaleCalculatorScreen } from './screens/WashSaleCalculatorScreen';
+import { TaxLossHarvestingCalculatorScreen } from './screens/TaxLossHarvestingCalculatorScreen';
 import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen';
 import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
@@ -401,6 +402,19 @@ function getWashSaleRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Tax Loss Harvesting Calculator (targeting US/UK keywords)
+function getTaxLossHarvestingRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/tax-loss-harvesting-calculator') ||
+        path.includes('/tools/tax-loss-harvest-calculator') ||
+        path.includes('/tools/fidelity-tax-loss-harvesting-calculator') ||
+        path.includes('/tools/calculate-tax-loss-harvesting') ||
+        path.includes('/tools/how-to-calculate-tax-loss-harvesting') ||
+        path.includes('/calculators/tax-loss-harvesting')
+    );
+}
+
 // Helper to check if URL path targets Dollar-Cost Averaging (DCA) Calculator
 function getDcaRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
@@ -482,6 +496,7 @@ const App = () => {
         if (getDcaRouteFromUrl()) return 'dca-calc';
         if (getRiskOfRuinRouteFromUrl()) return 'risk-of-ruin-calc';
         if (getWashSaleRouteFromUrl()) return 'wash-sale-calc';
+        if (getTaxLossHarvestingRouteFromUrl()) return 'tax-loss-harvesting-calc';
         if (getForexSwapRouteFromUrl()) return 'forex-swap-calc';
         if (getIronCondorRouteFromUrl()) return 'iron-condor-calc';
         if (getCryptoProfitRouteFromUrl()) return 'crypto-profit-calc';
@@ -566,6 +581,7 @@ const App = () => {
             getDcaRouteFromUrl() ||
             getRiskOfRuinRouteFromUrl() ||
             getWashSaleRouteFromUrl() ||
+            getTaxLossHarvestingRouteFromUrl() ||
             getForexSwapRouteFromUrl() ||
             getIronCondorRouteFromUrl() ||
             getCryptoProfitRouteFromUrl() ||
@@ -612,6 +628,9 @@ const App = () => {
             } else if (getWashSaleRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('wash-sale-calc');
+            } else if (getTaxLossHarvestingRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('tax-loss-harvesting-calc');
             } else if (getForexSwapRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('forex-swap-calc');
@@ -1317,6 +1336,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('wash-sale-calc');
                     }}
+                    onOpenTaxLossHarvestingCalculator={() => {
+                        window.history.pushState({}, '', '/tools/tax-loss-harvesting-calculator');
+                        setShowLanding(false);
+                        setCurrentScreen('tax-loss-harvesting-calc');
+                    }}
                     onOpenRiskOfRuinCalculator={() => {
                         window.history.pushState({}, '', '/tools/risk-of-ruin-calculator');
                         setShowLanding(false);
@@ -1912,6 +1936,30 @@ const App = () => {
                         onSignIn={() => {
                             setShowLanding(false);
                             setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
+        if (currentScreen === 'tax-loss-harvesting-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <TaxLossHarvestingCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onNavigateToWashSale={() => {
+                            window.history.pushState({}, '', '/tools/wash-sale-calculator');
+                            setCurrentScreen('wash-sale-calc');
                         }}
                     />
                 </div>
@@ -2919,6 +2967,20 @@ const App = () => {
                             primaryCurrencySymbol={globalCurrency}
                             onBackToLanding={() => setCurrentScreen('dashboard')}
                             onSignIn={() => setCurrentScreen('dashboard')}
+                        />
+                    )}
+
+                    {currentScreen === 'tax-loss-harvesting-calc' && (
+                        <TaxLossHarvestingCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
+                            onNavigateToWashSale={() => {
+                                window.history.pushState({}, '', '/tools/wash-sale-calculator');
+                                setCurrentScreen('wash-sale-calc');
+                            }}
                         />
                     )}
 

@@ -79,6 +79,17 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
         icon: ShieldAlert
     },
     {
+        id: 'tax-loss-harvesting',
+        title: 'Tax Loss Harvesting Calculator (IRS 2026)',
+        path: '/tools/tax-loss-harvesting-calculator',
+        category: 'tax',
+        categoryLabel: 'Tax Strategy',
+        badge: 'Fidelity Alternative KD 28',
+        badgeColor: 'emerald',
+        description: 'Calculate capital gains tax savings, offset short/long term gains, claim $3,000 IRS ordinary income write-offs, and track wash-sale safe ETF swaps.',
+        icon: Scale
+    },
+    {
         id: 'wash-sale',
         title: 'Wash Sale Rule Calculator (IRS § 1091)',
         path: '/tools/wash-sale-calculator',
