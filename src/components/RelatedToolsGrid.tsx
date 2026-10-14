@@ -424,9 +424,9 @@ export const RelatedToolsGrid: React.FC<RelatedToolsGridProps> = ({
                 })}
             </div>
 
-            {/* Expand / Collapse Button */}
-            {tabFilteredTools.length > initialLimit && (
-                <div className="relative z-10 mt-6 pt-4 border-t border-slate-800/80 flex justify-center">
+            {/* Expand / Collapse Button & All Tools Hub Link */}
+            <div className="relative z-10 mt-6 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-3">
+                {tabFilteredTools.length > initialLimit && (
                     <button
                         type="button"
                         onClick={() => setIsExpanded(!isExpanded)}
@@ -439,8 +439,16 @@ export const RelatedToolsGrid: React.FC<RelatedToolsGridProps> = ({
                         </span>
                         {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                     </button>
-                </div>
-            )}
+                )}
+                <a
+                    href="/tools"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/40 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition"
+                    style={{ textDecoration: 'none' }}
+                >
+                    <Grid size={13} className="text-emerald-400" />
+                    <span>View All Tools Directory (22+) &rarr;</span>
+                </a>
+            </div>
         </section>
     );
 };

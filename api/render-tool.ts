@@ -11,6 +11,20 @@ interface ToolMeta {
 }
 
 const TOOL_META_DATABASE: Record<string, ToolMeta> = {
+    // 0. All Tools Hub & Directory
+    'tools': {
+        title: 'All Free Quantitative Trading Tools & Calculators | TradeJournall',
+        description: 'Explore 22+ institutional-grade quantitative calculators for Prop Firms, Crypto Leverage, Options Greeks, Forex Swaps, DCA, and Tax compliance — 100% free.',
+        category: 'Quantitative Suite',
+        keywords: 'trading calculators, trading tools, prop firm calculator, crypto profit calculator, risk reward matrix, option theta calculator, trading journal tools',
+        h1: 'All Quantitative Trading Tools & Financial Calculators',
+        summary: 'Search and launch institutional-grade financial modeling tools to protect capital, master prop firm challenges, and calculate real trading performance.',
+        faq: [
+            { q: 'Are all TradeJournall trading calculators free to use?', a: 'Yes! All 22+ quantitative calculators and risk tools on TradeJournall are 100% free with no account signup required.' },
+            { q: 'What categories of trading tools are available?', a: 'TradeJournall provides tools for Prop Firm evaluation (FTMO, Apex, Topstep), Crypto Leverage & Liquidation, Options Greeks & Theta, Forex Swaps & Market Sessions, and Tax/Brokerage compliance.' }
+        ]
+    },
+
     // 1. Crypto Liquidation Calculator
     'crypto-liquidation-calculator': {
         title: 'Crypto Liquidation Calculator — Binance, Bybit & OKX Risk Management',
@@ -418,10 +432,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     // Normalize path key (extract last segment if nested)
     const segments = pathStr.split('/').filter(Boolean);
-    const toolKey = segments[segments.length - 1] || pathStr;
+    let toolKey = segments[segments.length - 1] || pathStr || 'tools';
+    if (!toolKey || toolKey === 'all' || toolKey === 'tools' || toolKey === 'calculators') {
+        toolKey = 'tools';
+    }
 
     const baseUrl = 'https://tradejournall.com';
-    const canonicalUrl = `${baseUrl}${req.url ? req.url.split('?')[0] : '/tools/' + toolKey}`;
+    const canonicalUrl = toolKey === 'tools' ? `${baseUrl}/tools` : `${baseUrl}${req.url ? req.url.split('?')[0] : '/tools/' + toolKey}`;
 
     let indexHtml = '';
     try {

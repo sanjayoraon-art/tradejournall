@@ -73,6 +73,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>1.0</priority>
   </url>
 
+  <!-- All Tools Directory Hub -->
+  <url>
+    <loc>${SITE_URL}/tools</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+
   <!-- Trading Tools and Risk Calculators -->
   <url>
     <loc>${SITE_URL}/tools/session-clock-ist</loc>

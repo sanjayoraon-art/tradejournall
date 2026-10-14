@@ -4,7 +4,7 @@ import {
     BookOpen, Clock, Sparkles, Loader2, Calculator, Scale, MoreVertical,
     ChevronDown, CheckCircle2, XCircle, Activity, Target, Shield, HelpCircle,
     Layers, Flame, Award, Lock, DollarSign, PieChart, Users, Check, AlertTriangle,
-    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign, RefreshCw, Coins, Percent
+    Eye, Smartphone, Grid, Compass, Landmark, CircleDollarSign, RefreshCw, Coins, Percent, Search
 } from 'lucide-react';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { SeoArticle } from '../components/SeoArticle';
@@ -17,6 +17,7 @@ import { DEFAULT_BLOG_POSTS } from '../utils/defaultArticles';
 interface LandingScreenProps {
     onSignIn: () => void;
     onOpenInfo: (page: 'about' | 'privacy' | 'terms' | 'contact') => void;
+    onOpenAllTools?: () => void;
     onOpenCalculator?: () => void;
     onOpenPropFirmCalculator?: () => void;
     onOpenLeverageCalculator?: () => void;
@@ -46,6 +47,7 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({
     onSignIn,
     onOpenInfo,
+    onOpenAllTools,
     onOpenCalculator,
     onOpenPropFirmCalculator,
     onOpenLeverageCalculator,
@@ -968,6 +970,23 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         <span>Trading Blog & Guides</span>
                                         <p className="text-[10px] text-slate-400 font-normal">Strategies, risk & psychology</p>
                                     </div>
+                                </a>
+                            </div>
+
+                            {/* Direct Hub Link to All Tools & Search */}
+                            <div className="border-t border-slate-800 pt-2 px-1">
+                                <a
+                                    href="/tools"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMenuOpen(false);
+                                        if (onOpenAllTools) onOpenAllTools();
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-purple-500/20 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 font-extrabold text-xs transition cursor-pointer text-center shadow-sm"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <Grid size={14} className="text-emerald-400" />
+                                    <span>View All Tools &amp; Search (22+) &rarr;</span>
                                 </a>
                             </div>
 
@@ -2911,6 +2930,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         <span>Revenge Cooldown Timer</span>
                                     </a>
                                 </li>
+                                <li className="pt-2 border-t border-slate-800/80">
+                                    <a
+                                        href="/tools"
+                                        onClick={(e) => {
+                                            if (onOpenAllTools) {
+                                                e.preventDefault();
+                                                onOpenAllTools();
+                                            }
+                                        }}
+                                        className="hover:text-purple-300 transition-colors text-purple-400 font-extrabold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Grid size={14} className="text-purple-400 group-hover:scale-110 transition" />
+                                        <span>View All Tools &rarr;</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 
@@ -3012,6 +3047,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                     >
                                         <Coins size={14} className="text-cyan-400 group-hover:scale-110 transition" />
                                         <span>Crypto Funding Rate APR Calc</span>
+                                    </a>
+                                </li>
+                                <li className="pt-2 border-t border-slate-800/80">
+                                    <a
+                                        href="/tools"
+                                        onClick={(e) => {
+                                            if (onOpenAllTools) {
+                                                e.preventDefault();
+                                                onOpenAllTools();
+                                            }
+                                        }}
+                                        className="hover:text-amber-300 transition-colors text-amber-400 font-extrabold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Grid size={14} className="text-amber-400 group-hover:scale-110 transition" />
+                                        <span>View All Tools &rarr;</span>
                                     </a>
                                 </li>
                             </ul>
@@ -3129,8 +3180,24 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                         className="hover:text-cyan-400 transition-colors text-slate-300 font-bold flex items-center gap-1.5 cursor-pointer text-left group"
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                         <Scale size={14} className="text-cyan-400 group-hover:scale-110 transition" />
                                         <span>Brokerage &amp; Tax Calculator</span>
+                                    </a>
+                                </li>
+                                <li className="pt-2 border-t border-slate-800/80">
+                                    <a
+                                        href="/tools"
+                                        onClick={(e) => {
+                                            if (onOpenAllTools) {
+                                                e.preventDefault();
+                                                onOpenAllTools();
+                                            }
+                                        }}
+                                        className="hover:text-cyan-300 transition-colors text-cyan-400 font-extrabold flex items-center gap-1.5 cursor-pointer text-left group"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Grid size={14} className="text-cyan-400 group-hover:scale-110 transition" />
+                                        <span>View All Tools &rarr;</span>
                                     </a>
                                 </li>
                             </ul>
@@ -3174,6 +3241,44 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 </li>
                             </ul>
                         </div>
+                    </div>
+
+                    {/* All Tools Discovery Banner (Under Tool Categories) */}
+                    <div className="pt-6 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4 bg-gradient-to-r from-purple-950/25 via-slate-900/60 to-emerald-950/25 p-5 rounded-2xl border border-slate-800/90 shadow-xl">
+                        <div className="flex items-center gap-3.5 text-left">
+                            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
+                                <Grid size={22} />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h5 className="font-extrabold text-sm sm:text-base text-white">
+                                        Looking for more financial calculators?
+                                    </h5>
+                                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-mono border border-emerald-500/30 font-black">
+                                        22+ FREE TOOLS
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-400 mt-0.5">
+                                    Search across all institutional-grade calculators for Prop Firms, Crypto Leverage, 0DTE Options, and Tax compliance.
+                                </p>
+                            </div>
+                        </div>
+
+                        <a
+                            href="/tools"
+                            onClick={(e) => {
+                                if (onOpenAllTools) {
+                                    e.preventDefault();
+                                    onOpenAllTools();
+                                }
+                            }}
+                            className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:scale-[1.02] cursor-pointer shrink-0"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <Search size={14} />
+                            <span>View All &amp; Search Tools</span>
+                            <ArrowRight size={14} />
+                        </a>
                     </div>
 
                     <div className="pt-6 border-t border-slate-800/80 text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-3">

@@ -25,6 +25,7 @@ import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen
 import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
 import { DividendSnowballCalculatorScreen } from './screens/DividendSnowballCalculatorScreen';
+import { ToolsScreen } from './screens/ToolsScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminScreen } from './screens/AdminScreen';
@@ -453,6 +454,12 @@ function getDividendSnowballRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets the All Tools Directory Hub
+function getToolsRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase().replace(/\/$/, '');
+    return path === '/tools' || path === '/calculators' || path === '/tools/all';
+}
+
 // Helper to get blog routing from URL path (/blog or /blog/my-article)
 function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | null } {
     const path = window.location.pathname;
@@ -469,6 +476,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getToolsRouteFromUrl()) return 'all-tools';
         if (getDividendSnowballRouteFromUrl()) return 'dividend-snowball-calc';
         if (getFuturesPositionSizeRouteFromUrl()) return 'futures-position-size-calc';
         if (getDcaRouteFromUrl()) return 'dca-calc';
@@ -499,7 +507,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'all-tools' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -551,9 +559,116 @@ const App = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
-        if (getPropFirmScalingRouteFromUrl() || getPropFirmPayoutRouteFromUrl() || getCryptoFundingRouteFromUrl() || getApexConsistencyRouteFromUrl() || getPcrRouteFromUrl() || getOptionThetaRouteFromUrl() || getRevengeCooldownRouteFromUrl() || getSessionClockRouteFromUrl() || getRiskRewardMatrixRouteFromUrl() || getDrawdownRecoveryRouteFromUrl() || getLeverageRouteFromUrl() || getPropFirmRouteFromUrl() || getBrokerageRouteFromUrl()) return false;
+        if (
+            getToolsRouteFromUrl() ||
+            getDividendSnowballRouteFromUrl() ||
+            getFuturesPositionSizeRouteFromUrl() ||
+            getDcaRouteFromUrl() ||
+            getRiskOfRuinRouteFromUrl() ||
+            getWashSaleRouteFromUrl() ||
+            getForexSwapRouteFromUrl() ||
+            getIronCondorRouteFromUrl() ||
+            getCryptoProfitRouteFromUrl() ||
+            getCrossVsIsolatedRouteFromUrl() ||
+            getPropFirmScalingRouteFromUrl() ||
+            getPropFirmPayoutRouteFromUrl() ||
+            getCryptoFundingRouteFromUrl() ||
+            getApexConsistencyRouteFromUrl() ||
+            getPcrRouteFromUrl() ||
+            getOptionThetaRouteFromUrl() ||
+            getRevengeCooldownRouteFromUrl() ||
+            getSessionClockRouteFromUrl() ||
+            getRiskRewardMatrixRouteFromUrl() ||
+            getDrawdownRecoveryRouteFromUrl() ||
+            getLeverageRouteFromUrl() ||
+            getPropFirmRouteFromUrl() ||
+            getBrokerageRouteFromUrl()
+        ) return false;
         return true;
     });
+
+    // Browser Back / Forward Button Handling (History PopState)
+    useEffect(() => {
+        const handlePopState = () => {
+            const path = window.location.pathname.toLowerCase().replace(/\/$/, '');
+            if (path === '' || path === '/' || path === '/index.html') {
+                setShowLanding(true);
+                setCurrentScreen('dashboard');
+            } else if (getToolsRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('all-tools');
+            } else if (getDividendSnowballRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('dividend-snowball-calc');
+            } else if (getFuturesPositionSizeRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('futures-position-size-calc');
+            } else if (getDcaRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('dca-calc');
+            } else if (getRiskOfRuinRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('risk-of-ruin-calc');
+            } else if (getWashSaleRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('wash-sale-calc');
+            } else if (getForexSwapRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('forex-swap-calc');
+            } else if (getIronCondorRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('iron-condor-calc');
+            } else if (getCryptoProfitRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('crypto-profit-calc');
+            } else if (getCrossVsIsolatedRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('cross-vs-isolated-calc');
+            } else if (getPropFirmScalingRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('prop-firm-scaling-calc');
+            } else if (getPropFirmPayoutRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('prop-firm-payout-calc');
+            } else if (getCryptoFundingRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('crypto-funding-calc');
+            } else if (getApexConsistencyRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('apex-consistency-calc');
+            } else if (getPcrRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('pcr-calc');
+            } else if (getOptionThetaRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('option-theta-calc');
+            } else if (getRevengeCooldownRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('cooldown-timer');
+            } else if (getSessionClockRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('session-clock');
+            } else if (getRiskRewardMatrixRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('risk-reward');
+            } else if (getDrawdownRecoveryRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('drawdown-calc');
+            } else if (getLeverageRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('leverage-calc');
+            } else if (getPropFirmRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('prop-firm-calc');
+            } else if (getBrokerageRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('brokerage-calc');
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
     const [infoPage, setInfoPage] = useState<'about' | 'privacy' | 'terms' | 'contact' | null>(null);
     const chatEndRef = React.useRef<HTMLDivElement>(null);
     // Analytics Tracking
@@ -1121,6 +1236,11 @@ const App = () => {
                         setShowLanding(false);
                         setCurrentScreen('dashboard');
                     }}
+                    onOpenAllTools={() => {
+                        window.history.pushState({}, '', '/tools');
+                        setShowLanding(false);
+                        setCurrentScreen('all-tools');
+                    }}
                     onOpenInfo={(page) => setInfoPage(page)}
                     onOpenCalculator={() => {
                         window.history.pushState({}, '', '/calculators/stocks/zerodha-vs-groww-brokerage-calculator');
@@ -1234,6 +1354,28 @@ const App = () => {
                     }}
                     theme={theme}
                     isDarkMode={isDarkMode}
+                />
+            );
+        }
+        if (currentScreen === 'all-tools') {
+            return (
+                <ToolsScreen
+                    theme={theme}
+                    isDarkMode={isDarkMode}
+                    onBackToLanding={() => {
+                        setCurrentScreen('dashboard');
+                        setShowLanding(true);
+                        window.history.pushState({}, '', '/');
+                    }}
+                    onSignIn={() => {
+                        setShowLanding(false);
+                        setCurrentScreen('dashboard');
+                    }}
+                    onNavigateToTool={(route, screenKey) => {
+                        window.history.pushState({}, '', route);
+                        setShowLanding(false);
+                        setCurrentScreen(screenKey);
+                    }}
                 />
             );
         }
@@ -1913,6 +2055,10 @@ const App = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-3 block mb-1">
                             Risk Tools
                         </span>
+                        <DeskNavButton icon={<Grid size={17} className="text-emerald-400 font-bold" />} label="All Tools & Calculators" active={currentScreen === 'all-tools'} onClick={() => {
+                            window.history.pushState({}, '', '/tools');
+                            setCurrentScreen('all-tools');
+                        }} badge="22+" />
                         <DeskNavButton icon={<Coins size={17} className="text-emerald-400 font-bold" />} label="Dividend Snowball & FIRE" active={currentScreen === 'dividend-snowball-calc'} onClick={() => setCurrentScreen('dividend-snowball-calc')} badge="SNOWBALL" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400 font-bold" />} label="Futures Position Sizer" active={currentScreen === 'futures-position-size-calc'} onClick={() => setCurrentScreen('futures-position-size-calc')} badge="FUTURES" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
@@ -2456,6 +2602,23 @@ const App = () => {
                         <div className="h-[calc(100vh-140px)]">
                             <AiChatScreen theme={theme} chatMessages={chatMessages} isThinking={isThinking} chatEndRef={chatEndRef} chatInput={chatInput} setChatInput={setChatInput} handleAiAsk={handleAiAsk} products={products} trackProductClick={trackProductClick} />
                         </div>
+                    )}
+
+                    {currentScreen === 'all-tools' && (
+                        <ToolsScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            onBackToLanding={() => {
+                                setCurrentScreen('dashboard');
+                                setShowLanding(false);
+                                window.history.pushState({}, '', '/');
+                            }}
+                            onSignIn={() => {}}
+                            onNavigateToTool={(route, screenKey) => {
+                                window.history.pushState({}, '', route);
+                                setCurrentScreen(screenKey);
+                            }}
+                        />
                     )}
 
                     {currentScreen === 'risk-reward' && (
