@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  
+  <!-- Primary Meta Tags -->
+  <title>Revenge Trade Cooldown Clock & Psychological Reset Widget | TradeJournal</title>
+  <meta name="title" content="Revenge Trade Cooldown Clock & Psychological Reset Widget | TradeJournal" />
+  <meta name="description" content="Interactive 15-minute revenge trading cooldown timer and stop-loss emotional reset tool. Features Trading in the Zone discipline quotes, 1% risk position sizing safety check, and daily loss limit circuit breaker." />
+  <meta name="keywords" content="revenge trading cooldown timer, stop loss emotional reset tool, trading discipline timer with quotes, how to stop revenge trading tool, daily loss limit cooldown clock, trading tilt breaker, mark douglas quotes tool" />
+  <meta name="theme-color" content="#0F172A" />
+  <link rel="canonical" href="https://tradejournall.com/tools/revenge-trading-cooldown-timer" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tradejournall.com/tools/revenge-trading-cooldown-timer" />
+  <meta property="og:title" content="Revenge Trade Cooldown Clock & Psychological Reset Widget" />
+  <meta property="og:description" content="Halt emotional revenge trading after hitting a stop-loss. Interactive 15-minute cooldown timer, discipline quotes, and position sizing check." />
+  <meta property="og:image" content="https://tradejournall.com/logo.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://tradejournall.com/tools/revenge-trading-cooldown-timer" />
+  <meta property="twitter:title" content="Revenge Trade Cooldown Clock - TradeJournal" />
+  <meta property="twitter:description" content="Stop loss emotional reset tool with dynamic quotes & daily loss circuit breaker." />
+  <meta property="twitter:image" content="https://tradejournall.com/logo.png" />
+
+  <!-- Structured JSON-LD Schema for Google Rich Snippets -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Revenge Trade Cooldown Clock & Psychological Reset Widget",
+        "alternateName": "Stop Loss Emotional Reset Tool & Trading Discipline Timer",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web Application, iOS, Android",
+        "url": "https://tradejournall.com/tools/revenge-trading-cooldown-timer",
+        "image": "https://tradejournall.com/logo.png",
+        "description": "Interactive 15-minute revenge trading cooldown timer and psychological reset widget for day traders, options scalpers, and forex traders.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Instant 15-minute emotional cooldown timer after hitting a stop-loss",
+          "Dynamic rotating library of 25+ Trading in the Zone discipline quotes",
+          "Daily loss limit circuit breaker with 3-loss terminal shutdown alert",
+          "Strict 1% capital risk position sizing calculator",
+          "Integrated 4-4-4-4 Box Breathing visual guide to lower heart rate and eliminate tilt",
+          "Web Audio API calming zen harmonic chime on timer completion"
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            deepCharcoal: '#0F172A',
+            activeIndigo: '#1E1B4B',
+            alertRed: '#EF4444',
+            safeGreen: '#22C55E',
+            quoteGold: '#F59E0B'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body id="pageBody" class="bg-[#0F172A] text-slate-100 font-sans antialiased transition-colors duration-700 min-h-screen flex flex-col justify-between selection:bg-rose-500/30 selection:text-rose-200">
+
+  <div class="max-w-3xl mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 flex flex-col justify-between flex-grow gap-5">
+
+    <!-- TOP HEADER -->
+    <header class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+      <div class="flex items-center gap-2.5">
+        <a href="https://tradejournall.com/" class="flex items-center gap-2 group text-decoration-none">
+          <div class="w-7 h-7 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 group-hover:scale-105 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/></svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-sm font-black tracking-tight text-white group-hover:text-rose-400 transition">
+              TradeJournal<span class="text-rose-400">.com</span>
+            </span>
+            <span class="text-[10px] text-slate-400 font-medium">Psychological Reset Engine</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="soundToggleBtn" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border border-slate-700 bg-slate-800/90 text-emerald-400 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" stroke-width="2"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" stroke-width="2"/></svg>
+          <span id="soundText">Chime ON</span>
+        </button>
+        <button id="shareBtn" class="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition cursor-pointer" title="Copy shareable link">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke-width="2"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke-width="2"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke-width="2"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- DAILY LOSS LIMIT BREAKER BAR -->
+    <div id="lossAlertBox" class="px-3 py-2 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Daily Loss Limit Cooldown Clock:</span>
+        <strong id="lossCountText" class="text-white">0 Stop-Losses Hit Today</strong>
+      </div>
+      <span class="text-[11px] text-slate-400 hidden sm:inline">Max limit: 3 losses before mandatory terminal shutdown</span>
+    </div>
+
+    <!-- 1. MAIN ACTION TRIGGER (RED BUTTON) -->
+    <section class="text-center space-y-3">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[11px] font-bold tracking-wider uppercase">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/></svg>
+          <span>Stop Loss Emotional Reset Tool</span>
+        </div>
+        <h1 class="text-xl sm:text-3xl font-black text-white tracking-tight">
+          Revenge Trading Cooldown Timer
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">
+          Halt emotional cortisol spikes, break the tilt cycle, and lock in capital protection before you take another trade.
+        </p>
+      </div>
+
+      <!-- Duration Presets -->
+      <div class="flex items-center justify-center gap-2 pt-1">
+        <button data-duration="300" class="dur-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 cursor-pointer">5 Min</button>
+        <button data-duration="900" class="dur-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-rose-500/20 border border-rose-500 text-rose-300 shadow-sm shadow-rose-500/20 cursor-pointer">15 Min (Recommended)</button>
+        <button data-duration="1800" class="dur-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 cursor-pointer">30 Min</button>
+      </div>
+
+      <!-- Big Red Trigger Button -->
+      <div class="pt-2">
+        <button id="triggerBtn" class="w-full sm:w-auto px-8 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 hover:from-rose-500 hover:to-red-600 text-white font-black text-base sm:text-xl tracking-tight shadow-2xl shadow-rose-600/30 hover:shadow-rose-600/50 hover:scale-[1.02] active:scale-[0.99] transition duration-200 border border-rose-400/40 cursor-pointer flex items-center justify-center gap-3 mx-auto">
+          <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white">🛑</div>
+          <span>STOP-LOSS HIT — START COOL-DOWN</span>
+        </button>
+        <p class="text-[11px] text-slate-400 mt-2">
+          Click to start <span id="durLabel">15</span>-minute emotional reset &amp; lock in capital protection.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. INTERACTIVE COOLDOWN TIMER ENGINE & BOX BREATHING -->
+    <section id="timerBox" class="p-6 sm:p-8 rounded-3xl border transition-all duration-700 text-center space-y-5 relative overflow-hidden shadow-2xl bg-slate-900/80 border-slate-800">
+      <div class="flex items-center justify-center gap-2">
+        <span id="timerBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border bg-slate-800 border-slate-700 text-slate-400">
+          Ready for Trigger
+        </span>
+      </div>
+
+      <div class="space-y-1">
+        <div id="timerDisplay" class="font-mono text-5xl sm:text-7xl font-black tracking-tight text-white drop-shadow-[0_0_25px_rgba(239,68,68,0.2)]">
+          15:00
+        </div>
+        <p id="timerSubtext" class="text-xs text-slate-400 font-medium">
+          Click button above to initiate cooldown timer
+        </p>
+      </div>
+
+      <!-- Visual Progress Bar -->
+      <div class="w-full max-w-md mx-auto space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+          <span id="elapsedPercentText">Elapsed: 0%</span>
+          <span id="minLeftText">15 min left</span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
+          <div id="timerProgressBar" class="h-full rounded-full transition-all duration-1000 bg-slate-700" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Timer Control Actions -->
+      <div id="controlsGroup" class="hidden flex items-center justify-center gap-3 pt-2">
+        <button id="pauseResumeBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition cursor-pointer border border-slate-700">Pause</button>
+        <button id="resetBtn" class="px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-bold transition cursor-pointer border border-slate-700">Reset</button>
+      </div>
+
+      <!-- Box Breathing Widget -->
+      <div id="breathingBox" class="hidden pt-4 border-t border-indigo-900/60 max-w-sm mx-auto space-y-2">
+        <div class="flex items-center justify-center gap-2 text-xs font-bold text-indigo-300">
+          <svg class="w-4 h-4 text-cyan-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" stroke-width="2"/></svg>
+          <span>4-4-4-4 Box Breathing Technique:</span>
+        </div>
+        <div class="p-3 rounded-2xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center gap-4">
+          <span id="breathingText" class="text-sm font-black text-white uppercase tracking-wider">🌬️ INHALE (4s)</span>
+        </div>
+        <p class="text-[10px] text-slate-400">
+          Slow, rhythmic breathing signals your parasympathetic nervous system to switch off the fight-or-flight response.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. DYNAMIC PSYCHOLOGICAL MOTIVATION ENGINE -->
+    <section class="p-5 sm:p-6 rounded-2xl bg-slate-900/90 border border-slate-800 relative space-y-3 shadow-xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-1.5 text-xs font-bold text-amber-400 uppercase tracking-wider">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-width="2"/></svg>
+          <span>Trading Discipline Timer With Quotes</span>
+        </div>
+        <button id="nextQuoteBtn" class="text-[11px] font-bold text-slate-400 hover:text-white transition flex items-center gap-1 cursor-pointer">
+          <span>Next Wisdom &rarr;</span>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <blockquote id="quoteText" class="text-sm sm:text-base font-semibold text-slate-100 italic leading-relaxed border-l-2 border-amber-500 pl-3">
+          &ldquo;A loss is just a business expense. Don't let a small loss turn into an account-destroying revenge trade.&rdquo;
+        </blockquote>
+        <div class="flex items-center gap-2 text-xs text-amber-400/90 font-medium pl-3">
+          <span id="quoteAuthor">&mdash; Mark Douglas</span>
+          <span class="text-slate-500">&bull;</span>
+          <span id="quoteContext" class="text-slate-400 text-[11px]">Trading in the Zone</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. POSITION SIZING SAFETY CHECK -->
+    <section class="p-5 sm:p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" stroke-width="2"/><line x1="8" y1="6" x2="16" y2="6" stroke-width="2"/><line x1="16" y1="14" x2="16" y2="18" stroke-width="2"/><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" stroke-width="2"/></svg>
+          <h3 class="text-sm font-bold text-white">Next Trade Rule: Keep Risk Strictly at 1% (Do NOT Double Sizing)</h3>
+        </div>
+        <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">Martingale = Account Suicide</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Capital ($)</label>
+          <input type="number" id="calcBalance" value="10000" class="w-full bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Max Risk % (Strict)</label>
+          <input type="number" id="calcRisk" value="1" step="0.25" max="2" min="0.25" class="w-full bg-transparent font-mono font-bold text-emerald-400 text-sm focus:outline-none" />
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SL Distance (Pts/Pips)</label>
+          <input type="number" id="calcStopLoss" value="20" class="w-full bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div class="space-y-0.5">
+          <div id="maxRiskOutput" class="font-bold text-emerald-300">Max Allowed Risk on Next Trade: $100.00</div>
+          <p id="recUnitsOutput" class="text-[11px] text-slate-400">Recommended sizing: Max 5 units / shares based on 20-point stop loss.</p>
+        </div>
+        <div class="text-[10px] font-bold text-slate-400">Never exceed this threshold to &ldquo;make it back fast.&rdquo;</div>
+      </div>
+    </section>
+
+    <!-- 7. CONVERSION CALL-TO-ACTION (CTA) FOOTER BAR -->
+    <footer class="pt-2">
+      <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-rose-950/40 via-indigo-950/40 to-slate-900 border border-rose-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left shadow-lg">
+        <div class="space-y-0.5">
+          <div class="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-rose-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-width="2"/></svg>
+            <span>Build Unbreakable Trading Discipline</span>
+          </div>
+          <p class="text-xs text-slate-300 font-medium">
+            Mastering discipline is the key to profitability. Track your emotional setups and trade logs automatically with TradeJournal.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <a href="https://tradejournall.com/" class="px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-black text-xs transition duration-200 shadow-lg shadow-rose-500/20 cursor-pointer flex items-center gap-1.5 text-decoration-none">
+            <span>Start Free Trial</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke-width="2"/><polyline points="15 3 21 3 21 9" stroke-width="2"/><line x1="10" y1="14" x2="21" y2="3" stroke-width="2"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="text-center py-2 text-[10px] text-slate-500">
+        &copy; 2026 TradeJournal.com &bull; Revenge Trade Cooldown Clock &bull; All Rights Reserved.
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    (function() {
+      const QUOTES = [
+        { q: "A loss is just a business expense. Don't let a small loss turn into an account-destroying revenge trade.", a: "Mark Douglas", c: "Trading in the Zone" },
+        { q: "The market doesn't know you exist. It is not personal. Respect your stop-loss.", a: "Tom Hougaard", c: "Best Loser Wins" },
+        { q: "One trade will not make your career, but one bad revenge trade can end it.", a: "Paul Tudor Jones", c: "Legendary Macro Trader" },
+        { q: "Amateurs focus on how much they can make. Professionals focus on how much they can lose.", a: "Jack Schwager", c: "Market Wizards" },
+        { q: "Accepting a loss is an act of supreme discipline. You followed your rules. You did your job.", a: "Brett Steenbarger", c: "The Daily Trading Coach" },
+        { q: "You cannot hurt the market by increasing your position size. You can only hurt your own family and financial future.", a: "Discipline Truth", c: "Capital Protection" },
+        { q: "When in doubt, step out. The market will be here tomorrow, next week, and next decade. Will your account?", a: "Pro Trading Axiom", c: "Longevity First" },
+        { q: "Doubling down after a stop loss is Martingale insanity. Risk 1%, stay in the game.", a: "Mathematical Edge", c: "Risk Management" }
+      ];
+
+      function playCalmChime() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
+          const now = ctx.currentTime;
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(528, now);
+          gain1.gain.setValueAtTime(0.2, now);
+          gain1.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(now);
+          osc1.stop(now + 1.25);
+        } catch(e) {}
+      }
+
+      let selectedDur = 900;
+      let timeLeft = 900;
+      let timerRunning = false;
+      let timerInterval = null;
+      let soundOn = true;
+      let lossCount = 0;
+
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+
+      function updateUI() {
+        document.getElementById('timerDisplay').textContent = formatTime(timeLeft);
+        const elapsed = selectedDur - timeLeft;
+        const pct = Math.min(100, Math.round((elapsed / selectedDur) * 100));
+        document.getElementById('elapsedPercentText').textContent = `Elapsed: ${pct}%`;
+        document.getElementById('minLeftText').textContent = `${Math.ceil(timeLeft / 60)} min left`;
+        document.getElementById('timerProgressBar').style.width = `${pct}%`;
+      }
+
+      function nextQuote() {
+        const item = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+        document.getElementById('quoteText').innerHTML = `&ldquo;${item.q}&rdquo;`;
+        document.getElementById('quoteAuthor').textContent = `— ${item.a}`;
+        document.getElementById('quoteContext').textContent = item.c;
+      }
+
+      document.getElementById('triggerBtn').addEventListener('click', () => {
+        nextQuote();
+        lossCount++;
+        document.getElementById('lossCountText').textContent = `${lossCount} Stop-Losses Hit Today`;
+        if (lossCount >= 3) {
+          document.getElementById('lossAlertBox').className = 'p-4 rounded-xl bg-rose-950 border-2 border-rose-500 text-white font-bold animate-pulse text-xs';
+          document.getElementById('lossAlertBox').innerHTML = '🚨 TRADING SESSION OVER: 3 Losses Hit Today. Turn off terminal immediately to protect remaining capital.';
+        }
+        timeLeft = selectedDur;
+        timerRunning = true;
+        document.getElementById('pageBody').className = 'bg-[#1E1B4B] text-slate-100 font-sans antialiased transition-colors duration-700 min-h-screen flex flex-col justify-between';
+        document.getElementById('timerBox').className = 'p-6 sm:p-8 rounded-3xl border transition-all duration-700 text-center space-y-5 relative overflow-hidden shadow-2xl bg-[#1E1B4B]/90 border-indigo-500/50 shadow-indigo-950/50';
+        document.getElementById('timerBadge').className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border bg-indigo-500/20 border-indigo-400 text-indigo-300 animate-pulse';
+        document.getElementById('timerBadge').textContent = '● Cooldown Active — Step Away From Terminal';
+        document.getElementById('controlsGroup').classList.remove('hidden');
+        document.getElementById('breathingBox').classList.remove('hidden');
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          if (timeLeft <= 1) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            if (soundOn) playCalmChime();
+            document.getElementById('timerBadge').className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border bg-emerald-500/20 border-emerald-400 text-emerald-300';
+            document.getElementById('timerBadge').textContent = '✓ Emotional Reset Complete';
+          } else {
+            timeLeft--;
+            updateUI();
+          }
+        }, 1000);
+      });
+
+      document.querySelectorAll('.dur-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          if (timerRunning) return;
+          selectedDur = parseInt(this.getAttribute('data-duration'), 10);
+          timeLeft = selectedDur;
+          document.querySelectorAll('.dur-btn').forEach(b => {
+            b.className = 'dur-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 cursor-pointer';
+          });
+          this.className = 'dur-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-rose-500/20 border border-rose-500 text-rose-300 shadow-sm shadow-rose-500/20 cursor-pointer';
+          document.getElementById('durLabel').textContent = Math.floor(selectedDur / 60);
+          updateUI();
+        });
+      });
+
+      document.getElementById('nextQuoteBtn').addEventListener('click', nextQuote);
+
+      document.getElementById('soundToggleBtn').addEventListener('click', () => {
+        soundOn = !soundOn;
+        document.getElementById('soundText').textContent = soundOn ? 'Chime ON' : 'Chime OFF';
+      });
+
+      function updateCalculator() {
+        const bal = parseFloat(document.getElementById('calcBalance').value) || 10000;
+        const rk = parseFloat(document.getElementById('calcRisk').value) || 1;
+        const sl = parseFloat(document.getElementById('calcStopLoss').value) || 20;
+        const maxDollar = (bal * rk) / 100;
+        const units = sl > 0 ? (maxDollar / sl).toFixed(1) : 0;
+        document.getElementById('maxRiskOutput').textContent = `Max Allowed Risk on Next Trade: $${maxDollar.toFixed(2)}`;
+        document.getElementById('recUnitsOutput').textContent = `Recommended sizing: Max ${units} units / shares based on ${sl}-point stop loss.`;
+      }
+
+      ['calcBalance', 'calcRisk', 'calcStopLoss'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateCalculator);
+      });
+
+      updateUI();
+      updateCalculator();
+    })();
+  </script>
+</body>
+</html>

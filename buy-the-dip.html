@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Candle Clash — Stock & Crypto Day Trading Simulator Game</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Play Candle Clash online! An intense crypto & stock market day trading simulator. Buy bottom wicks, leverage up to 100x, time your exits, and squeeze the bears. Free to play!">
+    <meta name="keywords" content="candle clash, candle clash game, trading game, crypto trading game, stock market game, day trading simulator, buy the dip, bull vs bear, trade journal game">
+    <meta name="author" content="Trade Journal">
+    <link rel="canonical" href="https://tradejournall.com/buy-the-dip">
+
+    <!-- Schema.org JSON-LD Structured Data for Game -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Candle Clash: Stock & Crypto Trading Game",
+      "url": "https://tradejournall.com/buy-the-dip",
+      "applicationCategory": "GameApplication",
+      "genre": "Trading Simulator, Educational Game, Day Trading Game",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript",
+      "description": "Play Candle Clash — an addictive stock & crypto day trading simulator. Test your market instincts, time bottom wicks, and squeeze the bears in real-time.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Fonts for High-Tech / Crypto Aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #07080a;
+            --card-bg: rgba(13, 16, 23, 0.9);
+            --card-border: rgba(255, 255, 255, 0.08);
+            
+            /* Neon Colors */
+            --neon-cyan: #00f0ff;
+            --neon-green: #00ff66;
+            --neon-red: #ff0055;
+            --neon-yellow: #ffb700;
+            --neon-purple: #b537f2;
+            
+            /* Text colors */
+            --text-main: #ffffff;
+            --text-sub: #7f8fa4;
+            
+            /* Glows */
+            --glow-cyan: 0 0 15px rgba(0, 240, 255, 0.4);
+            --glow-green: 0 0 15px rgba(0, 255, 102, 0.4);
+            --glow-red: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(0, 255, 102, 0.06) 0%, transparent 45%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        /* Container & Card */
+        .game-wrapper {
+            width: 100%;
+            max-width: 980px;
+            perspective: 1000px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.1s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Screen Shake effect on Crash/Loss */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px) rotate(-0.5deg); }
+            40%, 80% { transform: translateX(6px) rotate(0.5deg); }
+        }
+
+        .game-card.shaking {
+            animation: shake 0.25s infinite;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 35px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Header Bar: Asset selector, Live Mode & Sound */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .asset-selector {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .asset-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 5px 9px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .asset-btn.active {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Portfolio & Stats Dashboard */
+        .dashboard-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .dash-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .dash-lbl {
+            font-size: 0.58rem;
+            color: var(--text-sub);
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .dash-val {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        .dash-val.pnl-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 102, 0.3); }
+        .dash-val.pnl-red { color: var(--neon-red); text-shadow: 0 0 8px rgba(255, 0, 85, 0.3); }
+        .dash-val.timer { color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255, 183, 0, 0.3); }
+
+        /* Leverage Selector */
+        .leverage-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 4px 10px;
+            margin-bottom: 10px;
+            font-size: 0.68rem;
+        }
+
+        .leverage-lbl {
+            font-weight: 800;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .leverage-options {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lev-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-sub);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lev-btn.active {
+            background: var(--neon-yellow);
+            color: #000;
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 10px rgba(255, 183, 0, 0.4);
+        }
+
+        .lev-btn.active.degen {
+            background: var(--neon-red);
+            color: #fff;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        /* Live Market Event Ticker */
+        .event-banner {
+            background: linear-gradient(90deg, rgba(255, 0, 85, 0.15), rgba(0, 240, 255, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 6px 12px;
+            margin-bottom: 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .event-banner.whale {
+            background: rgba(255, 0, 85, 0.25);
+            border-color: var(--neon-red);
+            color: #ff3377;
+            animation: shake 0.2s 2;
+        }
+
+        .event-banner.elon {
+            background: rgba(0, 255, 102, 0.25);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .event-banner.squeeze {
+            background: rgba(0, 240, 255, 0.25);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        /* Candlestick Chart Area */
+        .chart-container {
+            position: relative;
+            height: min(290px, 38vh);
+            width: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .chart-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .center-guide-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            border-left: 1.5px dashed rgba(0, 240, 255, 0.25);
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .center-guide-line::after {
+            content: '🎯 CENTER';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.46rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: rgba(0, 240, 255, 0.65);
+            letter-spacing: 1px;
+            background: rgba(7, 8, 10, 0.85);
+            padding: 1px 5px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+        }
+
+        .grid-line {
+            position: absolute;
+            width: 100%;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .grid-line span {
+            background: rgba(13, 16, 23, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-size: 0.52rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+        }
+
+        .grid-line.sniper-zone {
+            border-bottom: 1.5px dashed rgba(0, 240, 255, 0.4);
+        }
+        .grid-line.sniper-zone span {
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 240, 255, 0.35);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+        }
+
+        .grid-line.break-even {
+            border-bottom: 1.5px dashed rgba(255, 183, 0, 0.3);
+        }
+        .grid-line.break-even span {
+            color: var(--neon-yellow);
+            border: 1px solid rgba(255, 183, 0, 0.3);
+        }
+
+        /* Candles container - Centered Active Candle */
+        .candles-view {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            gap: 7px;
+            width: 100%;
+            height: 100%;
+            padding-left: 50%;
+            padding-right: calc(50% - 6px);
+            position: relative;
+            z-index: 2;
+            overflow-x: hidden;
+            scroll-behavior: auto;
+        }
+
+        .candle {
+            position: relative;
+            width: 12px;
+            height: 100%;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .candle.green-candle {
+            color: var(--neon-green);
+        }
+
+        .candle.red-candle {
+            color: var(--neon-red);
+        }
+
+        .candle.green-candle .body {
+            background: linear-gradient(180deg, #00ff66 0%, #00b347 100%);
+            border: 1px solid #33ff88;
+            box-shadow: 0 0 7px rgba(0, 255, 102, 0.45);
+        }
+
+        .candle.red-candle .body {
+            background: linear-gradient(180deg, #ff0055 0%, #b3003b 100%);
+            border: 1px solid #ff3377;
+            box-shadow: 0 0 7px rgba(255, 0, 85, 0.45);
+        }
+
+        .wick {
+            position: absolute;
+            width: 2px;
+            background: currentColor;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 1px;
+            opacity: 0.9;
+            box-shadow: 0 0 5px currentColor;
+        }
+
+        .body {
+            position: absolute;
+            width: 100%;
+            border-radius: 2px;
+            transition: bottom 0.05s linear, height 0.05s linear;
+        }
+
+        /* Active Live Candle Highlight & Pulse */
+        .candle.active-live-candle .body {
+            box-shadow: 0 0 14px currentColor, inset 0 0 4px #ffffff;
+            animation: live-candle-glow 0.5s infinite alternate;
+        }
+
+        @keyframes live-candle-glow {
+            0% { filter: brightness(1.0); }
+            100% { filter: brightness(1.45); }
+        }
+
+        .candle.active-live-candle::after {
+            content: 'LIVE';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.42rem;
+            font-weight: 900;
+            color: #000;
+            background: currentColor;
+            padding: 1px 3px;
+            border-radius: 3px;
+            box-shadow: 0 0 8px currentColor;
+            z-index: 10;
+        }
+
+        /* Live Sweeping Price Indicator */
+        .live-price-line-container {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+            transition: bottom 0.05s linear;
+        }
+
+        .live-price-line {
+            flex-grow: 1;
+            border-top: 1.5px dotted currentColor;
+            height: 0;
+            opacity: 0.9;
+        }
+
+        .live-price-badge {
+            padding: 3px 8px;
+            border-radius: 7px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.68rem;
+            font-weight: 900;
+            background: rgba(7, 8, 10, 0.95);
+            border: 1.5px solid currentColor;
+            margin-right: 8px;
+            white-space: nowrap;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Entry line indicator */
+        .entry-line {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            pointer-events: none;
+            border-top: 1.5px dashed var(--neon-cyan);
+            z-index: 8;
+            display: none;
+        }
+
+        .entry-badge {
+            position: absolute;
+            right: 8px;
+            top: -10px;
+            font-size: 0.55rem;
+            font-family: 'Orbitron', monospace;
+            background: rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        /* Floating Score / Multiplier Particles */
+        .floating-tag {
+            position: absolute;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 25;
+            animation: float-up 1s forwards ease-out;
+        }
+
+        @keyframes float-up {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.15); }
+            100% { opacity: 0; transform: translateY(-55px) scale(0.9); }
+        }
+
+        /* Power-ups Bar */
+        .powerups-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .powerup-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 8px 6px;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            touch-action: manipulation;
+        }
+
+        .powerup-btn span {
+            font-size: 0.58rem;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .powerup-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .powerup-btn.active-glow {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+            background: rgba(0, 255, 102, 0.15);
+        }
+
+        .powerup-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Dual Trading Action Buttons */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 10px;
+        }
+
+        .trade-btn {
+            padding: 15px 12px;
+            border-radius: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            transition: all 0.1s ease;
+            touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .trade-btn sub {
+            font-size: 0.62rem;
+            font-weight: 600;
+            opacity: 0.85;
+            letter-spacing: 0.3px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #00b04c 0%, var(--neon-green) 100%);
+            color: #032b12;
+            box-shadow: 0 8px 25px rgba(0, 255, 102, 0.35);
+        }
+
+        .buy-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 15px rgba(0, 255, 102, 0.5);
+        }
+
+        .sell-btn {
+            background: linear-gradient(135deg, #b0003a 0%, var(--neon-red) 100%);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(255, 0, 85, 0.3);
+        }
+
+        .sell-btn:active {
+            transform: scale(0.96);
+        }
+
+        .sell-btn:disabled {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-sub);
+            box-shadow: none;
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Result Overlay */
+        .result-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(7, 8, 10, 0.96);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .result-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .result-badge {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+        }
+
+        .persona-tag {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .result-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .result-overlay.win .result-title { color: var(--neon-green); text-shadow: 0 0 15px rgba(0, 255, 102, 0.4); }
+        .result-overlay.lose .result-title { color: var(--neon-red); text-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
+
+        .result-desc {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            max-width: 320px;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .stats-breakdown {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .break-entry {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .break-lbl {
+            font-size: 0.6rem;
+            color: var(--text-sub);
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .break-val {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .overlay-btns {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-overlay {
+            width: 100%;
+            padding: 13px;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            touch-action: manipulation;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25);
+        }
+
+        .btn-restart {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+        }
+
+        .btn-restart:hover {
+            border-color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .icon { fill: currentColor; width: 1.2em; height: 1.2em; display: inline-block; }
+
+        /* Confetti elements */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: -10px;
+            z-index: 101;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(480px) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===================================================================
+           MOBILE RESPONSIVE OPTIMIZATIONS (Smartphones & Small Viewports)
+           =================================================================== */
+        @media (max-width: 600px) {
+            body {
+                padding: 4px;
+                min-height: 100vh;
+                min-height: 100dvh;
+            }
+
+            .game-wrapper {
+                max-width: 100%;
+            }
+
+            .game-card {
+                padding: 10px 10px;
+                border-radius: 18px;
+            }
+
+            .top-bar {
+                margin-bottom: 6px;
+            }
+
+            .asset-btn {
+                padding: 4px 6px;
+                font-size: 0.6rem;
+            }
+
+            .sound-btn {
+                width: 30px;
+                height: 30px;
+            }
+
+            .dashboard-panel {
+                gap: 5px;
+                margin-bottom: 6px;
+            }
+
+            .dash-box {
+                padding: 5px 6px;
+                border-radius: 10px;
+            }
+
+            .dash-lbl {
+                font-size: 0.52rem;
+                letter-spacing: 0.5px;
+            }
+
+            .dash-val {
+                font-size: 0.88rem;
+            }
+
+            .leverage-bar {
+                padding: 3px 6px;
+                margin-bottom: 6px;
+                font-size: 0.6rem;
+            }
+
+            .lev-btn {
+                padding: 2px 5px;
+                font-size: 0.6rem;
+                border-radius: 5px;
+            }
+
+            .event-banner {
+                min-height: 26px;
+                padding: 4px 8px;
+                font-size: 0.64rem;
+                margin-bottom: 6px;
+            }
+
+            .chart-container {
+                height: min(220px, 32vh);
+                border-radius: 14px;
+                margin-bottom: 6px;
+            }
+
+            .candles-view {
+                padding-left: 50%;
+                padding-right: calc(50% - 5px);
+                gap: 5px;
+            }
+
+            .candle {
+                width: 10px;
+            }
+
+            .grid-line span {
+                font-size: 0.48rem;
+                padding: 1px 4px;
+                margin-left: 4px;
+            }
+
+            .powerups-bar {
+                gap: 5px;
+                margin-bottom: 8px;
+            }
+
+            .powerup-btn {
+                padding: 6px 4px;
+                font-size: 0.65rem;
+                border-radius: 10px;
+            }
+
+            .powerup-btn span {
+                font-size: 0.52rem;
+            }
+
+            .actions-grid {
+                gap: 6px;
+            }
+
+            .trade-btn {
+                padding: 11px 6px;
+                font-size: 0.9rem;
+                border-radius: 12px;
+                min-height: 48px;
+            }
+
+            .trade-btn sub {
+                font-size: 0.52rem;
+            }
+
+            .result-overlay {
+                padding: 16px 12px;
+            }
+
+            .result-badge {
+                font-size: 2.6rem;
+                margin-bottom: 4px;
+            }
+
+            .persona-tag {
+                font-size: 0.65rem;
+                padding: 3px 10px;
+            }
+
+            .result-title {
+                font-size: 1.25rem;
+                margin-bottom: 4px;
+            }
+
+            .result-desc {
+                font-size: 0.75rem;
+                margin-bottom: 12px;
+            }
+
+            .stats-breakdown {
+                padding: 8px;
+                margin-bottom: 12px;
+                gap: 6px;
+            }
+
+            .break-lbl {
+                font-size: 0.52rem;
+            }
+
+            .break-val {
+                font-size: 1.05rem;
+            }
+
+            .btn-overlay {
+                padding: 11px;
+                font-size: 0.85rem;
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .chart-container {
+                height: 180px;
+            }
+            .dashboard-panel, .leverage-bar, .event-banner, .powerups-bar {
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <div class="game-card" id="game-card">
+            
+            <!-- Top Bar: Asset choice & Sound -->
+            <div class="top-bar">
+                <div class="asset-selector" id="asset-selector">
+                    <button class="asset-btn active" data-asset="BTC" data-price="60000">BTC/USD</button>
+                    <button class="asset-btn" data-asset="NIFTY" data-price="22000">NIFTY</button>
+                    <button class="asset-btn" data-asset="SOL" data-price="150">SOL DEGEN</button>
+                </div>
+
+                <div class="top-controls">
+                    <button class="control-btn" id="fullscreen-toggle" title="Toggle Full Screen Mode">
+                        <svg class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                    </button>
+
+                    <button class="control-btn sound-btn" id="sound-toggle" aria-label="Toggle Sound">
+                        <svg id="sound-on-icon" class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                        <svg id="sound-off-icon" class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" style="display: none;">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard: Bank Balance, Active Trade PnL, Timer -->
+            <div class="dashboard-panel">
+                <div class="dash-box">
+                    <div class="dash-lbl">Portfolio Cash</div>
+                    <div class="dash-val" id="portfolio-label">$10,000</div>
+                </div>
+                <div class="dash-box">
+                    <div class="dash-lbl">Active Trade PnL</div>
+                    <div class="dash-val" id="pnl-label">$0.00</div>
+                </div>
+                <div class="dash-box">
+                    <div class="dash-lbl">Round Timer</div>
+                    <div class="dash-val timer" id="timer-label">15.0s</div>
+                </div>
+            </div>
+
+            <!-- Leverage Bar -->
+            <div class="leverage-bar">
+                <span class="leverage-lbl">⚡ Leverage</span>
+                <div class="leverage-options" id="leverage-group">
+                    <button class="lev-btn" data-lev="1">1x</button>
+                    <button class="lev-btn active" data-lev="10">10x</button>
+                    <button class="lev-btn" data-lev="25">25x</button>
+                    <button class="lev-btn" data-lev="50">50x</button>
+                    <button class="lev-btn degen" data-lev="100">100x 🔥</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Market Event Banner -->
+            <div class="event-banner" id="event-banner">
+                <span id="event-icon">⚡</span>
+                <span id="event-text">CANDLE CLASH READY: TIME YOUR ENTRIES & EXITS!</span>
+            </div>
+
+            <!-- Candlestick Visual Chart -->
+            <div class="chart-container" id="chart-container">
+                <!-- Background Grid Lines -->
+                <div class="chart-grid">
+                    <div class="center-guide-line"></div>
+                    <div class="grid-line" style="bottom: 85%;"><span>85% - MOON RUN 🚀</span></div>
+                    <div class="grid-line break-even" style="bottom: 50%;"><span>50% - FAIR VALUE ⚖️</span></div>
+                    <div class="grid-line sniper-zone" style="bottom: 25%;"><span>🎯 SNIPER DIP ZONE (+3X)</span></div>
+                    <div class="grid-line" style="bottom: 10%;"><span>10% - LIQUIDATION 💀</span></div>
+                </div>
+
+                <!-- Candlestick elements -->
+                <div class="candles-view" id="candles-view"></div>
+
+                <!-- Entry Price Line -->
+                <div class="entry-line" id="entry-line">
+                    <div class="entry-badge" id="entry-badge">ENTRY: $50,000</div>
+                </div>
+
+                <!-- Live Sweeping Price Indicator -->
+                <div class="live-price-line-container" id="live-price-line-container">
+                    <div class="live-price-line"></div>
+                    <div class="live-price-badge" id="live-price-badge">$50,000</div>
+                </div>
+            </div>
+
+            <!-- Power-ups Bar -->
+            <div class="powerups-bar">
+                <button class="powerup-btn" id="shield-btn">
+                    🛡️ Stop-Loss
+                    <span id="shield-status">Ready</span>
+                </button>
+                <button class="powerup-btn" id="whale-btn">
+                    🐋 Whale Pump
+                    <span id="whale-status">Ready</span>
+                </button>
+                <button class="powerup-btn" id="diamond-btn">
+                    💎 Diamond Hands
+                    <span id="diamond-status">Ready (2x)</span>
+                </button>
+            </div>
+
+            <!-- Main Dual Trading Actions -->
+            <div class="actions-grid">
+                <button class="trade-btn buy-btn" id="buy-btn">
+                    BUY THE DIP 📈
+                    <sub id="buy-sub">TAP TO PUMP & RIDE</sub>
+                </button>
+                <button class="trade-btn sell-btn" id="sell-btn" disabled>
+                    SELL (TAKE PROFIT) 💰
+                    <sub id="sell-sub">LOCK IN CASH</sub>
+                </button>
+            </div>
+
+            <!-- Fullscreen Result Modal -->
+            <div class="result-overlay" id="result-overlay">
+                <div class="result-badge" id="result-badge">🏆</div>
+                <div class="persona-tag" id="persona-tag">Chad Institutional Whale</div>
+                <h2 class="result-title" id="result-title">Victory!</h2>
+                <p class="result-desc" id="result-desc">You timed the dips like an elite hedge fund trader!</p>
+                
+                <div class="stats-breakdown">
+                    <div class="break-entry">
+                        <div class="break-lbl">Final Balance</div>
+                        <div class="break-val" id="final-balance" style="color: var(--neon-green);">$24,500</div>
+                    </div>
+                    <div class="break-entry">
+                        <div class="break-lbl">Total Return</div>
+                        <div class="break-val" id="final-roi" style="color: var(--neon-yellow);">+145%</div>
+                    </div>
+                    <div class="break-entry">
+                        <div class="break-lbl">Profitable Trades</div>
+                        <div class="break-val" id="final-trades">3 / 4</div>
+                    </div>
+                    <div class="break-entry">
+                        <div class="break-lbl">Sniper Buys</div>
+                        <div class="break-val" id="final-snipers" style="color: var(--neon-cyan);">2 🎯</div>
+                    </div>
+                </div>
+
+                <div class="overlay-btns">
+                    <button class="btn-overlay btn-whatsapp" id="share-btn">
+                        <svg class="icon" viewBox="0 0 448 512" style="fill: white;">
+                            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+                        </svg>
+                        Brag on WhatsApp
+                    </button>
+                    <button class="btn-overlay btn-restart" id="restart-btn">
+                        Trade Another Round 🔄
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* ===================================================================
+           SOUND ENGINE (Web Audio API Synthesizer)
+           =================================================================== */
+        let audioCtx = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.12) {
+            if (isMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(gainVal, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
+        function playSound(name) {
+            if (isMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (name === 'buy') {
+                playTone(600, 'triangle', 0.07, 0.1);
+            } 
+            else if (name === 'sniper') {
+                playTone(900, 'sine', 0.08, 0.15);
+                setTimeout(() => playTone(1400, 'sine', 0.12, 0.2), 70);
+            }
+            else if (name === 'profit') {
+                // Happy cash chime (C5 -> E5 -> G5 -> C6)
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((f, i) => {
+                    setTimeout(() => playTone(f, 'sine', 0.15, 0.15), i * 65);
+                });
+            }
+            else if (name === 'liquidated' || name === 'crash') {
+                // Heavy downward saw
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(260, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.5);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+            else if (name === 'powerup') {
+                playTone(500, 'sine', 0.06, 0.12);
+                setTimeout(() => playTone(800, 'sine', 0.06, 0.15), 50);
+                setTimeout(() => playTone(1200, 'sine', 0.1, 0.18), 100);
+            }
+        }
+
+        /* ===================================================================
+           GAME STATE & CONFIGURATION
+           =================================================================== */
+        const GAME_DURATION = 15000; // 15 seconds
+        const TICK_INTERVAL = 50;
+        const CANDLE_TICKS = 10;
+
+        let state = 'ready'; // 'ready', 'playing', 'ended'
+        let startTime = 0;
+        let elapsed = 0;
+        let gameLoopTimer = null;
+        let tickCounter = 0;
+
+        // Assets
+        let currentAsset = 'BTC';
+        let baseAssetPrice = 60000;
+
+        // Portfolio & Position State
+        const INITIAL_BALANCE = 10000;
+        let cashBalance = INITIAL_BALANCE;
+        let activePosition = null; // { entryPrice, entryPercent, size, leverage }
+        let currentLeverage = 10;
+        let totalTrades = 0;
+        let winningTrades = 0;
+        let sniperEntries = 0;
+
+        // Powerup Statuses
+        let hasShield = false;
+        let whaleCooldown = false;
+        let diamondHandsActive = false;
+
+        // Market Mechanics
+        let marketPricePercent = 50.0; // 0% to 100% scale
+        let aiDrainRate = 0.55; // Per 50ms
+        let clickPumpAmount = 2.4;
+
+        // Candlesticks array
+        let candles = [];
+        let currentCandle = null;
+
+        // Market Events Pool
+        const EVENTS = [
+            { text: "🚀 ELON TWEETED DOGE! +35% GOD CANDLE!", type: "elon", priceDelta: 16 },
+            { text: "🐋 WHALE DUMPED 5,000 BTC! FLASH CRASH!", type: "whale", priceDelta: -16 },
+            { text: "💥 SHORT SQUEEZE DETECTED! PUMP CASCADE!", type: "squeeze", priceDelta: 12 },
+            { text: "🚨 FED RATE HIKE! WILD WHIPSAW VOLATILITY!", type: "whale", priceDelta: -10 },
+            { text: "💎 BINANCE CZ: 'FUNDS ARE SAFU!' +15% BOUNCE", type: "elon", priceDelta: 8 },
+            { text: "📄 RETAIL PANIC SELLING! DIP GETTING JUICY!", type: "squeeze", priceDelta: -8 }
+        ];
+
+        // DOM elements cache
+        const gameCard = document.getElementById('game-card');
+        const portfolioLabel = document.getElementById('portfolio-label');
+        const pnlLabel = document.getElementById('pnl-label');
+        const timerLabel = document.getElementById('timer-label');
+        const candlesView = document.getElementById('candles-view');
+        const livePriceLineContainer = document.getElementById('live-price-line-container');
+        const livePriceBadge = document.getElementById('live-price-badge');
+        const entryLine = document.getElementById('entry-line');
+        const entryBadge = document.getElementById('entry-badge');
+        const eventBanner = document.getElementById('event-banner');
+        const eventIcon = document.getElementById('event-icon');
+        const eventText = document.getElementById('event-text');
+        
+        const buyBtn = document.getElementById('buy-btn');
+        const sellBtn = document.getElementById('sell-btn');
+        const shieldBtn = document.getElementById('shield-btn');
+        const whaleBtn = document.getElementById('whale-btn');
+        const diamondBtn = document.getElementById('diamond-btn');
+        const shieldStatus = document.getElementById('shield-status');
+        const whaleStatus = document.getElementById('whale-status');
+        const diamondStatus = document.getElementById('diamond-status');
+
+        const resultOverlay = document.getElementById('result-overlay');
+        const resultBadge = document.getElementById('result-badge');
+        const personaTag = document.getElementById('persona-tag');
+        const resultTitle = document.getElementById('result-title');
+        const resultDesc = document.getElementById('result-desc');
+        const finalBalance = document.getElementById('final-balance');
+        const finalRoi = document.getElementById('final-roi');
+        const finalTrades = document.getElementById('final-trades');
+        const finalSnipers = document.getElementById('final-snipers');
+        const shareBtn = document.getElementById('share-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        /* ===================================================================
+           INITIALIZATION & PRE-GAME SETUP
+           =================================================================== */
+        const HISTORICAL_CANDLES = [
+            { open: 68, high: 72, low: 66, close: 70 },
+            { open: 70, high: 73, low: 62, close: 64 },
+            { open: 64, high: 66, low: 55, close: 57 },
+            { open: 57, high: 59, low: 48, close: 50 },
+            { open: 50, high: 54, low: 45, close: 48 },
+            { open: 48, high: 52, low: 44, close: 49 },
+            { open: 49, high: 53, low: 46, close: 50 }
+        ];
+
+        function initGame() {
+            candles = [...HISTORICAL_CANDLES];
+            marketPricePercent = 50.0;
+            cashBalance = INITIAL_BALANCE;
+            activePosition = null;
+            hasShield = false;
+            whaleCooldown = false;
+            diamondHandsActive = false;
+            totalTrades = 0;
+            winningTrades = 0;
+            sniperEntries = 0;
+            
+            updateUI();
+            updateDashboard();
+        }
+
+        // Switch Assets (BTC / Nifty / SOL)
+        document.querySelectorAll('.asset-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (state === 'playing') return;
+                document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAsset = btn.dataset.asset;
+                baseAssetPrice = parseFloat(btn.dataset.price);
+
+                if (currentAsset === 'SOL') {
+                    aiDrainRate = 0.8;
+                    clickPumpAmount = 3.6; // High Volatility
+                    setEvent("🔥 SOLANA DEGEN MODE ACTIVE: EXTREME PUMPS & DUMPS!", "whale");
+                } else if (currentAsset === 'NIFTY') {
+                    aiDrainRate = 0.4;
+                    clickPumpAmount = 1.8; // Low Volatility
+                    setEvent("📈 NIFTY 50 MODE: STEADY MARKET MOVEMENT", "elon");
+                } else {
+                    aiDrainRate = 0.55;
+                    clickPumpAmount = 2.4;
+                    setEvent("⚡ BITCOIN STANDARD: BUY THE DIP & TIME YOUR EXIT!", "squeeze");
+                }
+                updateUI();
+            });
+        });
+
+        // Switch Leverage
+        document.querySelectorAll('.lev-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (state === 'playing' && activePosition) return; // Cannot change leverage mid-trade
+                document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLeverage = parseInt(btn.dataset.lev);
+                playSound('buy');
+
+                if (currentLeverage >= 50) {
+                    setEvent(`⚠️ ${currentLeverage}X LEVERAGE: 1 BAD DIP = INSTANT REKT!`, "whale");
+                }
+            });
+        });
+
+        // Sound Toggle
+        document.getElementById('sound-toggle').addEventListener('click', () => {
+            isMuted = !isMuted;
+            initAudio();
+            document.getElementById('sound-on-icon').style.display = isMuted ? 'none' : 'block';
+            document.getElementById('sound-off-icon').style.display = isMuted ? 'block' : 'none';
+            if (!isMuted) playSound('buy');
+        });
+
+        // Fullscreen Toggle (PC / Desktop)
+        const fsToggle = document.getElementById('fullscreen-toggle');
+        if (fsToggle) {
+            fsToggle.addEventListener('click', () => {
+                const targetDoc = (window.parent && window.parent.document !== document) 
+                    ? window.parent.document.documentElement 
+                    : document.documentElement;
+
+                const isFull = document.fullscreenElement || (window.parent && window.parent.document.fullscreenElement);
+
+                if (!isFull) {
+                    if (targetDoc.requestFullscreen) targetDoc.requestFullscreen().catch(() => {});
+                    else if (targetDoc.webkitRequestFullscreen) targetDoc.webkitRequestFullscreen();
+                    else if (targetDoc.msRequestFullscreen) targetDoc.msRequestFullscreen();
+                } else {
+                    const exitDoc = (window.parent && window.parent.document !== document) ? window.parent.document : document;
+                    if (exitDoc.exitFullscreen) exitDoc.exitFullscreen().catch(() => {});
+                    else if (exitDoc.webkitExitFullscreen) exitDoc.webkitExitFullscreen();
+                }
+            });
+        }
+
+        /* ===================================================================
+           MARKET EVENTS ENGINE
+           =================================================================== */
+        function setEvent(text, type = 'squeeze') {
+            eventBanner.className = `event-banner ${type}`;
+            eventText.innerText = text;
+            eventIcon.innerText = type === 'whale' ? '🐋' : type === 'elon' ? '🚀' : '💥';
+        }
+
+        function triggerRandomEvent() {
+            if (state !== 'playing') return;
+            const ev = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+            setEvent(ev.text, ev.type);
+
+            if (ev.priceDelta > 0) {
+                playSound('powerup');
+                marketPricePercent = Math.min(95, marketPricePercent + ev.priceDelta);
+            } else {
+                if (hasShield) {
+                    hasShield = false;
+                    shieldStatus.innerText = "Used";
+                    shieldBtn.classList.remove('active-glow');
+                    setEvent("🛡️ STOP-LOSS SHIELD TRIGGERED! CRASH PREVENTED!", "squeeze");
+                    playSound('powerup');
+                    return;
+                }
+                playSound('crash');
+                gameCard.classList.add('shaking');
+                setTimeout(() => gameCard.classList.remove('shaking'), 400);
+                marketPricePercent = Math.max(8, marketPricePercent + ev.priceDelta);
+            }
+            updateUI();
+        }
+
+        /* ===================================================================
+           POWER-UPS ENGINE
+           =================================================================== */
+        // 1. Stop Loss Shield
+        shieldBtn.addEventListener('click', () => {
+            if (state !== 'playing' || hasShield) return;
+            hasShield = true;
+            shieldBtn.classList.add('active-glow');
+            shieldStatus.innerText = "ACTIVE 🛡️";
+            playSound('powerup');
+            showFloatingText("🛡️ SHIELD ARMED!", shieldBtn, "var(--neon-cyan)");
+        });
+
+        // 2. Whale Pump
+        whaleBtn.addEventListener('click', () => {
+            if (state !== 'playing' || whaleCooldown) return;
+            whaleCooldown = true;
+            whaleBtn.disabled = true;
+            whaleStatus.innerText = "Pumping!";
+            playSound('powerup');
+
+            setEvent("🐋 WHALE BUY ORDER EXECUTED! +18% GREEN CANDLE!", "elon");
+            marketPricePercent = Math.min(96, marketPricePercent + 18);
+            showFloatingText("🐋 +18% WHALE PUMP!", whaleBtn, "var(--neon-green)");
+            updateUI();
+
+            setTimeout(() => {
+                whaleStatus.innerText = "Ready";
+                whaleBtn.disabled = false;
+                whaleCooldown = false;
+            }, 6000);
+        });
+
+        // 3. Diamond Hands (2x Profit Multiplier)
+        diamondBtn.addEventListener('click', () => {
+            if (state !== 'playing' || diamondHandsActive) return;
+            diamondHandsActive = true;
+            diamondBtn.classList.add('active-glow');
+            diamondStatus.innerText = "2X ACTIVE!";
+            playSound('powerup');
+            showFloatingText("💎 2X MULTIPLIER!", diamondBtn, "var(--neon-yellow)");
+
+            setTimeout(() => {
+                diamondHandsActive = false;
+                diamondBtn.classList.remove('active-glow');
+                diamondStatus.innerText = "Used";
+                diamondBtn.disabled = true;
+            }, 4000);
+        });
+
+        /* ===================================================================
+           CANDLESTICK RENDERING
+           =================================================================== */
+        function renderChart() {
+            const combined = [...candles];
+            if (currentCandle) combined.push(currentCandle);
+
+            const visible = combined.slice(Math.max(0, combined.length - 80));
+            let html = '';
+
+            visible.forEach((c, idx) => {
+                const isLast = idx === visible.length - 1;
+                const isGreen = c.close >= c.open;
+                const bodyBottom = Math.min(c.open, c.close);
+                const bodyHeight = Math.max(2, Math.abs(c.open - c.close));
+                const wickBottom = c.low;
+                const wickHeight = Math.max(2, c.high - c.low);
+
+                const colorClass = isGreen ? 'green-candle' : 'red-candle';
+                const activeClass = isLast ? 'active-live-candle' : '';
+                html += `
+                    <div class="candle ${colorClass} ${activeClass}">
+                        <div class="wick" style="bottom: ${wickBottom}%; height: ${wickHeight}%;"></div>
+                        <div class="body" style="bottom: ${bodyBottom}%; height: ${bodyHeight}%;"></div>
+                    </div>
+                `;
+            });
+
+            candlesView.innerHTML = html;
+            candlesView.scrollLeft = candlesView.scrollWidth;
+        }
+
+        function calculateCurrentPrice() {
+            return (baseAssetPrice * (marketPricePercent / 50.0)).toFixed(currentAsset === 'SOL' ? 2 : 0);
+        }
+
+        function updateUI() {
+            marketPricePercent = Math.max(0, Math.min(100, marketPricePercent));
+
+            livePriceLineContainer.style.bottom = `${marketPricePercent}%`;
+            const formattedPrice = `$${parseFloat(calculateCurrentPrice()).toLocaleString()}`;
+            livePriceBadge.innerText = formattedPrice;
+
+            // Sync Entry Line if position is open
+            if (activePosition) {
+                entryLine.style.display = 'block';
+                entryLine.style.bottom = `${activePosition.entryPercent}%`;
+                entryBadge.innerText = `ENTRY: $${parseFloat(activePosition.entryPrice).toLocaleString()} (${activePosition.leverage}x)`;
+            } else {
+                entryLine.style.display = 'none';
+            }
+
+            // Color based on level
+            let activeColor = marketPricePercent >= 50 ? 'var(--neon-green)' : 'var(--neon-red)';
+            livePriceLineContainer.style.color = activeColor;
+
+            renderChart();
+            updateTradePnL();
+        }
+
+        function updateDashboard() {
+            portfolioLabel.innerText = `$${Math.round(cashBalance).toLocaleString()}`;
+        }
+
+        function updateTradePnL() {
+            if (!activePosition) {
+                pnlLabel.innerText = "$0.00";
+                pnlLabel.className = "dash-val";
+                sellBtn.disabled = true;
+                return;
+            }
+
+            sellBtn.disabled = false;
+            const currentP = parseFloat(calculateCurrentPrice());
+            const rawPercentGain = ((currentP - activePosition.entryPrice) / activePosition.entryPrice);
+            let totalGainPercent = rawPercentGain * activePosition.leverage;
+
+            if (diamondHandsActive) totalGainPercent *= 2.0;
+
+            const pnlAmount = activePosition.size * totalGainPercent;
+            const isProfit = pnlAmount >= 0;
+
+            pnlLabel.className = `dash-val ${isProfit ? 'pnl-green' : 'pnl-red'}`;
+            pnlLabel.innerText = `${isProfit ? '+' : ''}$${Math.round(pnlAmount).toLocaleString()} (${(totalGainPercent * 100).toFixed(0)}%)`;
+
+            // Check Liquidation Condition
+            if (totalGainPercent <= -1.0) {
+                triggerLiquidation();
+            }
+        }
+
+        function triggerLiquidation() {
+            playSound('liquidated');
+            gameCard.classList.add('shaking');
+            showFloatingText("💥 LIQUIDATED! -100%", buyBtn, "var(--neon-red)");
+
+            cashBalance = Math.max(0, cashBalance - activePosition.size);
+            activePosition = null;
+            updateDashboard();
+            updateTradePnL();
+
+            setEvent("💀 TRADE LIQUIDATED! 100% MARGIN LOST!", "whale");
+
+            setTimeout(() => gameCard.classList.remove('shaking'), 500);
+
+            if (cashBalance <= 0) {
+                endGame(false, "TOTAL BANKRUPTCY! Margin called to zero.");
+            }
+        }
+
+        /* ===================================================================
+           TRADING ACTIONS: BUY & SELL
+           =================================================================== */
+        function buyTheDipAction() {
+            initAudio();
+
+            if (state === 'ended') return;
+
+            if (state === 'ready') {
+                startRound();
+            }
+
+            // Check if Sniper Entry (buying below 35% or near bottom wick)
+            const isSniper = marketPricePercent <= 35.0;
+            let pumpMultiplier = 1.0;
+
+            if (isSniper) {
+                sniperEntries++;
+                pumpMultiplier = 3.0;
+                playSound('sniper');
+                showFloatingText("🎯 SNIPER DIP! +3X!", buyBtn, "var(--neon-cyan)");
+                setEvent("🎯 SNIPER ENTRY SECURED! +3X PUMP MOMENTUM!", "squeeze");
+            } else {
+                playSound('buy');
+            }
+
+            // Open position if none active
+            if (!activePosition) {
+                totalTrades++;
+                const positionSize = Math.min(cashBalance, 2500);
+                activePosition = {
+                    entryPrice: parseFloat(calculateCurrentPrice()),
+                    entryPercent: marketPricePercent,
+                    size: positionSize,
+                    leverage: currentLeverage
+                };
+                showFloatingText(`🟢 OPENED ${currentLeverage}X LONG!`, buyBtn, "var(--neon-green)");
+            }
+
+            // Pump the market
+            marketPricePercent += (clickPumpAmount * pumpMultiplier);
+
+            if (currentCandle) {
+                currentCandle.close = marketPricePercent;
+                currentCandle.high = Math.max(currentCandle.high, marketPricePercent);
+            }
+
+            updateUI();
+
+            // Button tactile shrink
+            buyBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => { buyBtn.style.transform = ''; }, 60);
+        }
+
+        function takeProfitAction() {
+            if (!activePosition) return;
+
+            const currentP = parseFloat(calculateCurrentPrice());
+            const rawPercentGain = ((currentP - activePosition.entryPrice) / activePosition.entryPrice);
+            let totalGainPercent = rawPercentGain * activePosition.leverage;
+            if (diamondHandsActive) totalGainPercent *= 2.0;
+
+            const pnlAmount = activePosition.size * totalGainPercent;
+            cashBalance += pnlAmount;
+
+            if (pnlAmount > 0) {
+                winningTrades++;
+                playSound('profit');
+                showFloatingText(`💰 +$${Math.round(pnlAmount).toLocaleString()} PROFIT!`, sellBtn, "var(--neon-green)");
+                setEvent(`💰 PROFIT LOCKED: +$${Math.round(pnlAmount).toLocaleString()}!`, "elon");
+                triggerConfetti(15);
+            } else {
+                playSound('buy');
+                showFloatingText(`PAPER HANDS: $${Math.round(pnlAmount).toLocaleString()}`, sellBtn, "var(--neon-yellow)");
+            }
+
+            activePosition = null;
+            updateDashboard();
+            updateTradePnL();
+            updateUI();
+        }
+
+        function showFloatingText(text, targetEl, color = 'var(--neon-green)') {
+            const tag = document.createElement('div');
+            tag.className = 'floating-tag';
+            tag.innerText = text;
+            tag.style.color = color;
+            tag.style.textShadow = `0 0 10px ${color}`;
+
+            const rect = targetEl.getBoundingClientRect();
+            tag.style.left = `${rect.left + rect.width / 2 - 40}px`;
+            tag.style.top = `${rect.top - 10}px`;
+
+            document.body.appendChild(tag);
+            setTimeout(() => tag.remove(), 1000);
+        }
+
+        /* ===================================================================
+           ROUND CONTROLLER
+           =================================================================== */
+        function startRound() {
+            state = 'playing';
+            startTime = Date.now();
+            elapsed = 0;
+            tickCounter = 0;
+            candles = [];
+
+            currentCandle = {
+                open: marketPricePercent,
+                close: marketPricePercent,
+                high: marketPricePercent,
+                low: marketPricePercent
+            };
+
+            setEvent("⚡ BATTLE COMMENCED: SQUEEZE THE BEARS & SECURE PROFIT!", "squeeze");
+
+            // Event scheduler (every 3 to 4 seconds)
+            const eventInterval = setInterval(() => {
+                if (state !== 'playing') {
+                    clearInterval(eventInterval);
+                    return;
+                }
+                triggerRandomEvent();
+            }, 3600);
+
+            // Main Game Loop
+            gameLoopTimer = setInterval(() => {
+                const now = Date.now();
+                elapsed = now - startTime;
+                const timeRemaining = Math.max(0, GAME_DURATION - elapsed);
+
+                timerLabel.innerText = `${(timeRemaining / 1000).toFixed(1)}s`;
+
+                // Natural Bear drain
+                marketPricePercent -= aiDrainRate;
+
+                if (currentCandle) {
+                    currentCandle.close = marketPricePercent;
+                    currentCandle.high = Math.max(currentCandle.high, marketPricePercent);
+                    currentCandle.low = Math.min(currentCandle.low, marketPricePercent);
+                }
+
+                tickCounter++;
+                if (tickCounter % CANDLE_TICKS === 0 && timeRemaining > 0) {
+                    candles.push(currentCandle);
+                    currentCandle = {
+                        open: marketPricePercent,
+                        close: marketPricePercent,
+                        high: marketPricePercent,
+                        low: marketPricePercent
+                    };
+                }
+
+                updateUI();
+
+                if (timeRemaining <= 0) {
+                    endGame(cashBalance >= INITIAL_BALANCE);
+                }
+            }, TICK_INTERVAL);
+        }
+
+        function endGame(isWin, customMsg) {
+            clearInterval(gameLoopTimer);
+            state = 'ended';
+
+            // Auto cash-out any open trade
+            if (activePosition) {
+                takeProfitAction();
+            }
+
+            const roi = (((cashBalance - INITIAL_BALANCE) / INITIAL_BALANCE) * 100).toFixed(0);
+
+            // Assign Persona Badge
+            let badge = "🏆";
+            let persona = "Chad Institutional Whale";
+            let desc = "You dominated the book and sucked liquidity out of retail bears!";
+
+            if (cashBalance >= 20000) {
+                badge = "🐋";
+                persona = "Chad Institutional Whale";
+                desc = "Legendary performance! The Wall Street floor whispers your name.";
+            } else if (sniperEntries >= 3) {
+                badge = "🎯";
+                persona = "Apex Sniper Scalper";
+                desc = "Flawless entries at bottom wicks. You never catch a falling knife!";
+            } else if (cashBalance > INITIAL_BALANCE) {
+                badge = "💎";
+                persona = "Diamond Hands Maestro";
+                desc = "Survived high volatility and closed cleanly in green profit.";
+            } else if (cashBalance > 0) {
+                badge = "📄";
+                persona = "Paper Hands Panic Seller";
+                desc = "Cut trades too early and took small hits. Still alive to trade tomorrow!";
+            } else {
+                badge = "💀";
+                persona = "Degenerate Liquidated Gambler";
+                desc = "Full degen leverage blew your account! Risk management where?";
+            }
+
+            resultBadge.innerText = badge;
+            personaTag.innerText = persona;
+            resultTitle.innerText = isWin ? "BULL VICTORY!" : "MARKET CLOSED!";
+            resultDesc.innerText = customMsg || desc;
+
+            finalBalance.innerText = `$${Math.round(cashBalance).toLocaleString()}`;
+            finalRoi.innerText = `${roi >= 0 ? '+' : ''}${roi}%`;
+            finalRoi.style.color = roi >= 0 ? 'var(--neon-green)' : 'var(--neon-red)';
+            finalTrades.innerText = `${winningTrades} / ${totalTrades}`;
+            finalSnipers.innerText = `${sniperEntries} 🎯`;
+
+            resultOverlay.className = `result-overlay active ${isWin ? 'win' : 'lose'}`;
+            if (isWin) triggerConfetti(35);
+
+            // WhatsApp Share
+            const shareText = `I made $${Math.round(cashBalance).toLocaleString()} (${roi >= 0 ? '+' : ''}${roi}% ROI) in Candle Clash!\nMy Trader Persona: ${badge} ${persona}!\nCan you beat my trading skills? Play free: https://tradejournall.com/game`;
+            shareBtn.onclick = () => {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+            };
+        }
+
+        function resetRound() {
+            resultOverlay.className = "result-overlay";
+            state = 'ready';
+            timerLabel.innerText = "15.0s";
+            shieldStatus.innerText = "Ready";
+            shieldBtn.classList.remove('active-glow');
+            shieldBtn.disabled = false;
+            whaleStatus.innerText = "Ready";
+            whaleBtn.disabled = false;
+            diamondStatus.innerText = "Ready (2x)";
+            diamondBtn.classList.remove('active-glow');
+            diamondBtn.disabled = false;
+
+            initGame();
+            setEvent("⚡ READY: SELECT LEVERAGE & CLICK BUY TO START!", "squeeze");
+        }
+
+        // Event Listeners
+        buyBtn.addEventListener('click', buyTheDipAction);
+        sellBtn.addEventListener('click', takeProfitAction);
+        restartBtn.addEventListener('click', resetRound);
+
+        // Confetti
+        function triggerConfetti(count = 25) {
+            const colors = ['#00ff66', '#00f0ff', '#ffffff', '#ffb700'];
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = `${Math.random() * 90 + 5}%`;
+                p.style.width = `${Math.random() * 6 + 6}px`;
+                p.style.height = `${Math.random() * 6 + 6}px`;
+                p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                const dur = Math.random() * 1.5 + 1.0;
+                p.style.animation = `fall ${dur}s linear forwards`;
+                resultOverlay.appendChild(p);
+                setTimeout(() => p.remove(), dur * 1000);
+            }
+        }
+
+        // Run initial setup
+        initGame();
+    </script>
+</body>
+</html>
