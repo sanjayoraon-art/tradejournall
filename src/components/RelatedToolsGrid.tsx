@@ -18,7 +18,8 @@ import {
     ChevronDown,
     ChevronUp,
     Sparkles,
-    ArrowRight
+    ArrowRight,
+    Grid
 } from 'lucide-react';
 
 export interface ToolItem {
