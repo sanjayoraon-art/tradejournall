@@ -279,7 +279,8 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
 ];
 
 interface RelatedToolsGridProps {
-    currentToolSlug: string;
+    currentToolSlug?: string;
+    currentToolId?: string;
     category?: 'risk' | 'prop-firm' | 'options' | 'crypto' | 'forex' | 'tax' | 'all';
     title?: string;
     subtitle?: string;
@@ -288,7 +289,8 @@ interface RelatedToolsGridProps {
 }
 
 export const RelatedToolsGrid: React.FC<RelatedToolsGridProps> = ({
-    currentToolSlug,
+    currentToolSlug = '',
+    currentToolId = '',
     category,
     title = 'Explore Related Trading & Risk Calculators',
     subtitle = 'Professional mathematical modeling tools to protect your capital, optimize position sizes, and calculate net trading performance.',
@@ -300,11 +302,18 @@ export const RelatedToolsGrid: React.FC<RelatedToolsGridProps> = ({
     );
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // Filter out current tool
-    const normalizedCurrent = currentToolSlug.toLowerCase().replace(/\/$/, '');
+    // Filter out current tool safely
+    const targetSlug = currentToolSlug || currentToolId || '';
+    const normalizedCurrent = targetSlug ? targetSlug.toLowerCase().replace(/\/$/, '') : '';
     const filteredTools = ALL_TOOLS_REGISTRY.filter((tool) => {
-        const normalizedTool = tool.path.toLowerCase().replace(/\/$/, '');
-        return normalizedTool !== normalizedCurrent && !normalizedTool.includes(normalizedCurrent);
+        if (!normalizedCurrent) return true;
+        const normalizedTool = (tool.path || '').toLowerCase().replace(/\/$/, '');
+        const normalizedId = (tool.id || '').toLowerCase();
+        return (
+            normalizedTool !== normalizedCurrent &&
+            !normalizedTool.includes(normalizedCurrent) &&
+            normalizedId !== normalizedCurrent
+        );
     });
 
     // Tab-based filtering
