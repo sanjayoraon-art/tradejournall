@@ -19,7 +19,8 @@ import {
     ChevronUp,
     Sparkles,
     ArrowRight,
-    Grid
+    Grid,
+    Car
 } from 'lucide-react';
 
 export interface ToolItem {
@@ -89,6 +90,17 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
         badgeColor: 'emerald',
         description: 'Calculate capital gains tax savings, offset short/long term gains, claim $3,000 IRS ordinary income write-offs, and track wash-sale safe ETF swaps.',
         icon: Scale
+    },
+    {
+        id: 'doordash-tax-calculator',
+        title: 'DoorDash Tax Calculator & 1099 Mileage App',
+        path: '/tools/doordash-tax-calculator',
+        category: 'tax',
+        categoryLabel: '1099 Gig Tax',
+        badge: 'IRS 67¢ Mileage Rate',
+        badgeColor: 'rose',
+        description: 'Calculate 15.3% self-employment tax, 2026 IRS 67¢/mile deductions, Schedule C net profit, and Form 1040-ES quarterly payments.',
+        icon: Car
     },
     {
         id: 'wash-sale',

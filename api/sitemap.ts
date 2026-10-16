@@ -83,6 +83,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   <!-- Trading Tools and Risk Calculators -->
   <url>
+    <loc>${SITE_URL}/tools/doordash-tax-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/tax-calculator-for-doordash-drivers</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/doordash-taxes-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/doordash-tax-calculator-app</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/doordash-tax-deductions-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/tax-loss-harvesting-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/session-clock-ist</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
