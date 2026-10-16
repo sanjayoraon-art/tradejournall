@@ -408,6 +408,54 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'dividend snowball effect calculator, snowball dividend calculator, dividend compounding calculator',
         h1: 'Dividend Snowball Effect Compounding Calculator',
         summary: 'Calculate when your reinvested dividends surpass your annual cash contributions and achieve financial freedom.'
+    },
+
+    // 🏆 DoorDash & Gig Worker 1099 Tax Suite (Targeting Low-Competition High-Traffic US Keywords)
+    'doordash-tax-calculator': {
+        title: 'DoorDash Tax Calculator 2026 — 1099 Mileage & Tax Deductions App | TradeJournall',
+        description: 'Free DoorDash Tax Calculator for delivery drivers. Calculate exact 15.3% self-employment tax, 2026 IRS 67¢/mile deductions, Schedule C write-offs, and Form 1040-ES quarterly estimated payments.',
+        category: '1099 & Gig Worker Tax',
+        keywords: 'doordash tax calculator, tax calculator for doordash drivers, doordash taxes calculator, doordash tax calculator app, doordash tax deductions calculator, gig worker tax calculator, 1099 delivery driver taxes, mileage tax deduction calculator',
+        h1: 'DoorDash Tax Calculator & 1099 Deductions App (2026)',
+        summary: 'Calculate exact 15.3% Self-Employment Tax (SECA), 2026 IRS 67¢/mile deductions, net Schedule C taxable profit, and quarterly 1040-ES estimated payments.',
+        faq: [
+            { q: 'Do DoorDash drivers have to pay taxes on their earnings?', a: 'Yes. DoorDash classifies delivery drivers as independent contractors (1099 workers). If you earn $600 or more, DoorDash sends Form 1099-NEC, and you must report all income on IRS Schedule C.' },
+            { q: 'How much should I set aside each week for DoorDash taxes?', a: 'Dashers should set aside between 20% to 30% of their net profits (gross pay minus mileage deductions) for federal and state self-employment taxes.' },
+            { q: 'Can I write off gas AND the IRS standard mileage deduction?', a: 'No! You must choose between the IRS Standard Mileage Rate ($0.67 per mile in 2026) OR the Actual Car Expense method. You cannot claim both.' },
+            { q: 'What other tax deductions can DoorDash drivers claim besides mileage?', a: 'You can deduct your work phone bill percentage, hot delivery bags, phone mounts, chargers, tolls, parking fees, and self-employed health insurance.' }
+        ]
+    },
+    'tax-calculator-for-doordash-drivers': {
+        title: 'Tax Calculator for DoorDash Drivers — 1099 Deductions & Estimated Tax | TradeJournall',
+        description: 'Free tax calculator for DoorDash drivers. Determine your 1099 tax bracket, quarterly IRS payment deadlines, and mileage deductions.',
+        category: '1099 & Gig Worker Tax',
+        keywords: 'tax calculator for doordash drivers, doordash tax calculator, doordash taxes, delivery driver tax calculator',
+        h1: 'Tax Calculator for DoorDash Drivers (Free 1099 Tool)',
+        summary: 'Estimate quarterly and annual taxes for independent delivery couriers driving for DoorDash, UberEats, and Instacart.'
+    },
+    'doordash-taxes-calculator': {
+        title: 'DoorDash Taxes Calculator 2026 — Mileage Write-Off & Schedule C Tool | TradeJournall',
+        description: 'Calculate your DoorDash taxes with IRS 67 cents per mile deduction. Estimate self-employment tax and net take-home earnings.',
+        category: '1099 & Gig Worker Tax',
+        keywords: 'doordash taxes calculator, doordash tax deductions calculator, 1099 schedule c calculator',
+        h1: 'DoorDash Taxes Calculator & Net Profit Estimator',
+        summary: 'Understand how much to set aside each week for DoorDash taxes with automatic standard mileage write-offs.'
+    },
+    'doordash-tax-calculator-app': {
+        title: 'DoorDash Tax Calculator App — Free 1099 Mileage & Expense Tracker | TradeJournall',
+        description: 'Free DoorDash tax calculator app online. No sign-up or download needed. Calculate taxes, mileage write-offs, and 1040-ES payments instantly.',
+        category: '1099 & Gig Worker Tax',
+        keywords: 'doordash tax calculator app, dasher tax app, doordash tax deductions app, free 1099 tax calculator app',
+        h1: 'DoorDash Tax Calculator App (100% Free Online)',
+        summary: 'A mobile-friendly, instant 1099 delivery tax calculator app for smartphones and desktop browsers.'
+    },
+    'doordash-tax-deductions-calculator': {
+        title: 'DoorDash Tax Deductions Calculator — Write-Off Checklist & Savings | TradeJournall',
+        description: 'Calculate all legitimate DoorDash tax deductions: standard mileage, cell phone bill, hot bags, phone mounts, parking, and tolls.',
+        category: '1099 & Gig Worker Tax',
+        keywords: 'doordash tax deductions calculator, doordash write offs calculator, doordash mileage deduction, dasher expense write offs',
+        h1: 'DoorDash Tax Deductions & Mileage Write-Off Calculator',
+        summary: 'Maximize your 1099 tax deductions to reduce your taxable delivery profits and lower your IRS tax bill legally.'
     }
 };
 

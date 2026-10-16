@@ -25,7 +25,9 @@ import {
     ShieldCheck,
     Compass,
     SlidersHorizontal,
-    BookOpen
+    BookOpen,
+    Car,
+    Receipt
 } from 'lucide-react';
 
 export interface ToolDefinition {
@@ -399,6 +401,30 @@ export const TOOLS_MASTER_LIST: ToolDefinition[] = [
         description: 'Calculate exact brokerage charges, STT turnover tax, GST, SEBI charges, stamp duty, and real breakeven point in points.',
         icon: Calculator,
         tags: ['brokerage calculator', 'zerodha vs groww', 'stt charges', 'gst tax', 'stock brokerage', 'angelone', 'taxes'],
+        featured: true
+    },
+    {
+        id: 'doordash-tax-calculator',
+        title: 'DoorDash Tax Calculator & 1099 Mileage App (2026)',
+        shortTitle: 'DoorDash 1099 Tax Calc',
+        path: '/tools/doordash-tax-calculator',
+        screenKey: 'doordash-tax-calc',
+        category: 'tax',
+        categoryLabel: 'Brokerage & Tax',
+        badge: 'IRS 67¢ Mileage Rate',
+        badgeColor: 'rose',
+        description: 'Calculate 15.3% self-employment tax, 2026 IRS 67¢/mile deductions, net Schedule C taxable profit, and Form 1040-ES quarterly estimated payments.',
+        icon: Car,
+        tags: [
+            'doordash tax calculator',
+            'tax calculator for doordash drivers',
+            'doordash taxes calculator',
+            'doordash tax calculator app',
+            'doordash tax deductions calculator',
+            'gig worker tax calculator',
+            '1099 delivery driver taxes',
+            'mileage tax deduction calculator'
+        ],
         featured: true
     }
 ];

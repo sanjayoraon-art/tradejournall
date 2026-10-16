@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass, Landmark, CircleDollarSign, RefreshCw } from 'lucide-react';
+import { Home, TrendingUp, TrendingDown, Calculator, BarChart3, User, Plus, X, Star, Trash2, Upload, Brain, ChevronDown, MessageSquare, ShieldCheck, ShieldAlert, Bell, Zap, ExternalLink, BookOpen, Scale, Sparkles, ArrowRight, Grid, Clock, Award, Compass, Landmark, CircleDollarSign, RefreshCw, Coins, Car } from 'lucide-react';
 import { AiChatScreen } from './screens/AiChatScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -26,6 +26,7 @@ import { RiskOfRuinCalculatorScreen } from './screens/RiskOfRuinCalculatorScreen
 import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
 import { DividendSnowballCalculatorScreen } from './screens/DividendSnowballCalculatorScreen';
+import { DoorDashTaxCalculatorScreen } from './screens/DoorDashTaxCalculatorScreen';
 import { ToolsScreen } from './screens/ToolsScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -468,6 +469,20 @@ function getDividendSnowballRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets DoorDash & Gig Worker Tax Calculator
+function getDoorDashTaxRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/doordash-tax-calculator') ||
+        path.includes('/tools/tax-calculator-for-doordash-drivers') ||
+        path.includes('/tools/doordash-taxes-calculator') ||
+        path.includes('/tools/doordash-tax-calculator-app') ||
+        path.includes('/tools/doordash-tax-deductions-calculator') ||
+        path.includes('/tools/gig-worker-tax-calculator') ||
+        path.includes('/calculators/doordash-tax')
+    );
+}
+
 // Helper to check if URL path targets the All Tools Directory Hub
 function getToolsRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase().replace(/\/$/, '');
@@ -491,6 +506,7 @@ const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
         if (getToolsRouteFromUrl()) return 'all-tools';
+        if (getDoorDashTaxRouteFromUrl()) return 'doordash-tax-calc';
         if (getDividendSnowballRouteFromUrl()) return 'dividend-snowball-calc';
         if (getFuturesPositionSizeRouteFromUrl()) return 'futures-position-size-calc';
         if (getDcaRouteFromUrl()) return 'dca-calc';
@@ -522,7 +538,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'all-tools' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'all-tools' || saved === 'doordash-tax-calc' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -576,6 +592,7 @@ const App = () => {
     const [showLanding, setShowLanding] = useState(() => {
         if (
             getToolsRouteFromUrl() ||
+            getDoorDashTaxRouteFromUrl() ||
             getDividendSnowballRouteFromUrl() ||
             getFuturesPositionSizeRouteFromUrl() ||
             getDcaRouteFromUrl() ||
@@ -613,6 +630,9 @@ const App = () => {
             } else if (getToolsRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('all-tools');
+            } else if (getDoorDashTaxRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('doordash-tax-calc');
             } else if (getDividendSnowballRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('dividend-snowball-calc');
@@ -2060,6 +2080,26 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'doordash-tax-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+                    <DoorDashTaxCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (!isDevDev) return <LoginScreen theme={theme} />;
     }
 
@@ -2111,6 +2151,10 @@ const App = () => {
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400 font-bold" />} label="Futures Position Sizer" active={currentScreen === 'futures-position-size-calc'} onClick={() => setCurrentScreen('futures-position-size-calc')} badge="FUTURES" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
                         <DeskNavButton icon={<Scale size={17} className="text-emerald-400 font-bold" />} label="Wash Sale Tax Calc" active={currentScreen === 'wash-sale-calc'} onClick={() => setCurrentScreen('wash-sale-calc')} badge="IRS" />
+                        <DeskNavButton icon={<Car size={17} className="text-rose-400 font-bold" />} label="DoorDash 1099 Tax" active={currentScreen === 'doordash-tax-calc'} onClick={() => {
+                            window.history.pushState({}, '', '/tools/doordash-tax-calculator');
+                            setCurrentScreen('doordash-tax-calc');
+                        }} badge="1099" />
                         <DeskNavButton icon={<RefreshCw size={17} className="text-amber-400 font-bold" />} label="Forex Swap Fee Calc" active={currentScreen === 'forex-swap-calc'} onClick={() => setCurrentScreen('forex-swap-calc')} badge="SWAP" />
                         <DeskNavButton icon={<TrendingUp size={17} className="text-emerald-400 font-bold" />} label="Prop Firm Scaling Roadmap" active={currentScreen === 'prop-firm-scaling-calc'} onClick={() => setCurrentScreen('prop-firm-scaling-calc')} badge="ROADMAP" />
                         <DeskNavButton icon={<Landmark size={17} className="text-purple-400 font-bold" />} label="Prop Firm Payout Tax" active={currentScreen === 'prop-firm-payout-calc'} onClick={() => setCurrentScreen('prop-firm-payout-calc')} badge="PAYOUT" />
@@ -3029,6 +3073,16 @@ const App = () => {
 
                     {currentScreen === 'dividend-snowball-calc' && (
                         <DividendSnowballCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
+                        />
+                    )}
+
+                    {currentScreen === 'doordash-tax-calc' && (
+                        <DoorDashTaxCalculatorScreen
                             theme={theme}
                             isDarkMode={isDarkMode}
                             primaryCurrencySymbol={globalCurrency}
