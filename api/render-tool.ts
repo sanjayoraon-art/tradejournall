@@ -352,15 +352,16 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         summary: 'Explore the classical Gambler\'s Ruin theorem and understand why negative expectancy systems guarantee eventual ruin.',
     },
     'futures-position-size-calculator': {
-        title: 'Futures Position Size Calculator Free | Position Size Calculator for Futures & Gold',
-        description: 'Free Futures Position Size Calculator for ES, NQ, MES, MNQ, Crude Oil, and Gold futures. Calculate exact contract quantities, tick values, and dollar risk per trade.',
+        title: 'Futures Position Size Calculator (ES, NQ, MES, Gold) — Free Contract & Tick Sizer (2026)',
+        description: 'Calculate exact contract quantities, tick values, and dollar risk per trade for E-mini S&P (ES), Nasdaq (NQ), Micro (MES/MNQ), and COMEX Gold. Enforces zero account blowouts with institutional 1% risk rules. 100% Free & No Signup.',
         category: 'Futures Risk Management',
-        keywords: 'futures position size calculator, position size calculator futures, future position size calculator, futures calculator position size, futures position size calculator free, position size calculator for futures, gold futures position size calculator',
-        h1: 'Futures Position Size Calculator (Free)',
+        keywords: 'futures position size calculator, position size calculator futures, future position size calculator, futures calculator position size, futures position size calculator free, position size calculator for futures, gold futures position size calculator, es position size calculator, nq contract size calculator',
+        h1: 'Futures Position Size Calculator (ES, NQ, MES, Gold & Crude Oil)',
         summary: 'Calculate exact contract quantities for E-mini S&P (ES), Nasdaq (NQ), Micro contracts (MES/MNQ), and Gold futures (GC). Strictly round down to protect your capital and eliminate over-leveraged blowouts.',
         faq: [
             { q: 'How do you calculate position size in futures?', a: 'Futures position size = Allowed Dollar Risk / (Stop Distance in Points × Point Multiplier). Always round down to the nearest whole integer.' },
             { q: 'Why is rounding down mandatory in futures sizing?', a: 'Futures contracts are non-fractional. Rounding up causes you to exceed your maximum risk budget when a stop loss is executed.' },
+            { q: 'How many Micro E-mini (MES) contracts equal one E-mini (ES) contract?', a: 'Exactly 10 Micro E-mini (MES) contracts equal 1 standard E-mini (ES) contract. MES has a point value of $5 ($1.25/tick), while ES is $50 ($12.50/tick).' },
             { q: 'How do you calculate position size for Gold Futures (GC & MGC)?', a: 'Standard COMEX Gold (GC) has a $100 per point multiplier ($10/tick). Micro Gold (MGC) is 1/10th the size with a $10 per point multiplier ($1/tick).' }
         ]
     },

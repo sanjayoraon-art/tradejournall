@@ -214,7 +214,7 @@ export const TOOLS_MASTER_LIST: ToolDefinition[] = [
         badgeColor: 'cyan',
         description: 'Calculate exact contract quantities for E-mini S&P (ES), Nasdaq (NQ), Micro (MES/MNQ), and Gold futures based on tick-based risk budgets.',
         icon: Scale,
-        tags: ['futures', 'position size', 'contracts', 'tick value', 'es', 'nq', 'gold futures', 'risk budget', 'lot sizing'],
+        tags: ['futures', 'position size', 'contracts', 'tick value', 'es', 'nq', 'gold futures', 'risk budget', 'lot sizing', 'es position size calculator', 'nq position size calculator', 'micro futures calculator'],
         featured: true
     },
     {

@@ -273,7 +273,7 @@ export const DividendSnowballCalculatorScreen: React.FC<DividendSnowballCalculat
                     name="keywords"
                     content="dividend snowball calculator, schd dividend snowball calculator, dividend snowball effect calculator, snowball dividend calculator, drip return calculator, dividend growth calculator, yield on cost calculator"
                 />
-                <link rel="canonical" href="https://sanjayoraon-art.github.io/tradejournall/tools/dividend-snowball-calculator" />
+                <link rel="canonical" href="https://tradejournall.com/tools/dividend-snowball-calculator" />
 
                 {/* Open Graph */}
                 <meta property="og:title" content="Dividend Snowball Calculator | DRIP & SCHD Growth Visualizer" />
