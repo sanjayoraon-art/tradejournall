@@ -312,6 +312,11 @@ Track Prop Firm Trailing Thresholds: https://tradejournall.com/tools/apex-consis
     };
   }, []);
 
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+  const canonicalUrl = currentPath.includes('apex-consistency-rule-calculator')
+    ? 'https://tradejournall.com/tools/apex-consistency-rule-calculator'
+    : 'https://tradejournall.com/tools/apex-trailing-drawdown-calculator';
+
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
@@ -324,14 +329,14 @@ Track Prop Firm Trailing Thresholds: https://tradejournall.com/tools/apex-consis
           name="keywords"
           content="apex trailing drawdown calculator, apex trailing threshold calculator, apex drawdown calculator, apex consistency rule calculator, topstep trailing drawdown calculator, prop firm drawdown calculator, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/apex-trailing-drawdown-calculator" />
+        <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content="Apex Trailing Drawdown Calculator & Consistency Rule Tool" />
         <meta
           property="og:description"
           content="Free Apex Trailing Drawdown Calculator & 30% consistency rule tool. Live trailing threshold peak equity calculator for Apex Trader Funding."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradejournall.com/tools/apex-trailing-drawdown-calculator" />
+        <meta property="og:url" content={canonicalUrl} />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 

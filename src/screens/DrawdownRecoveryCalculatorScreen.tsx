@@ -815,6 +815,11 @@ Plan your growth on TradeJournal: https://tradejournall.com/tools/drawdown-recov
   // ---------------------------------------------------------------------------
   // RENDER COMPONENT
   // ---------------------------------------------------------------------------
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+  const canonicalUrl = currentPath.includes('trading-drawdown-recovery-calculator')
+    ? 'https://tradejournall.com/tools/trading-drawdown-recovery-calculator'
+    : 'https://tradejournall.com/tools/drawdown-recovery-calculator';
+
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
@@ -827,14 +832,14 @@ Plan your growth on TradeJournal: https://tradejournall.com/tools/drawdown-recov
           name="keywords"
           content="trading drawdown recovery calculator, how to recover trading loss percentage tool, trading loss recovery trades needed calculator, forex account drawdown recovery calculator, option trading loss recovery plan calculator, trading compounding goal tracker, capital recovery percentage calculator, 1 to 2 risk reward drawdown recovery tool, tradejournal"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/drawdown-recovery-calculator" />
+        <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content="Trading Drawdown Recovery Calculator & Compounding Goal Tracker" />
         <meta
           property="og:description"
           content="Calculate exact gain percentage and trades needed to break even after a loss. Interactive visual asymmetry gauge and compounding roadmap."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradejournall.com/tools/drawdown-recovery-calculator" />
+        <meta property="og:url" content={canonicalUrl} />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 

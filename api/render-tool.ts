@@ -149,6 +149,14 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         h1: 'Drawdown Recovery & Capital Compounding Calculator',
         summary: 'Understand the exponential math of drawdowns: a 50% loss requires a 100% gain to breakeven.',
     },
+    'trading-drawdown-recovery-calculator': {
+        title: 'Trading Drawdown Recovery Calculator — Compounding & Breakeven Tool | TradeJournall',
+        description: 'Free trading drawdown recovery calculator. Calculate exact trades and win rate required to recover account equity after losing streaks.',
+        category: 'Risk Management',
+        keywords: 'trading drawdown recovery calculator, loss recovery percentage, drawdown breakeven calculator',
+        h1: 'Trading Drawdown Recovery & Breakeven Plan Calculator',
+        summary: 'Formulate a mathematical recovery plan after severe drawdown without overleveraging or revenge trading.',
+    },
     'apex-consistency-rule-calculator': {
         title: 'Apex & Topstep Prop Firm Consistency Rule Calculator',
         description: 'Calculate Apex Trader Funding 30% consistency rule limit and Topstep daily profit cap to ensure payout eligibility.',
@@ -204,6 +212,23 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'cross vs isolated margin calculator, binance cross margin risk, isolated margin liquidation calculator',
         h1: 'Cross Margin vs Isolated Margin Risk Comparison Tool',
         summary: 'Determine which margin mode fits your trading strategy and risk tolerance.',
+        faq: [
+            { q: 'What is the main difference between Cross and Isolated margin?', a: 'Cross Margin pools your entire account equity across all open trades to prevent liquidation, risking a 100% wallet wipeout. Isolated Margin restricts risk exclusively to the funds specifically allocated to that single position.' },
+            { q: 'Which margin mode is safer for beginners?', a: 'Isolated Margin is substantially safer because an unexpected spike against you cannot wipe out your other holdings or overall wallet balance.' }
+        ]
+    },
+    'isolated-margin-calculator': {
+        title: 'Isolated Margin Calculator — Binance, Bybit & OKX Liquidation Price | TradeJournall',
+        description: 'Free isolated margin calculator for crypto futures. Calculate exact liquidation price, maintenance margin requirements, and bankruptcy buffer without risking your entire account balance.',
+        category: 'Risk Management',
+        keywords: 'isolated margin calculator, isolated margin vs cross margin, binance isolated margin calculator, bybit isolated margin liquidation price, crypto isolated leverage',
+        h1: 'Isolated Margin Liquidation & Risk Calculator',
+        summary: 'Isolate individual position risk to protect remaining wallet balance. Calculate exact liquidation threshold for crypto leverage positions on Binance, Bybit, and OKX.',
+        faq: [
+            { q: 'How does isolated margin protect my trading account?', a: 'In isolated margin mode, risk is strictly confined to the initial margin allocated to that specific trade. Even if the position is liquidated, the remainder of your wallet balance remains safe and untouched.' },
+            { q: 'What is the difference between isolated margin and cross margin?', a: 'Cross margin shares your entire account balance across all open positions to prevent liquidation, risking a total wallet blowout. Isolated margin confines loss strictly to the margin assigned to that one single position.' },
+            { q: 'Can I add margin to an isolated position on Binance or Bybit?', a: 'Yes. Most crypto exchanges allow you to manually inject additional USDT margin into an open isolated position to lower the liquidation price during extreme volatility.' }
+        ]
     },
     'crypto-profit-calculator': {
         title: 'Crypto Profit, Tax & Staged Exit Ladder Calculator',
@@ -212,6 +237,36 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'crypto profit calculator, crypto exit strategy ladder, crypto take profit calculator',
         h1: 'Crypto Profit & Staged Exit Strategy Calculator',
         summary: 'Design multi-target exit ladders while accounting for exchange fees and tax liabilities.',
+        faq: [
+            { q: 'How is net crypto profit calculated?', a: 'Net crypto profit equals total selling proceeds minus total purchase costs, exchange maker/taker trading fees, and capital gains or flat VDA taxes.' },
+            { q: 'What is a staged exit ladder in crypto trading?', a: 'A staged exit ladder divides your crypto bag into chunks (e.g. 25%, 25%, 50%) sold at progressive price levels to secure profit while letting runners capture parabolic upside.' }
+        ]
+    },
+    'crypto-profit-exit-ladder-calculator': {
+        title: 'Crypto Profit Exit Ladder Calculator — Staged Take-Profit Scaling | TradeJournall',
+        description: 'Free crypto profit exit ladder calculator. Calculate multi-tier take-profit exit orders, weighted average exit price, and net crypto profits after trading fees and 30% VDA taxes.',
+        category: 'Trade Planning',
+        keywords: 'crypto profit exit ladder calculator, crypto take profit ladder calculator, staged profit calculator crypto, crypto dca out calculator, take profit laddering',
+        h1: 'Crypto Profit Exit Ladder & Staged Scaling Calculator',
+        summary: 'Plan disciplined multi-step take-profit exit ladders. Lock in profits systematically at predetermined target levels to avoid giving back bull market gains.',
+        faq: [
+            { q: 'What is a crypto take-profit exit ladder?', a: 'A take-profit exit ladder is a strategy where you place multiple sell limit orders at progressively higher price targets (e.g. 25% at 2x, 25% at 3x, 50% at 5x) instead of trying to time the single exact peak.' },
+            { q: 'Why is staged scaling out better than selling all at once?', a: 'Staged scaling guarantees you lock in realized gains along the way while maintaining an open moon bag runner in case the asset surges much higher.' },
+            { q: 'How does this tool calculate net profit after fees and taxes?', a: 'The tool deducts maker/taker exchange fees and models applicable tax deductions (such as Indian 30% flat VDA tax or US capital gains) to show your true take-home cash.' }
+        ]
+    },
+    'crypto-exit-strategy-calculator': {
+        title: 'Crypto Exit Strategy Calculator — DCA Out & Portfolio De-risking | TradeJournall',
+        description: 'Build a mathematical crypto exit strategy. Model staged DCA-out exit levels, capital recovery milestones, and risk-free moonbags before the bull market tops.',
+        category: 'Trade Planning',
+        keywords: 'crypto exit strategy calculator, crypto dca out calculator, bitcoin exit plan, portfolio derisking crypto, when to sell crypto',
+        h1: 'Crypto Exit Strategy & Portfolio De-risking Calculator',
+        summary: 'Design a structured plan to exit crypto positions with mathematical discipline before cyclical market reversals wipe out paper profits.',
+        faq: [
+            { q: 'When should I create a crypto exit strategy?', a: 'The best time to build an exit strategy is BEFORE buying or while the market is calm, never in the middle of parabolic euphoric price spikes when greed clouds rational decision making.' },
+            { q: 'What is the initial capital recovery rule in crypto?', a: 'A popular risk mitigation tactic is pulling out 100% of your initial investment when the coin does a 2x, letting the remaining profit ride entirely risk-free.' },
+            { q: 'How does DCA-out differ from panic selling?', a: 'DCA-out systematically sells predetermined percentages at fixed price triggers or time intervals, eliminating emotional panic selling during flash crashes.' }
+        ]
     },
     'forex-swap-fee-calculator': {
         title: 'Forex Swap Fee Calculator & Overnight Rollover Tool | TradeJournall',
@@ -321,6 +376,19 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: '30 day wash sale calculator, wash sale calendar, wash sale date calculator',
         h1: '30-Day Wash Sale Window & Calendar Calculator',
         summary: 'Check safe re-entry dates to ensure your stock and option losses remain 100% tax deductible.',
+    },
+    'tax-loss-harvesting-calculator': {
+        title: 'Tax Loss Harvesting Calculator 2026 — Capital Gains & $3,000 Income Offset | TradeJournall',
+        description: 'Free tax loss harvesting calculator. Calculate capital gains tax savings, offset short/long term gains, claim $3,000 IRS ordinary income write-offs, and track wash-sale safe ETF swaps.',
+        category: 'Tax & Compliance',
+        keywords: 'tax loss harvesting calculator, tax loss harvesting tool, offset capital gains, 3000 ordinary income write off, tax loss harvesting fidelity alternative',
+        h1: 'Tax Loss Harvesting & Capital Gains Offset Calculator',
+        summary: 'Model tax loss harvesting strategies before year-end. Offset realized capital gains dollar-for-dollar and claim up to $3,000 against ordinary salary income.',
+        faq: [
+            { q: 'How does tax-loss harvesting save money?', a: 'Tax-loss harvesting lets you sell losing investments to offset realized capital gains from winning investments, lowering your taxable income.' },
+            { q: 'Can tax loss harvesting offset regular W-2 salary income?', a: 'Yes! Under IRS rules, after offsetting all capital gains, you can use up to $3,000 of excess net capital loss per year against ordinary income ($1,500 if married filing separately).' },
+            { q: 'Can unused tax losses be carried forward to future years?', a: 'Yes, any remaining net capital loss exceeding the $3,000 annual limit can be carried forward indefinitely to future tax years.' }
+        ]
     },
     'risk-of-ruin-calculator': {
         title: 'Risk of Ruin Calculator — Monte Carlo Trading & Poker Variance Tool 2026',

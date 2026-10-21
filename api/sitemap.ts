@@ -155,6 +155,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/dividend-snowball-effect-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/futures-position-size-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
@@ -233,6 +239,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/30-day-wash-sale-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/risk-of-ruin-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
@@ -275,7 +287,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>${SITE_URL}/tools/isolated-margin-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/crypto-profit-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/crypto-profit-exit-ladder-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>

@@ -374,13 +374,13 @@ export const DcaCalculatorScreen: React.FC<DcaCalculatorScreenProps> = ({
                     name="keywords"
                     content="dca calculator, bitcoin dca calculator, dca calculator stock, dca calculator crypto, dca calculator stocks, dca stock calculator, how to calculate dca in crypto, bitcoin dca tracker spreadsheet average entry price calculation including fees, calculadora dca"
                 />
-                <link rel="canonical" href="https://tradejournal.com/tools/dca-calculator" />
+                <link rel="canonical" href="https://tradejournall.com/tools/dca-calculator" />
 
                 {/* OpenGraph */}
                 <meta property="og:title" content="DCA Calculator – Bitcoin, Crypto & Stock Investment Simulator" />
                 <meta property="og:description" content="Calculate true average entry price including fees, backtest periodic DCA returns, and download ready-to-use CSV spreadsheet tracker." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://tradejournal.com/tools/dca-calculator" />
+                <meta property="og:url" content="https://tradejournall.com/tools/dca-calculator" />
 
                 {/* Twitter */}
                 <meta name="twitter:card" content="summary_large_image" />

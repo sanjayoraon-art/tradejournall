@@ -327,6 +327,13 @@ export const CryptoProfitCalculatorScreen: React.FC<CryptoProfitCalculatorScreen
         ]
     };
 
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+    const canonicalUrl = currentPath.includes('crypto-profit-exit-ladder-calculator')
+        ? 'https://tradejournall.com/tools/crypto-profit-exit-ladder-calculator'
+        : currentPath.includes('crypto-exit-strategy-calculator')
+        ? 'https://tradejournall.com/tools/crypto-exit-strategy-calculator'
+        : 'https://tradejournall.com/tools/crypto-profit-calculator';
+
     return (
         <div className="w-full max-w-6xl mx-auto space-y-8 pb-16">
             <Helmet>
@@ -339,8 +346,9 @@ export const CryptoProfitCalculatorScreen: React.FC<CryptoProfitCalculatorScreen
                     name="keywords"
                     content="crypto profit calculator, crypto exit strategy calculator, crypto take profit ladder calculator, bitcoin profit calculator, crypto dca out calculator, crypto fee calculator, tradejournall"
                 />
-                <link rel="canonical" href="https://tradejournall.com/tools/crypto-profit-exit-ladder-calculator" />
+                <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:title" content="Crypto Profit Calculator &amp; Staged Exit Ladder" />
+                <meta property="og:url" content={canonicalUrl} />
                 <meta
                     property="og:description"
                     content="Calculate net crypto profit after exchange fees, model staged take-profit exit ladders, and eliminate bull run FOMO."

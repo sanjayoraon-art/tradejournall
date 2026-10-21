@@ -347,13 +347,25 @@ Calculated with TradeJournall DoorDash Tax Calculator: https://tradejournall.com
         ]
     };
 
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+    const canonicalUrl = currentPath.includes('tax-calculator-for-doordash-drivers')
+        ? 'https://tradejournall.com/tools/tax-calculator-for-doordash-drivers'
+        : currentPath.includes('doordash-taxes-calculator')
+        ? 'https://tradejournall.com/tools/doordash-taxes-calculator'
+        : currentPath.includes('doordash-tax-calculator-app')
+        ? 'https://tradejournall.com/tools/doordash-tax-calculator-app'
+        : currentPath.includes('doordash-tax-deductions-calculator')
+        ? 'https://tradejournall.com/tools/doordash-tax-deductions-calculator'
+        : 'https://tradejournall.com/tools/doordash-tax-calculator';
+
     return (
         <div className={`min-h-screen ${theme.bg} ${theme.text} pb-20 selection:bg-rose-500 selection:text-white`}>
             <Helmet>
                 <title>DoorDash Tax Calculator 2026 | 1099 Mileage & Tax Deductions App</title>
                 <meta name="description" content="Free DoorDash Tax Calculator for delivery drivers. Calculate exact 15.3% self-employment tax, 2026 IRS 67¢/mile deductions, Schedule C write-offs, and quarterly 1040-ES estimated payments." />
                 <meta name="keywords" content="doordash tax calculator, tax calculator for doordash drivers, doordash taxes calculator, doordash tax calculator app, doordash tax deductions calculator, gig worker tax calculator, 1099 delivery driver taxes" />
-                <link rel="canonical" href="https://tradejournall.com/tools/doordash-tax-calculator" />
+                <link rel="canonical" href={canonicalUrl} />
+                <meta property="og:url" content={canonicalUrl} />
                 <script type="application/ld+json">
                     {JSON.stringify(jsonLdScript)}
                 </script>

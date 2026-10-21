@@ -338,6 +338,13 @@ Calculated via TradeJournall Wash Sale Calculator`;
         }
     ];
 
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+    const canonicalUrl = currentPath.includes('wash-sale-rule-calculator')
+        ? 'https://tradejournall.com/tools/wash-sale-rule-calculator'
+        : currentPath.includes('30-day-wash-sale-calculator')
+        ? 'https://tradejournall.com/tools/30-day-wash-sale-calculator'
+        : 'https://tradejournall.com/tools/wash-sale-calculator';
+
     return (
         <div className={`min-h-screen ${theme.bg} ${theme.text} pb-16`}>
             {/* SEO Helmet with WebApplication & FAQPage Schema */}
@@ -351,7 +358,8 @@ Calculated via TradeJournall Wash Sale Calculator`;
                     name="keywords"
                     content="wash sale calculator, wash sale rule calculator, calculate wash sale, cost basis adjustment calculator, 30 day wash sale calculator, wash sale disallowed loss, irs form 8949 wash sale"
                 />
-                <link rel="canonical" href="https://tradejournall.com/tools/wash-sale-calculator" />
+                <link rel="canonical" href={canonicalUrl} />
+                <meta property="og:url" content={canonicalUrl} />
                 <script type="application/ld+json">
                     {JSON.stringify([
                         {

@@ -768,6 +768,11 @@ export const RiskRewardMatrixCalculatorScreen: React.FC<RiskRewardMatrixCalculat
     ]
   };
 
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+  const canonicalUrl = currentPath.includes('risk-reward-win-rate-matrix')
+    ? 'https://tradejournall.com/tools/risk-reward-win-rate-matrix'
+    : 'https://tradejournall.com/tools/trading-expectancy-calculator';
+
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
@@ -780,13 +785,13 @@ export const RiskRewardMatrixCalculatorScreen: React.FC<RiskRewardMatrixCalculat
           name="keywords"
           content="trading expectancy calculator, expectancy calculator, trading expectancy matrix calculator, risk reward win rate matrix, breakeven win rate calculator, positive expectancy trading tool, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/trading-expectancy-calculator" />
+        <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content="Trading Expectancy Calculator & Risk Reward Matrix" />
         <meta
           property="og:description"
           content="Free Trading Expectancy Calculator & 2D Heatmap Matrix. Calculate mathematical expectancy per trade and breakeven win rate."
         />
-        <meta property="og:url" content="https://tradejournall.com/tools/trading-expectancy-calculator" />
+        <meta property="og:url" content={canonicalUrl} />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 

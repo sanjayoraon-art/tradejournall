@@ -271,6 +271,11 @@ export const CrossVsIsolatedCalculatorScreen: React.FC<CrossVsIsolatedCalculator
         ]
     };
 
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+    const canonicalUrl = currentPath.includes('isolated-margin-calculator')
+        ? 'https://tradejournall.com/tools/isolated-margin-calculator'
+        : 'https://tradejournall.com/tools/cross-vs-isolated-margin-calculator';
+
     return (
         <div className="w-full max-w-6xl mx-auto space-y-8 pb-16">
             <Helmet>
@@ -283,8 +288,9 @@ export const CrossVsIsolatedCalculatorScreen: React.FC<CrossVsIsolatedCalculator
                     name="keywords"
                     content="cross vs isolated margin calculator, cross margin calculator, binance cross vs isolated liquidation price, bybit cross margin liquidation calculator, isolated margin vs cross margin liquidation price, crypto futures liquidation calculator, tradejournall"
                 />
-                <link rel="canonical" href="https://tradejournall.com/tools/cross-vs-isolated-margin-calculator" />
+                <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:title" content="Cross vs Isolated Margin Liquidation Risk Calculator" />
+                <meta property="og:url" content={canonicalUrl} />
                 <meta
                     property="og:description"
                     content="Dual interactive comparison simulator: Cross Margin vs Isolated Margin liquidation thresholds, safety buffer %, and wallet contagion risk."

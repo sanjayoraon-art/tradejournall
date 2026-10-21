@@ -311,6 +311,11 @@ Calculate option theta in Rupees: https://tradejournall.com/tools/option-theta-d
     };
   }, []);
 
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+  const canonicalUrl = currentPath.includes('nifty-option-theta-decay-calculator')
+    ? 'https://tradejournall.com/tools/nifty-option-theta-decay-calculator'
+    : 'https://tradejournall.com/tools/0dte-option-profit-calculator';
+
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 text-slate-100 font-sans">
       <Helmet>
@@ -323,14 +328,14 @@ Calculate option theta in Rupees: https://tradejournall.com/tools/option-theta-d
           name="keywords"
           content="0dte option profit calculator, 0dte calculator, option theta decay calculator, 0dte spy option calculator, hourly option decay calculator, 0 dte option decay risk timer, tradejournall"
         />
-        <link rel="canonical" href="https://tradejournall.com/tools/0dte-option-profit-calculator" />
+        <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content="0DTE Option Profit & Theta Decay Calculator" />
         <meta
           property="og:description"
           content="Free 0DTE Option Profit & Theta Decay Calculator. Live holding timer clock and 0DTE expiry decay danger gauge."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradejournall.com/tools/0dte-option-profit-calculator" />
+        <meta property="og:url" content={canonicalUrl} />
         <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
       </Helmet>
 

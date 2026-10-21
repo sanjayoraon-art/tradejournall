@@ -213,6 +213,17 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
         icon: Calculator
     },
     {
+        id: 'isolated-margin',
+        title: 'Isolated Margin Calculator (Binance & Bybit)',
+        path: '/tools/isolated-margin-calculator',
+        category: 'crypto',
+        categoryLabel: 'Futures Margin',
+        badge: 'Isolated Risk',
+        badgeColor: 'purple',
+        description: 'Calculate isolated position liquidation price and maintenance margin buffer to protect wallet equity.',
+        icon: Scale
+    },
+    {
         id: 'crypto-funding',
         title: 'Crypto Funding Rate APR & Arbitrage Calculator',
         path: '/tools/crypto-funding-rate-calculator',
@@ -233,6 +244,17 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
         badgeColor: 'emerald',
         description: 'Plan stepped limit exit orders, calculate weighted average selling price, and factor in net profit after fees.',
         icon: PieChart
+    },
+    {
+        id: 'crypto-profit-ladder',
+        title: 'Crypto Profit Exit Ladder Calculator',
+        path: '/tools/crypto-profit-exit-ladder-calculator',
+        category: 'crypto',
+        categoryLabel: 'Take-Profit Ladder',
+        badge: 'DCA Out Plan',
+        badgeColor: 'emerald',
+        description: 'Model multi-tier take-profit exit orders and staged scaling targets to eliminate bull market FOMO.',
+        icon: TrendingUp
     },
     {
         id: 'iron-condor',
