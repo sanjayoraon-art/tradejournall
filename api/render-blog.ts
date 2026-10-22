@@ -196,7 +196,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       </article>
       <footer class="mt-12 pt-8 border-t border-slate-800 flex justify-between items-center text-sm text-slate-400">
         <a href="/blog" class="text-emerald-400 font-bold">&larr; Back to Trading Blog</a>
-        <a href="/" class="text-white font-bold">Start Free Crypto Journal &rarr;</a>
+        <a href="/tools/free-trading-journal" class="text-white font-bold">Start Free Trading Journal &rarr;</a>
       </footer>
     </div>
   </div>

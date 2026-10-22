@@ -27,6 +27,7 @@ import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
 import { DividendSnowballCalculatorScreen } from './screens/DividendSnowballCalculatorScreen';
 import { DoorDashTaxCalculatorScreen } from './screens/DoorDashTaxCalculatorScreen';
+import { FreeTradingJournalScreen } from './screens/FreeTradingJournalScreen';
 import { ToolsScreen } from './screens/ToolsScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -469,6 +470,18 @@ function getDividendSnowballRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets the Free Trading Journal Flagship Screen
+function getFreeTradingJournalRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/free-trading-journal') ||
+        path.includes('/free-trading-journal') ||
+        path.includes('/trading-journal-free') ||
+        path.includes('/tools/trading-journal-free') ||
+        path.includes('/calculators/free-trading-journal')
+    );
+}
+
 // Helper to check if URL path targets DoorDash & Gig Worker Tax Calculator
 function getDoorDashTaxRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
@@ -505,6 +518,7 @@ function getBlogRouteFromUrl(): { isBlogList: boolean; articleSlug: string | nul
 const App = () => {
     const [blogRoute] = useState(getBlogRouteFromUrl);
     const [currentScreen, setCurrentScreen] = useState(() => {
+        if (getFreeTradingJournalRouteFromUrl()) return 'free-trading-journal-screen';
         if (getToolsRouteFromUrl()) return 'all-tools';
         if (getDoorDashTaxRouteFromUrl()) return 'doordash-tax-calc';
         if (getDividendSnowballRouteFromUrl()) return 'dividend-snowball-calc';
@@ -538,7 +552,7 @@ const App = () => {
         try {
             const saved = localStorage.getItem('currentScreen');
             // Security & UX: Never auto-open admin or calculator screens from old localStorage on root
-            if (saved === 'admin' || saved === 'all-tools' || saved === 'doordash-tax-calc' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
+            if (saved === 'admin' || saved === 'all-tools' || saved === 'free-trading-journal-screen' || saved === 'doordash-tax-calc' || saved === 'dividend-snowball-calc' || saved === 'futures-position-size-calc' || saved === 'dca-calc' || saved === 'risk-of-ruin-calc' || saved === 'wash-sale-calc' || saved === 'forex-swap-calc' || saved === 'iron-condor-calc' || saved === 'crypto-profit-calc' || saved === 'cross-vs-isolated-calc' || saved === 'prop-firm-scaling-calc' || saved === 'prop-firm-payout-calc' || saved === 'crypto-funding-calc' || saved === 'apex-consistency-calc' || saved === 'pcr-calc' || saved === 'option-theta-calc' || saved === 'prop-firm-calc' || saved === 'leverage-calc' || saved === 'brokerage-calc' || saved === 'drawdown-calc' || saved === 'risk-reward' || saved === 'session-clock' || saved === 'cooldown-timer') return 'dashboard';
             return saved || 'dashboard';
         } catch (e) {
             return 'dashboard';
@@ -591,6 +605,7 @@ const App = () => {
     const [pendingTrade, setPendingTrade] = useState<Trade | null>(null);
     const [showLanding, setShowLanding] = useState(() => {
         if (
+            getFreeTradingJournalRouteFromUrl() ||
             getToolsRouteFromUrl() ||
             getDoorDashTaxRouteFromUrl() ||
             getDividendSnowballRouteFromUrl() ||
@@ -627,6 +642,9 @@ const App = () => {
             if (path === '' || path === '/' || path === '/index.html') {
                 setShowLanding(true);
                 setCurrentScreen('dashboard');
+            } else if (getFreeTradingJournalRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('free-trading-journal-screen');
             } else if (getToolsRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('all-tools');
@@ -2080,6 +2098,30 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'free-trading-journal-screen') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text} p-4 md:p-8`}>
+                    <FreeTradingJournalScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('dashboard');
+                            setShowLanding(true);
+                            window.history.pushState({}, '', '/');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                        onStartJournaling={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (currentScreen === 'doordash-tax-calc') {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
@@ -2147,6 +2189,10 @@ const App = () => {
                             window.history.pushState({}, '', '/tools');
                             setCurrentScreen('all-tools');
                         }} badge="22+" />
+                        <DeskNavButton icon={<Sparkles size={17} className="text-emerald-400 font-bold" />} label="Free Trading Journal" active={currentScreen === 'free-trading-journal-screen'} onClick={() => {
+                            window.history.pushState({}, '', '/tools/free-trading-journal');
+                            setCurrentScreen('free-trading-journal-screen');
+                        }} badge="FREE" />
                         <DeskNavButton icon={<Coins size={17} className="text-emerald-400 font-bold" />} label="Dividend Snowball & FIRE" active={currentScreen === 'dividend-snowball-calc'} onClick={() => setCurrentScreen('dividend-snowball-calc')} badge="SNOWBALL" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400 font-bold" />} label="Futures Position Sizer" active={currentScreen === 'futures-position-size-calc'} onClick={() => setCurrentScreen('futures-position-size-calc')} badge="FUTURES" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
@@ -3068,6 +3114,17 @@ const App = () => {
                                 });
                                 setShowAddTrade(true);
                             }}
+                        />
+                    )}
+
+                    {currentScreen === 'free-trading-journal-screen' && (
+                        <FreeTradingJournalScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
+                            onStartJournaling={() => setCurrentScreen('dashboard')}
                         />
                     )}
 

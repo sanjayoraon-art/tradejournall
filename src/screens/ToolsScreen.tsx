@@ -47,6 +47,22 @@ export interface ToolDefinition {
 }
 
 export const TOOLS_MASTER_LIST: ToolDefinition[] = [
+    // 🌟 Flagship Free Trading Journal
+    {
+        id: 'free-trading-journal',
+        title: 'Free Trading Journal & Performance Analytics',
+        shortTitle: 'Free Trading Journal',
+        path: '/tools/free-trading-journal',
+        screenKey: 'free-trading-journal-screen',
+        category: 'risk',
+        categoryLabel: 'Core Platform',
+        badge: '100% FREE FOREVER',
+        badgeColor: 'emerald',
+        description: 'The #1 free trading journal software for stocks, crypto, forex, and futures. Automated P&L tracking, win rate analytics, and psychology mistake tagging.',
+        icon: Sparkles,
+        tags: ['free trading journal', 'trading journal free', 'best trading journal', 'trade tracker', 'journal', 'pnl tracker', 'tradezella alternative'],
+        featured: true
+    },
     // 🏆 Prop Firm Suite
     {
         id: 'ftmo-calc',

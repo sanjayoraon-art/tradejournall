@@ -25,6 +25,23 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         ]
     },
 
+    // 0.1 Flagship Free Trading Journal Landing & Tool
+    'free-trading-journal': {
+        title: 'Free Trading Journal 2026 — #1 Free Online Trade Tracker (Stocks, Crypto, Forex) | TradeJournall',
+        description: 'TradeJournall is a 100% free trading journal for stocks, crypto, forex, and futures. Automated P&L tracking, win rate analytics, psychology tags, and 25+ risk tools with zero subscription fees.',
+        category: 'Trading Journal & Analytics',
+        keywords: 'free trading journal, trading journal free, best free trading journal, free trading journal software, free trade tracker, crypto trading journal, forex trading journal, stock trading journal, trading journal free online, tradejournall',
+        h1: 'The #1 Free Trading Journal & Trade Analytics Software',
+        summary: 'Log trades, compute automated P&L, eliminate revenge trading, and master statistical edge across Stocks, Crypto, Forex, and Futures — 100% free with zero subscription fees.',
+        faq: [
+            { q: 'Is TradeJournall really a 100% free trading journal?', a: 'Yes! TradeJournall is completely free with no monthly fees, no trial periods, and no credit card required. You get unlimited trade logging, P&L analytics, and full access to all 25+ quantitative risk calculators.' },
+            { q: 'Why is a free trading journal better than Excel or Google Sheets?', a: 'Excel requires manual formula maintenance, easily breaks, and cannot spot emotional leaks. TradeJournall automatically computes net P&L, risk-to-reward ratios, drawdown recovery, and visualizes your equity curve and P&L calendar in real-time.' },
+            { q: 'How does TradeJournall compare to paid journals like TradeZella or TraderSync?', a: 'While TradeZella and TraderSync charge $20 to $40 every month ($240 to $480/year), TradeJournall offers core trade analytics, emotional state tracking, and institutional risk calculators completely free forever.' },
+            { q: 'Which markets and asset classes can I track in this free journal?', a: 'You can journal trades across US Stocks, Indian Equities (NSE/BSE), Options, Cryptocurrency (Binance, Bybit, CoinDCX), Forex (Exness, XM), and Futures/Prop Firms (Apex, FTMO, Topstep).' },
+            { q: 'Does this free trading journal track emotional psychology and discipline?', a: 'Yes. Every trade entry allows you to log mental state tags like Disciplined, FOMO, Revenge Warning, or Hesitant, helping you identify psychological patterns that drain your trading profits.' }
+        ]
+    },
+
     // 1. Crypto Liquidation Calculator
     'crypto-liquidation-calculator': {
         title: 'Crypto Liquidation Calculator — Binance, Bybit & OKX Risk Management',

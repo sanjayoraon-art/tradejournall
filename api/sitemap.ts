@@ -81,6 +81,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <priority>0.99</priority>
   </url>
 
+  <!-- Flagship Free Trading Journal Hub -->
+  <url>
+    <loc>${SITE_URL}/tools/free-trading-journal</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
   <!-- Trading Tools and Risk Calculators -->
   <url>
     <loc>${SITE_URL}/tools/doordash-tax-calculator</loc>

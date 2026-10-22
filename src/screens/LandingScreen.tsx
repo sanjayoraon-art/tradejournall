@@ -136,7 +136,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
     // Page-specific SEO title & Meta tags
     useEffect(() => {
-        document.title = "TradeJournall | #1 Free Crypto, Forex & Indian Stock Market Trading Journal";
+        document.title = "Free Trading Journal — #1 Free Online Trade Tracker (Stocks, Crypto, Forex, Futures) | TradeJournall";
         return () => {
             document.title = "TradeJournall";
         };
@@ -1046,20 +1046,20 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            <span>The #1 Free Crypto & Stock Trading Journal</span>
+                            <span>The #1 Free Trading Journal &amp; Trade Analytics Suite</span>
                         </div>
 
-                        {/* High-Impact Main Heading */}
+                        {/* High-Impact Main Heading targeting 'Free Trading Journal' & 'Trading Journal Free' */}
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight text-white">
-                            Stop Trading Blind. <br />
+                            The #1 Free Trading Journal. <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-                                Journal Like an Institution.
+                                Built for Disciplined Traders.
                             </span>
                         </h1>
 
                         {/* Descriptive SEO Subtitle */}
                         <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-xl">
-                            Auto-calculate net P&amp;L, track risk-to-reward ratios, prevent 100x liquidations, and spot costly emotional leaks across <strong className="text-emerald-400">Binance, WazirX, CoinDCX, Zerodha &amp; Bybit</strong>. Completely free, no KYC, no credit card required.
+                            A 100% <strong className="text-white">free trading journal</strong> for stocks, options, crypto, forex, and futures. Auto-calculate net P&amp;L, track risk-reward ratios, eliminate emotional mistakes (FOMO &amp; revenge trades), and access 25+ free quantitative risk calculators. Zero subscriptions, no credit card required.
                         </p>
 
                         {/* Single Primary CTA Button (Strictly NO extra buttons in hero center) */}

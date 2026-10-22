@@ -37,6 +37,17 @@ export interface ToolItem {
 
 export const ALL_TOOLS_REGISTRY: ToolItem[] = [
     {
+        id: 'free-trading-journal',
+        title: 'Free Trading Journal & Performance Analytics',
+        path: '/tools/free-trading-journal',
+        category: 'risk',
+        categoryLabel: 'Core Platform',
+        badge: '100% FREE FOREVER',
+        badgeColor: 'emerald',
+        description: 'The #1 free trading journal software for stocks, crypto, forex, and futures. Automated P&L tracking, win rate analytics, and psychology mistake tagging.',
+        icon: Sparkles
+    },
+    {
         id: 'dividend-snowball',
         title: 'Dividend Snowball & DRIP FIRE Calculator',
         path: '/tools/dividend-snowball-calculator',
