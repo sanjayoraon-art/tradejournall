@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
-    Calculator, DollarSign, ArrowRight, ShieldCheck, ShieldAlert,
+    Coins, Calculator, DollarSign, ArrowRight, ShieldCheck, ShieldAlert,
     CheckCircle2, AlertTriangle, HelpCircle, ChevronDown, Copy, Check,
     Sparkles, RefreshCw, FileText, Share2, Info, ArrowLeft, ArrowUpRight,
     TrendingDown, TrendingUp, BookOpen, Scale, Clock, Eye, Plus, Trash2,
