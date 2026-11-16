@@ -70,6 +70,17 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
         icon: Scale
     },
     {
+        id: 'compound-interest',
+        title: 'Compound Interest Calculator & Growth Simulator',
+        path: '/tools/compound-interest-calculator',
+        category: 'risk',
+        categoryLabel: 'Wealth & Compounding',
+        badge: 'Compounding KD 14',
+        badgeColor: 'emerald',
+        description: 'Simulate exponential wealth compounding with monthly contributions, 1% daily trading scaling, and year-by-year accrual schedules.',
+        icon: Coins
+    },
+    {
         id: 'stock-average',
         title: 'Stock Average Calculator & Average Down Solver',
         path: '/tools/stock-average-calculator',

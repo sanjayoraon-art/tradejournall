@@ -589,6 +589,44 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'how many shares to buy to average down calculator, average down shares needed, target average price calculator',
         h1: 'How Many Shares to Buy to Average Down? (Instant Solver)',
         summary: 'Instant algebraic solver that reveals the exact number of shares to purchase at market dip prices to reach your target average.'
+    },
+    'compound-interest-calculator': {
+        title: 'Compound Interest Calculator — Free Compounding Interest Calculator (2026) | TradeJournall',
+        description: 'Free compound interest calculator & compounding interest calculator. Calculate exponential future value with monthly deposits, daily trading compounding, Rule of 72 doubling dates, and year-by-year growth charts.',
+        category: 'Wealth & Compounding',
+        keywords: 'compounding interest calculator, compound interest calculator, daily compound interest calculator, compound interest calculator with monthly contributions, compound interest formula, compound interest calculator daily, compound growth calculator',
+        h1: 'Compound Interest Calculator & Exponential Wealth Simulator',
+        summary: 'Calculate the exponential power of compounding interest with regular monthly deposits, annual returns, Rule of 72 doubling timelines, and day trader 1% daily compounding.',
+        faq: [
+            { q: 'What is a compounding interest calculator and how does it work?', a: 'A compounding interest calculator computes the future value of an investment where interest earned in each period is added back to the principal, earning additional interest in subsequent periods to create an exponential growth curve.' },
+            { q: 'What is the compound interest formula with regular deposits?', a: 'The formula with periodic contributions is: A = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) - 1) / (r/n)], where P is initial principal, r is annual rate, n is compounding frequency, t is time in years, and PMT is periodic deposit.' },
+            { q: 'What is the Rule of 72 in compound interest?', a: 'The Rule of 72 estimates how many years it takes for your investment to double: Years to Double ≈ 72 ÷ Annual Interest Rate. At 8% return, your money doubles in ~9 years.' },
+            { q: 'What is the difference between simple interest and compound interest?', a: 'Simple interest only pays on the initial deposit. Compound interest pays returns on BOTH the principal AND all accumulated interest, producing significantly higher long-term wealth.' }
+        ]
+    },
+    'compounding-interest-calculator': {
+        title: 'Compounding Interest Calculator — Free Investment Growth Tool | TradeJournall',
+        description: 'Free compounding interest calculator. Model exponential returns on savings, index funds, crypto staking, and trading accounts with monthly contributions.',
+        category: 'Wealth & Compounding',
+        keywords: 'compounding interest calculator, compound interest calculator, compound growth calculator',
+        h1: 'Compounding Interest Calculator',
+        summary: 'Forecast long-term compounding growth across stocks, ETFs, mutual funds, and crypto investments.'
+    },
+    'daily-compound-interest-calculator': {
+        title: 'Daily Compound Interest Calculator — 1% Daily Trader Compounding | TradeJournall',
+        description: 'Calculate daily compounding interest for day trading, forex, and crypto scalping. Model 1% a day growth across custom trading sessions.',
+        category: 'Wealth & Compounding',
+        keywords: 'daily compound interest calculator, daily compounding calculator, 1 percent a day compound calculator, forex compounding calculator',
+        h1: 'Daily Compound Interest Calculator (Day Trading & Scalping)',
+        summary: 'Simulate daily account scaling with reinvestment percentage controls and milestone doubling trackers.'
+    },
+    'compound-interest-calculator-with-monthly-contributions': {
+        title: 'Compound Interest Calculator with Monthly Contributions | TradeJournall',
+        description: 'Calculate future wealth with recurring monthly deposits, dividend compounding, and inflation adjustments over 5 to 40 years.',
+        category: 'Wealth & Compounding',
+        keywords: 'compound interest calculator with monthly contributions, monthly deposit compound calculator, investment future value calculator',
+        h1: 'Compound Interest Calculator with Monthly Contributions',
+        summary: 'See how adding regular monthly savings supercharges compound interest growth over your investment horizon.'
     }
 };
 

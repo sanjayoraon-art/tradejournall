@@ -219,6 +219,30 @@ export const TOOLS_MASTER_LIST: ToolDefinition[] = [
 
     // 🛡️ Risk & Psychology
     {
+        id: 'compound-interest-calc',
+        title: 'Compound Interest Calculator & Exponential Wealth Simulator',
+        shortTitle: 'Compounding Interest Calc',
+        path: '/tools/compound-interest-calculator',
+        screenKey: 'compound-interest-calc',
+        category: 'risk',
+        categoryLabel: 'Wealth & Compounding',
+        badge: 'Monthly Deposits & Day Trader',
+        badgeColor: 'emerald',
+        description: 'Simulate exponential compound interest growth with recurring monthly deposits, 1% daily day-trading scaling, and Rule of 72 doubling schedules.',
+        icon: Coins,
+        tags: [
+            'compounding interest calculator',
+            'compound interest calculator',
+            'daily compound interest calculator',
+            'compound interest calculator with monthly contributions',
+            'compound interest formula',
+            'compound interest calculator daily',
+            'compound growth calculator',
+            'trading compound calculator'
+        ],
+        featured: true
+    },
+    {
         id: 'stock-average-calc',
         title: 'Stock Average Calculator & Target Average Down Solver',
         shortTitle: 'Stock Average Calculator',

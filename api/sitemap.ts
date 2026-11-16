@@ -91,6 +91,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   <!-- Trading Tools and Risk Calculators -->
   <url>
+    <loc>${SITE_URL}/tools/compound-interest-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/compounding-interest-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/daily-compound-interest-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/compound-interest-calculator-with-monthly-contributions</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/stock-average-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
