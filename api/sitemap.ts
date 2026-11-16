@@ -91,6 +91,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   <!-- Trading Tools and Risk Calculators -->
   <url>
+    <loc>${SITE_URL}/tools/compound-interest-calculator-for-daily</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/compound-interest-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>

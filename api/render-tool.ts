@@ -620,6 +620,20 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         h1: 'Daily Compound Interest Calculator (Day Trading & Scalping)',
         summary: 'Simulate daily account scaling with reinvestment percentage controls and milestone doubling trackers.'
     },
+    'compound-interest-calculator-for-daily': {
+        title: 'Compound Interest Calculator for Daily — Daily Compounding Calculator (2026) | TradeJournall',
+        description: 'Free compound interest calculator for daily compounding. Calculate daily interest from annual APY savings or simulate 1% daily trading compounding with day-by-day growth schedules.',
+        category: 'Wealth & Compounding',
+        keywords: 'compound interest calculator for daily, daily compound interest calculator, compound interest calculator daily, daily compounding calculator, daily compound interest formula, compound daily calculator, 1 percent daily compound interest calculator',
+        h1: 'Compound Interest Calculator for Daily (Trading & Savings)',
+        summary: 'Calculate exact daily compound interest growth. Toggle between Annual APY compounded daily for cash savings and daily return percentages for day trading accounts.',
+        faq: [
+            { q: 'How does daily compound interest work?', a: 'With daily compound interest, the interest earned each day is added to your account balance at the end of the day. On the next day, you earn interest on both your original deposit and the previous days interest.' },
+            { q: 'What is the formula for daily compound interest?', a: 'From an annual interest rate: A = P(1 + r/365)^(365 × t). For a fixed daily growth rate (i): A = P(1 + i)^d, where d is the number of active days.' },
+            { q: 'How much will $1,000 be in 1 year at 1% daily compound interest?', a: 'Mathematically, $1,000 compounded at 1% daily for 365 days grows to $37,783.43 (a 3,678% gain), demonstrating the exponential power of compounding.' },
+            { q: 'Does daily compounding produce more money than monthly compounding?', a: 'Yes. Because interest is reinvested every single day (365 times/year) rather than 12 times/year, your effective annual yield (APY) is slightly higher with daily compounding.' }
+        ]
+    },
     'compound-interest-calculator-with-monthly-contributions': {
         title: 'Compound Interest Calculator with Monthly Contributions | TradeJournall',
         description: 'Calculate future wealth with recurring monthly deposits, dividend compounding, and inflation adjustments over 5 to 40 years.',

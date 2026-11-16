@@ -488,13 +488,16 @@ function getFreeTradingJournalRouteFromUrl(): boolean {
 function getCompoundInterestRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
     return (
+        path.includes('/tools/compound-interest-calculator-for-daily') ||
+        path.includes('/tools/compound-interest-daily-calculator') ||
+        path.includes('/tools/daily-compound-interest-calculator') ||
         path.includes('/tools/compound-interest-calculator') ||
         path.includes('/tools/compounding-interest-calculator') ||
-        path.includes('/tools/daily-compound-interest-calculator') ||
         path.includes('/tools/compound-interest-calculator-with-monthly-contributions') ||
         path.includes('/tools/compound-growth-calculator') ||
         path.includes('/calculators/compound-interest') ||
-        path.includes('/calculators/compounding-interest')
+        path.includes('/calculators/compounding-interest') ||
+        path.includes('/calculators/daily-compound-interest')
     );
 }
 

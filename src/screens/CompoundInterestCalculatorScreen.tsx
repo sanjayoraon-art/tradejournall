@@ -7,7 +7,7 @@ import {
     TrendingDown, TrendingUp, BookOpen, Scale, Clock, Eye, Plus, Trash2,
     PieChart, Landmark, Percent, Zap, Award, ExternalLink, Target,
     SlidersHorizontal, Layers, CheckCircle, Table, BarChart3, AlertOctagon,
-    Calendar, Flame
+    Calendar, Flame, Download
 } from 'lucide-react';
 import { RelatedToolsGrid } from '../components/RelatedToolsGrid';
 
@@ -106,32 +106,36 @@ const PRESET_SCENARIOS: PresetScenario[] = [
 
 const FAQ_ITEMS = [
     {
-        q: 'What is a compounding interest calculator and how does it work?',
-        a: 'A compounding interest calculator computes the future value of an investment where interest earned in each period is added back to the principal, earning additional interest in subsequent periods. This creates an exponential growth curve over time, dramatically outpacing simple linear interest.'
+        q: 'What is a compound interest calculator for daily compounding and how does it work?',
+        a: 'A compound interest calculator for daily compounding calculates investment growth where interest is calculated and reinvested every single day (365 times per year). It supports two modes: (1) converting an Annual APY (like 5.5% on cash savings) into an exact daily compounded rate (r ÷ 365), and (2) modeling fixed daily percentage returns (like 1% per day in trading and crypto).'
     },
     {
-        q: 'What is the exact compound interest formula?',
-        a: 'The classic compound interest formula with regular periodic contributions is: A = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) - 1) / (r/n)], where A is future value, P is starting principal, r is annual interest rate (decimal), n is compounding frequency per year, t is time in years, and PMT is the recurring periodic deposit.'
+        q: 'What is the formula for compound interest for daily compounding?',
+        a: 'When compounding daily from an annual interest rate: A = P(1 + r/365)^(365 × t), where P is principal, r is nominal annual rate, and t is time in years. If you are compounding a fixed daily percentage gain (i): A = P(1 + i)^d, where d is the number of active days.'
+    },
+    {
+        q: 'How much will $1,000 be in 1 year at 1% daily compound interest?',
+        a: 'Mathematically, $1,000 compounded at 1% daily for 365 days grows to $37,783.43 ($1,000 × 1.01^365). Over 30 days, it grows to $1,347.85. Over 60 days, it reaches $1,816.70. This highlights the explosive nature of daily geometric growth.'
+    },
+    {
+        q: 'Does daily compounding produce more money than monthly compounding?',
+        a: 'Yes, but for standard banking interest rates, the difference is modest. For example, $10,000 at 10% annual interest over 20 years yields $67,275 with annual compounding, $73,280 with monthly compounding, and $73,870 with daily compounding. Daily compounding gives an extra $590 due to 365 reinvestment cycles.'
     },
     {
         q: 'What is the Rule of 72 and how does it relate to compounding?',
-        a: 'The Rule of 72 is a quick mathematical shortcut to estimate how many years it takes for an investment to double: Doubling Years ≈ 72 ÷ Annual Interest Rate. For example, at an 8% annual return, your money doubles in approximately 72 ÷ 8 = 9 years; at 12%, it doubles in just 6 years.'
+        a: 'The Rule of 72 is an algebraic shortcut to estimate how many years it takes for an investment to double: Doubling Years ≈ 72 ÷ Annual Interest Rate. For example, at an 8% annual return, your money doubles in approximately 72 ÷ 8 = 9 years; at 12%, it doubles in just 6 years.'
     },
     {
         q: 'What is the difference between Simple Interest and Compound Interest?',
         a: 'Simple interest only pays returns on the initial principal deposit forever. Compound interest pays returns on BOTH the initial principal AND all previously accumulated interest. Over 25 years, compound interest can generate 300% to 800% more total wealth than simple interest on the exact same capital.'
     },
     {
-        q: 'How does compounding frequency (Daily vs Monthly vs Annually) affect returns?',
-        a: 'The more frequently interest is compounded, the higher your total effective annual yield (APY). Compounding daily produces slightly higher returns than compounding monthly, which in turn beats compounding annually. However, the biggest factor in compound wealth is always time (number of years) and consistent contributions, not tiny differences in frequency.'
-    },
-    {
         q: 'Is 1% daily compounding realistic for day traders?',
         a: 'Mathematically, 1% daily compounding on $1,000 turns into $37,783 in 365 days. However, in reality, markets have losing streaks, liquidity limits, slippage, and psychological friction. Experienced day traders use compounding calculations to model account scaling, but always withdraw profits regularly rather than risking entire bloated account balances.'
     },
     {
-        q: 'How does inflation affect compound interest returns?',
-        a: 'Inflation erodes purchasing power over time. To calculate your real purchasing power, use the Fisher equation: Real Return ≈ Nominal Return - Inflation Rate. For example, if your investments compound at 10% and inflation averages 3.5%, your real wealth is growing at an effective rate of 6.5% per year.'
+        q: 'Which financial assets offer daily compound interest?',
+        a: 'High-Yield Savings Accounts (HYSAs), Certificates of Deposit (CDs), Money Market Mutual Funds, DeFi Liquidity Pools, and Cryptocurrency Proof-of-Stake (PoS) validator rewards frequently calculate and accrue interest on a daily basis.'
     }
 ];
 
@@ -148,8 +152,14 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
     onBackToLanding,
     onSignIn
 }) => {
+    // Check if user came from a "daily" specific route
+    const isDailyUrl = typeof window !== 'undefined' && (
+        window.location.pathname.toLowerCase().includes('daily') ||
+        window.location.pathname.toLowerCase().includes('compound-interest-calculator-for-daily')
+    );
+
     // Mode Switcher: 'wealth' | 'trader' | 'goal'
-    const [calcMode, setCalcMode] = useState<'wealth' | 'trader' | 'goal'>('wealth');
+    const [calcMode, setCalcMode] = useState<'wealth' | 'trader' | 'goal'>(isDailyUrl ? 'trader' : 'wealth');
 
     // Currency selection
     const [currency, setCurrency] = useState<string>(primaryCurrencySymbol || '$');
@@ -161,11 +171,14 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
     const [investmentYears, setInvestmentYears] = useState<number>(20);
     const [compoundFrequency, setCompoundFrequency] = useState<number>(12); // 12 = monthly, 1 = annually, 4 = quarterly, 365 = daily
 
-    // Mode 2: Day Trader Daily Compounding State
+    // Mode 2: Daily Compounding State (Day Trader & Daily Cash Interest)
     const [traderBalance, setTraderBalance] = useState<number>(2000);
+    const [dailyInputType, setDailyInputType] = useState<'dailyRate' | 'annualApy'>('dailyRate');
     const [dailyTargetPercent, setDailyTargetPercent] = useState<number>(1.0);
+    const [dailyApyRate, setDailyApyRate] = useState<number>(5.5);
     const [tradingDays, setTradingDays] = useState<number>(60);
     const [reinvestPercent, setReinvestPercent] = useState<number>(100);
+    const [showAllDays, setShowAllDays] = useState<boolean>(false);
 
     // Mode 3: Goal Solver State
     const [targetGoalAmount, setTargetGoalAmount] = useState<number>(1000000);
@@ -176,7 +189,6 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
     // UI State
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
     const [copiedSummary, setCopiedSummary] = useState<boolean>(false);
-    const [breakdownView, setBreakdownView] = useState<'annual' | 'summary'>('annual');
 
     // ==========================================
     // 1. WEALTH COMPOUNDING CALCULATIONS
@@ -196,13 +208,10 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
             const startYearBalance = runningBalance;
             let yearDeposits = 0;
             
-            // Monthly compounding steps inside the year
             for (let m = 1; m <= 12; m++) {
-                // Add monthly deposit
                 runningBalance += PMT;
                 yearDeposits += PMT;
                 totalDeposited += PMT;
-                // Compound based on frequency proportion
                 const periodicRate = r / n;
                 const compoundingEventsThisMonth = n / 12;
                 runningBalance *= Math.pow(1 + periodicRate, compoundingEventsThisMonth);
@@ -226,8 +235,6 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
         const principalSharePercent = futureValue > 0 ? (totalDeposited / futureValue) * 100 : 0;
         const interestSharePercent = futureValue > 0 ? (totalInterest / futureValue) * 100 : 0;
         const wealthMultiplier = totalDeposited > 0 ? futureValue / totalDeposited : 1;
-        
-        // Rule of 72 doubling estimate
         const doublingYears = r > 0 ? (72 / (r * 100)).toFixed(1) : 'N/A';
 
         return {
@@ -243,12 +250,16 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
     }, [principal, monthlyContribution, annualRate, investmentYears, compoundFrequency]);
 
     // ==========================================
-    // 2. DAY TRADER DAILY COMPOUNDING CALCULATIONS
+    // 2. DAILY COMPOUNDING CALCULATIONS (DAY TRADER & CASH APY)
     // ==========================================
     const traderResults = useMemo(() => {
         const start = Math.max(1, Number(traderBalance) || 0);
-        const rate = (Number(dailyTargetPercent) || 0) / 100;
-        const days = Math.max(1, Math.min(250, Number(tradingDays) || 1));
+        // Effective daily rate
+        const rate = dailyInputType === 'annualApy'
+            ? ((Number(dailyApyRate) || 0) / 100) / 365
+            : (Number(dailyTargetPercent) || 0) / 100;
+
+        const days = Math.max(1, Math.min(365, Number(tradingDays) || 1));
         const reinvestFraction = Math.max(0, Math.min(100, Number(reinvestPercent) || 100)) / 100;
 
         let currentBalance = start;
@@ -281,9 +292,10 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
             totalWithdrawn,
             totalNetProfit,
             roiPercent,
+            effectiveDailyRatePercent: rate * 100,
             dayRows
         };
-    }, [traderBalance, dailyTargetPercent, tradingDays, reinvestPercent]);
+    }, [traderBalance, dailyTargetPercent, dailyApyRate, dailyInputType, tradingDays, reinvestPercent]);
 
     // ==========================================
     // 3. GOAL SOLVER CALCULATIONS
@@ -297,13 +309,11 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
         const months = t * 12;
         const monthlyRate = r / 12;
 
-        // Future value of starting capital alone:
         const fvOfPrincipal = P * Math.pow(1 + monthlyRate, months);
         const remainingGoal = target - fvOfPrincipal;
 
         let monthlyDepositNeeded = 0;
         if (remainingGoal > 0 && monthlyRate > 0) {
-            // Formula for PMT: FV = PMT * [((1 + r)^n - 1) / r]
             monthlyDepositNeeded = remainingGoal / ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
         }
 
@@ -327,9 +337,25 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
             setCompoundFrequency(preset.frequency);
         } else if (preset.mode === 'trader') {
             setTraderBalance(preset.principal);
+            setDailyInputType('dailyRate');
             setDailyTargetPercent(preset.rate);
             setTradingDays(preset.years);
         }
+    };
+
+    const exportDailyCsv = () => {
+        let csv = `Day,Starting Balance (${currency}),Daily Interest/Gain (${currency}),Ending Balance (${currency}),Total Cumulative Profit (${currency})\n`;
+        traderResults.dayRows.forEach((row) => {
+            csv += `${row.day},${row.startBalance.toFixed(2)},${row.dailyGain.toFixed(2)},${row.endBalance.toFixed(2)},${row.totalProfit.toFixed(2)}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `compound-interest-daily-schedule-${tradingDays}-days.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const copySummary = () => {
@@ -343,12 +369,12 @@ export const CompoundInterestCalculatorScreen: React.FC<CompoundInterestCalculat
 • Estimated Doubling Period: Every ${wealthResults.doublingYears} Years
 Calculated via TradeJournall Compound Interest Calculator: https://tradejournall.com/tools/compound-interest-calculator`;
         } else if (calcMode === 'trader') {
-            text = `📈 Day Trader Daily Compounding Simulation:
+            text = `📈 Compound Interest Calculator for Daily Schedule:
 • Starting Balance: ${currency}${traderBalance.toLocaleString()}
-• Daily Target: ${dailyTargetPercent}% across ${tradingDays} Days
-• Final Trading Balance: ${currency}${traderResults.endBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-• Total Profit: ${currency}${traderResults.totalNetProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${traderResults.roiPercent.toFixed(1)}% ROI)
-Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-calculator`;
+• Daily Rate: ${traderResults.effectiveDailyRatePercent.toFixed(4)}% across ${tradingDays} Days
+• Final Balance: ${currency}${traderResults.endBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+• Net Profit: ${currency}${traderResults.totalNetProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (+${traderResults.roiPercent.toFixed(1)}% ROI)
+Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-calculator-for-daily`;
         } else {
             text = `🎯 Goal Target Wealth Solver:
 • Target Milestone: ${currency}${targetGoalAmount.toLocaleString()} in ${goalYears} Years
@@ -365,21 +391,21 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
     return (
         <div className={`min-h-screen ${theme.bg} ${theme.text} font-sans selection:bg-emerald-500/20`}>
             <Helmet>
-                <title>Compound Interest Calculator – Compounding Interest Calculator (2026)</title>
+                <title>Compound Interest Calculator for Daily – Daily Compounding Calculator (2026)</title>
                 <meta
                     name="description"
-                    content="Free compound interest calculator & compounding interest calculator. Calculate future value with monthly deposits, daily trading compounding, Rule of 72 doubling dates, and year-by-year growth charts."
+                    content="Free compound interest calculator for daily returns. Calculate daily compound interest from annual APY savings or simulate 1% daily trading compounding with day-by-day schedules, Rule of 72 dates, and CSV export."
                 />
                 <meta
                     name="keywords"
-                    content="compounding interest calculator, compound interest calculator, daily compound interest calculator, compound interest calculator with monthly contributions, compound interest formula, compound interest calculator daily, compound growth calculator"
+                    content="compound interest calculator for daily, daily compound interest calculator, compound interest calculator daily, daily compounding calculator, daily compound interest formula, compound daily calculator, 1 percent daily compound interest calculator, compound interest calculator with monthly contributions, compound interest formula"
                 />
-                <link rel="canonical" href="https://tradejournall.com/tools/compound-interest-calculator" />
+                <link rel="canonical" href="https://tradejournall.com/tools/compound-interest-calculator-for-daily" />
 
                 {/* Open Graph / Social */}
-                <meta property="og:title" content="Compound Interest Calculator – Free Compounding Interest Calculator" />
-                <meta property="og:description" content="Simulate exponential compound wealth growth with regular deposits, daily trader compounding, and doubling schedules." />
-                <meta property="og:url" content="https://tradejournall.com/tools/compound-interest-calculator" />
+                <meta property="og:title" content="Compound Interest Calculator for Daily – Daily Compounding Calculator" />
+                <meta property="og:description" content="Calculate daily compound interest from annual APY savings or simulate 1% daily trading compounding with day-by-day growth schedules." />
+                <meta property="og:url" content="https://tradejournall.com/tools/compound-interest-calculator-for-daily" />
                 <meta property="og:type" content="website" />
 
                 {/* Structured Data Schema */}
@@ -389,7 +415,7 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                         '@graph': [
                             {
                                 '@type': 'SoftwareApplication',
-                                name: 'Compound Interest Calculator & Wealth Growth Simulator',
+                                name: 'Compound Interest Calculator for Daily & Wealth Growth Simulator',
                                 operatingSystem: 'All',
                                 applicationCategory: 'FinanceApplication',
                                 offers: {
@@ -397,32 +423,32 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                                     price: '0.00',
                                     priceCurrency: 'USD'
                                 },
-                                description: 'Free online compound interest calculator. Calculate compound growth, monthly deposits, daily trading compounding, and Rule of 72 timelines.'
+                                description: 'Free online compound interest calculator for daily returns. Calculate daily compounding, annual APY daily accruals, monthly deposits, and day-by-day growth curves.'
                             },
                             {
                                 '@type': 'HowTo',
-                                name: 'How to Calculate Compound Interest',
-                                description: 'Step-by-step formula and mathematical method to calculate compound interest on investments with periodic contributions.',
+                                name: 'How to Calculate Compound Interest for Daily Periods',
+                                description: 'Step-by-step method to calculate daily compound interest on cash savings, high-yield accounts, or trading balances.',
                                 step: [
                                     {
                                         '@type': 'HowToStep',
-                                        name: 'Step 1: Identify your starting principal and interest rate',
-                                        text: 'Determine your initial deposit amount (P) and your anticipated annual interest rate (r) expressed as a decimal.'
+                                        name: 'Step 1: Determine starting principal and daily interest rate',
+                                        text: 'Divide the annual interest rate (APY) by 365 to determine your daily interest rate (r/365), or input your fixed daily return percentage.'
                                     },
                                     {
                                         '@type': 'HowToStep',
-                                        name: 'Step 2: Define your compounding frequency',
-                                        text: 'Decide how often interest compounds per year (n), such as annually (1), quarterly (4), monthly (12), or daily (365).'
+                                        name: 'Step 2: Define the number of days (d)',
+                                        text: 'Set the total number of compounding days, factoring in whether weekends are included or excluded.'
                                     },
                                     {
                                         '@type': 'HowToStep',
-                                        name: 'Step 3: Add regular recurring contributions',
-                                        text: 'Factor in regular monthly or yearly deposits (PMT) that continuously expand your interest-earning base.'
+                                        name: 'Step 3: Apply the daily compounding formula',
+                                        text: 'Calculate ending balance using: A = P(1 + r/365)^d or A = P(1 + daily_rate)^d.'
                                     },
                                     {
                                         '@type': 'HowToStep',
-                                        name: 'Step 4: Compute Future Value using the compounding formula',
-                                        text: 'Apply the formula: A = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) - 1) / (r/n)] to obtain your total future balance.'
+                                        name: 'Step 4: Analyze daily profit accruals',
+                                        text: 'Review the day-by-day schedule to track interest earned each session.'
                                     }
                                 ]
                             },
@@ -508,13 +534,13 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 <div className="text-center sm:text-left space-y-3 max-w-4xl">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-bold uppercase tracking-wider">
                         <Coins size={13} className="text-emerald-400" />
-                        Einstein's 8th Wonder of the World
+                        Daily Interest &amp; Geometric Compounding Engine
                     </div>
                     <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-                        Compound Interest Calculator
+                        Compound Interest Calculator for Daily
                     </h1>
                     <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-                        Simulate exponential compound interest growth with <strong className="text-slate-200">monthly contributions</strong>, explore <strong className="text-cyan-400">day trader 1% daily compounding</strong>, or solve your exact monthly savings needed to hit financial independence (FIRE).
+                        Calculate exact <strong className="text-cyan-400">daily compound interest</strong> on savings and staking accounts, simulate <strong className="text-emerald-400">1% daily day-trading compounding</strong> across custom sessions, or project long-term monthly wealth with year-by-year accruals.
                     </p>
                 </div>
 
@@ -552,18 +578,6 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 {/* Calculator Mode Switcher Tabs */}
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
                     <button
-                        onClick={() => setCalcMode('wealth')}
-                        className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
-                            calcMode === 'wealth'
-                                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                                : 'bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
-                        }`}
-                    >
-                        <TrendingUp size={14} />
-                        <span>Mode 1: Wealth &amp; Monthly Deposits Compounding</span>
-                    </button>
-
-                    <button
                         onClick={() => setCalcMode('trader')}
                         className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                             calcMode === 'trader'
@@ -572,7 +586,19 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                         }`}
                     >
                         <Flame size={14} />
-                        <span>Mode 2: Day Trader Daily Compounding (1% a Day)</span>
+                        <span>Mode 1: Compound Interest for Daily (Trading &amp; Daily APY)</span>
+                    </button>
+
+                    <button
+                        onClick={() => setCalcMode('wealth')}
+                        className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                            calcMode === 'wealth'
+                                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                                : 'bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+                        }`}
+                    >
+                        <TrendingUp size={14} />
+                        <span>Mode 2: Wealth &amp; Monthly Deposits Compounding</span>
                     </button>
 
                     <button
@@ -589,7 +615,288 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 </div>
 
                 {/* ========================================================================= */}
-                {/* MODE 1: WEALTH & MONTHLY DEPOSITS COMPOUNDING                              */}
+                {/* MODE 1: DAILY COMPOUNDING (DAY TRADER & CASH APY)                         */}
+                {/* ========================================================================= */}
+                {calcMode === 'trader' && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            {/* Left Column: Form Controls (7 cols) */}
+                            <div className="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl">
+                                <div className="border-b border-slate-800 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <div>
+                                        <h3 className="text-base font-bold text-white flex items-center gap-2">
+                                            <Flame size={16} className="text-cyan-400" />
+                                            Daily Compounding Parameters
+                                        </h3>
+                                        <p className="text-xs text-slate-400 mt-0.5">
+                                            Calculate daily interest on savings or trading accounts.
+                                        </p>
+                                    </div>
+
+                                    {/* Daily Calculation Mode Switcher */}
+                                    <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl p-1 text-[11px]">
+                                        <button
+                                            onClick={() => setDailyInputType('dailyRate')}
+                                            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
+                                                dailyInputType === 'dailyRate'
+                                                    ? 'bg-cyan-500 text-slate-950'
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            Daily Rate (e.g. 1%)
+                                        </button>
+                                        <button
+                                            onClick={() => setDailyInputType('annualApy')}
+                                            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
+                                                dailyInputType === 'annualApy'
+                                                    ? 'bg-cyan-500 text-slate-950'
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            Annual APY (e.g. 5.5%)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Starting Account Balance */}
+                                    <div>
+                                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
+                                            Starting Principal Balance ({currency})
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">
+                                                {currency}
+                                            </span>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={traderBalance || ''}
+                                                onChange={(e) => setTraderBalance(parseFloat(e.target.value) || 0)}
+                                                placeholder="2000"
+                                                className="w-full pl-8 pr-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
+                                            />
+                                        </div>
+                                        <span className="text-[10px] text-slate-500 mt-1 block">Starting seed capital</span>
+                                    </div>
+
+                                    {/* Rate Input based on Type */}
+                                    {dailyInputType === 'dailyRate' ? (
+                                        <div>
+                                            <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
+                                                Daily Target Gain (%)
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="number"
+                                                    min="0.01"
+                                                    step="0.1"
+                                                    value={dailyTargetPercent || ''}
+                                                    onChange={(e) => setDailyTargetPercent(parseFloat(e.target.value) || 0)}
+                                                    placeholder="1.0"
+                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
+                                                />
+                                                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm font-bold">
+                                                    % / day
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] text-slate-500 mt-1 block">Typically 0.5% to 1.5% daily</span>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
+                                                Annual APY Rate (%)
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="number"
+                                                    min="0.1"
+                                                    step="0.1"
+                                                    value={dailyApyRate || ''}
+                                                    onChange={(e) => setDailyApyRate(parseFloat(e.target.value) || 0)}
+                                                    placeholder="5.5"
+                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
+                                                />
+                                                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm font-bold">
+                                                    % / year
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] text-slate-500 mt-1 block">Yields ~{(dailyApyRate / 365).toFixed(4)}% per day</span>
+                                        </div>
+                                    )}
+
+                                    {/* Number of Days */}
+                                    <div>
+                                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
+                                            Total Compounding Days
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="365"
+                                            value={tradingDays || ''}
+                                            onChange={(e) => setTradingDays(parseInt(e.target.value) || 1)}
+                                            placeholder="60"
+                                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
+                                        />
+                                        <span className="text-[10px] text-slate-500 mt-1 block">~20 trading days/mo (or 30 calendar days)</span>
+                                    </div>
+
+                                    {/* Reinvestment Rate */}
+                                    <div>
+                                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
+                                            Reinvestment Rate (%)
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                value={reinvestPercent || ''}
+                                                onChange={(e) => setReinvestPercent(parseFloat(e.target.value) || 0)}
+                                                placeholder="100"
+                                                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
+                                            />
+                                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm font-bold">
+                                                %
+                                            </span>
+                                        </div>
+                                        <span className="text-[10px] text-slate-500 mt-1 block">100% = Full Compounding</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Column: Output Card (5 cols) */}
+                            <div className="lg:col-span-5 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-cyan-500/30 rounded-2xl p-6 shadow-2xl relative space-y-6">
+                                <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
+                                    <Flame size={14} /> Daily Compounding Projection
+                                </span>
+
+                                <div className="space-y-1">
+                                    <span className="text-xs text-slate-400 font-medium">
+                                        Projected Final Balance ({tradingDays} Days)
+                                    </span>
+                                    <div className="text-4xl sm:text-5xl font-black text-cyan-400 font-mono tracking-tight flex items-baseline gap-1">
+                                        <span className="text-white text-3xl sm:text-4xl">{currency}</span>
+                                        {traderResults.endBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    </div>
+                                    <span className="text-[11px] text-cyan-300 font-mono block">
+                                        Effective rate: ~{traderResults.effectiveDailyRatePercent.toFixed(4)}% interest per day
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                            Net Profit Earned
+                                        </span>
+                                        <span className="text-sm font-mono font-bold text-emerald-400">
+                                            +{currency}{traderResults.totalNetProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+
+                                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                            Total Return (ROI)
+                                        </span>
+                                        <span className="text-sm font-mono font-bold text-cyan-300">
+                                            +{traderResults.roiPercent.toFixed(1)}%
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
+                                    💡 <strong>Daily Compounding Edge:</strong> Reinvesting profits daily accelerates balance doubling compared to monthly or quarterly compounding periods.
+                                </div>
+
+                                <button
+                                    onClick={copySummary}
+                                    className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+                                >
+                                    {copiedSummary ? (
+                                        <>
+                                            <Check size={14} className="text-emerald-400" />
+                                            <span className="text-emerald-400">Copied to Clipboard!</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Copy size={14} />
+                                            <span>Copy Daily Schedule Summary</span>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Day-by-Day Compounding Schedule Table */}
+                        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                                <div>
+                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                        <Calendar size={18} className="text-cyan-400" />
+                                        Day-by-Day Compound Interest Accrual Schedule ({tradingDays} Days)
+                                    </h3>
+                                    <p className="text-xs text-slate-400">
+                                        Track the daily mathematical trajectory of your account balance and interest earned each session.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setShowAllDays(!showAllDays)}
+                                        className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs font-bold text-slate-300 hover:text-white transition cursor-pointer"
+                                    >
+                                        {showAllDays ? 'Show First 15 Days' : `Show All ${tradingDays} Days`}
+                                    </button>
+                                    <button
+                                        onClick={exportDailyCsv}
+                                        className="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+                                    >
+                                        <Download size={13} />
+                                        <span>Export CSV</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950 max-h-96 overflow-y-auto">
+                                <table className="w-full text-xs text-left border-collapse">
+                                    <thead className="sticky top-0 bg-slate-900 z-10">
+                                        <tr className="border-b border-slate-800 text-slate-300">
+                                            <th className="p-3 font-bold">Day</th>
+                                            <th className="p-3 font-bold">Starting Balance</th>
+                                            <th className="p-3 font-bold text-cyan-400">Daily Gain / Interest</th>
+                                            <th className="p-3 font-bold text-emerald-400">Total Profit</th>
+                                            <th className="p-3 font-bold text-white">Ending Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-800/80 font-mono text-slate-300">
+                                        {(showAllDays ? traderResults.dayRows : traderResults.dayRows.slice(0, 15)).map((row) => (
+                                            <tr key={row.day} className="hover:bg-slate-900/50 transition">
+                                                <td className="p-3 font-bold text-white">Day {row.day}</td>
+                                                <td className="p-3 text-slate-400">{currency}{row.startBalance.toFixed(2)}</td>
+                                                <td className="p-3 text-cyan-400 font-bold">+{currency}{row.dailyGain.toFixed(2)}</td>
+                                                <td className="p-3 text-emerald-400 font-bold">+{currency}{row.totalProfit.toFixed(2)}</td>
+                                                <td className="p-3 font-bold text-white">{currency}{row.endBalance.toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {!showAllDays && traderResults.dayRows.length > 15 && (
+                                <div className="text-center pt-2">
+                                    <button
+                                        onClick={() => setShowAllDays(true)}
+                                        className="text-xs text-cyan-400 hover:text-cyan-300 font-bold cursor-pointer"
+                                    >
+                                        Showing 15 of {tradingDays} days. Click to expand all {tradingDays} days ↓
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* ========================================================================= */}
+                {/* MODE 2: WEALTH & MONTHLY DEPOSITS COMPOUNDING                              */}
                 {/* ========================================================================= */}
                 {calcMode === 'wealth' && (
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -832,163 +1139,6 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 )}
 
                 {/* ========================================================================= */}
-                {/* MODE 2: DAY TRADER DAILY COMPOUNDING (1% A DAY SIMULATOR)                 */}
-                {/* ========================================================================= */}
-                {calcMode === 'trader' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                        {/* Left Column: Form Controls (7 cols) */}
-                        <div className="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl">
-                            <div className="border-b border-slate-800 pb-3">
-                                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                                    <Flame size={16} className="text-cyan-400" />
-                                    Day Trading Daily Compounding Parameters
-                                </h3>
-                                <p className="text-xs text-slate-400 mt-0.5">
-                                    Simulate daily account scaling with strict risk management.
-                                </p>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
-                                        Starting Account Balance ({currency})
-                                    </label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">
-                                            {currency}
-                                        </span>
-                                        <input
-                                            type="number"
-                                            min="100"
-                                            value={traderBalance || ''}
-                                            onChange={(e) => setTraderBalance(parseFloat(e.target.value) || 0)}
-                                            placeholder="2000"
-                                            className="w-full pl-8 pr-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
-                                        Daily Target Profit Rate (%)
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            min="0.1"
-                                            step="0.1"
-                                            value={dailyTargetPercent || ''}
-                                            onChange={(e) => setDailyTargetPercent(parseFloat(e.target.value) || 0)}
-                                            placeholder="1.0"
-                                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
-                                        />
-                                        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm font-bold">
-                                            %
-                                        </span>
-                                    </div>
-                                    <span className="text-[10px] text-slate-500 mt-1 block">Typically 0.5% to 1.5% daily</span>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
-                                        Number of Trading Days
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="250"
-                                        value={tradingDays || ''}
-                                        onChange={(e) => setTradingDays(parseInt(e.target.value) || 1)}
-                                        placeholder="60"
-                                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
-                                    />
-                                    <span className="text-[10px] text-slate-500 mt-1 block">~20 trading days in a calendar month</span>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5">
-                                        Reinvestment Rate (%)
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="100"
-                                            value={reinvestPercent || ''}
-                                            onChange={(e) => setReinvestPercent(parseFloat(e.target.value) || 0)}
-                                            placeholder="100"
-                                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm focus:border-cyan-500 focus:outline-none"
-                                        />
-                                        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm font-bold">
-                                            %
-                                        </span>
-                                    </div>
-                                    <span className="text-[10px] text-slate-500 mt-1 block">100% = Full Compounding</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Right Column: Day Trader Output (5 cols) */}
-                        <div className="lg:col-span-5 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-cyan-500/30 rounded-2xl p-6 shadow-2xl relative space-y-6">
-                            <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
-                                <Flame size={14} /> Trading Account Projection
-                            </span>
-
-                            <div className="space-y-1">
-                                <span className="text-xs text-slate-400 font-medium">
-                                    Projected Final Balance ({tradingDays} Trading Days)
-                                </span>
-                                <div className="text-4xl sm:text-5xl font-black text-cyan-400 font-mono tracking-tight flex items-baseline gap-1">
-                                    <span className="text-white text-3xl sm:text-4xl">{currency}</span>
-                                    {traderResults.endBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                                        Total Net Profit
-                                    </span>
-                                    <span className="text-sm font-mono font-bold text-emerald-400">
-                                        +{currency}{traderResults.totalNetProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
-                                </div>
-
-                                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                                        Total ROI
-                                    </span>
-                                    <span className="text-sm font-mono font-bold text-cyan-300">
-                                        +{traderResults.roiPercent.toFixed(1)}%
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
-                                ⚠️ <strong>Trader Reality Note:</strong> Market conditions fluctuate. Ensure you risk only 0.5% to 1.0% per trade and log every emotional leak in your trade journal.
-                            </div>
-
-                            <button
-                                onClick={copySummary}
-                                className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer"
-                            >
-                                {copiedSummary ? (
-                                    <>
-                                        <Check size={14} className="text-emerald-400" />
-                                        <span className="text-emerald-400">Copied to Clipboard!</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Copy size={14} />
-                                        <span>Copy Trader Forecast</span>
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* ========================================================================= */}
                 {/* MODE 3: GOAL TARGET REVERSE SOLVER                                        */}
                 {/* ========================================================================= */}
                 {calcMode === 'goal' && (
@@ -1142,7 +1292,7 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 )}
 
                 {/* ========================================================================= */}
-                {/* YEAR-BY-YEAR ACCRUAL BREAKDOWN TABLE                                      */}
+                {/* YEAR-BY-YEAR ACCRUAL BREAKDOWN TABLE (FOR WEALTH MODE)                    */}
                 {/* ========================================================================= */}
                 {calcMode === 'wealth' && (
                     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
@@ -1194,21 +1344,120 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 <article className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 space-y-10 text-slate-300 text-sm leading-relaxed shadow-2xl">
                     <header className="border-b border-slate-800 pb-6 space-y-3">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-                            <BookOpen size={13} /> The Definitive Compounding Guide 2026
+                            <BookOpen size={13} /> The Definitive Daily Compounding Guide 2026
                         </div>
                         <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-                            The Power of Compounding Interest: Mathematics, Exponential Growth &amp; The Rule of 72
+                            Compound Interest Calculator for Daily: Formulas, APY vs. Daily Rates &amp; Reality Math
                         </h2>
                         <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-4xl">
-                            Albert Einstein famously called compound interest the <em>"eighth wonder of the world. He who understands it, earns it; he who doesn't, pays it."</em> Explore the exact mathematical equations, differences between simple and compound growth, and strategic application for stocks, ETFs, and day trading.
+                            Whether you are looking for a <strong className="text-slate-200">compound interest calculator for daily</strong> compounding on High-Yield Savings Accounts, crypto staking rewards, or day-trading accounts, understanding the exact mathematics of 365 daily compounding cycles is essential to maximizing exponential gains.
                         </p>
                     </header>
 
-                    {/* Section 1: Simple vs Compound Interest */}
+                    {/* Section 1: The Exact Daily Compounding Formulas */}
+                    <section className="space-y-4">
+                        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                            <Calculator className="text-cyan-400" size={20} />
+                            <span>1. The Exact Daily Compound Interest Formulas Explained</span>
+                        </h3>
+                        <p>
+                            Depending on whether your interest is derived from an <strong>Annual APY</strong> (cash savings, bonds, staking) or a <strong>Fixed Daily Return</strong> (day trading, scalping), two distinct mathematical formulas apply:
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                                    CASE A: ANNUAL APY COMPOUNDED DAILY (SAVINGS / BONDS)
+                                </span>
+                                <div className="p-3 rounded-xl bg-slate-900 font-mono text-xs text-emerald-300 text-center border border-slate-800">
+                                    A = P × (1 + r / 365)^(365 × t)
+                                </div>
+                                <p className="text-[11px] text-slate-400">
+                                    Divides the annual rate <strong>r</strong> by 365 days. If a bank pays 5.5% APY on $10,000, your daily interest rate is approximately 0.01506% per day ($1.51/day).
+                                </p>
+                            </div>
+
+                            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+                                    CASE B: FIXED DAILY RETURN COMPOUNDING (TRADING / ROI)
+                                </span>
+                                <div className="p-3 rounded-xl bg-slate-900 font-mono text-xs text-cyan-300 text-center border border-slate-800">
+                                    A = P × (1 + i)^d
+                                </div>
+                                <p className="text-[11px] text-slate-400">
+                                    Where <strong>i</strong> is the direct percentage gain per session (e.g. 1% = 0.01) and <strong>d</strong> is the total number of active trading days.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Section 2: What Happens to $1,000 at 1% Daily Compound Interest */}
+                    <section className="space-y-4">
+                        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                            <Flame className="text-rose-400" size={20} />
+                            <span>2. The 1% Daily Compounding Progression: $1,000 to $37,783</span>
+                        </h3>
+                        <p>
+                            The viral <em>"1% a Day Compounding Challenge"</em> demonstrates the mind-boggling mathematics of geometric acceleration:
+                        </p>
+
+                        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950 p-1 mt-4">
+                            <table className="w-full text-xs text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-slate-800 text-slate-300 bg-slate-900/60">
+                                        <th className="p-3.5 font-bold">Timeline</th>
+                                        <th className="p-3.5 font-bold">Account Balance (Starting: $1,000)</th>
+                                        <th className="p-3.5 font-bold text-cyan-400">Daily Gain ($) on That Day</th>
+                                        <th className="p-3.5 font-bold text-emerald-400">Net Profit ($)</th>
+                                        <th className="p-3.5 font-bold">Total ROI %</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800 text-slate-400 font-mono">
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-white">Day 1</td>
+                                        <td className="p-3.5 text-slate-300">$1,010.00</td>
+                                        <td className="p-3.5 text-cyan-400">$10.00 / day</td>
+                                        <td className="p-3.5 text-emerald-400">+$10.00</td>
+                                        <td className="p-3.5 text-slate-300">+1.0%</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-white">Day 30 (1 Month)</td>
+                                        <td className="p-3.5 text-slate-300">$1,347.85</td>
+                                        <td className="p-3.5 text-cyan-400">$13.48 / day</td>
+                                        <td className="p-3.5 text-emerald-400">+$347.85</td>
+                                        <td className="p-3.5 text-slate-300">+34.8%</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-white">Day 60 (2 Months)</td>
+                                        <td className="p-3.5 text-slate-300">$1,816.70</td>
+                                        <td className="p-3.5 text-cyan-400">$18.17 / day</td>
+                                        <td className="p-3.5 text-emerald-400">+$816.70</td>
+                                        <td className="p-3.5 text-slate-300">+81.7%</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40">
+                                        <td className="p-3.5 font-bold text-white">Day 100</td>
+                                        <td className="p-3.5 text-slate-300">$2,704.81</td>
+                                        <td className="p-3.5 text-cyan-400">$27.05 / day</td>
+                                        <td className="p-3.5 text-emerald-400">+$1,704.81</td>
+                                        <td className="p-3.5 text-slate-300">+170.5%</td>
+                                    </tr>
+                                    <tr className="hover:bg-slate-900/40 bg-emerald-500/5">
+                                        <td className="p-3.5 font-bold text-emerald-400">Day 365 (1 Year)</td>
+                                        <td className="p-3.5 text-emerald-400 font-bold">$37,783.43</td>
+                                        <td className="p-3.5 text-cyan-400 font-bold">$374.09 / day</td>
+                                        <td className="p-3.5 text-emerald-400 font-bold">+$36,783.43</td>
+                                        <td className="p-3.5 text-emerald-300 font-bold">+3,678.3%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    {/* Section 3: Simple vs Compound Interest */}
                     <section className="space-y-4">
                         <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
                             <Scale className="text-emerald-400" size={20} />
-                            <span>1. Simple Interest vs. Compound Interest: The $500,000 Difference</span>
+                            <span>3. Simple Interest vs. Compound Interest: The $500,000 Difference</span>
                         </h3>
                         <p>
                             To truly grasp why wealth accelerates exponentially after year 10, consider a comparison between simple linear interest and true compounding on a $10,000 investment growing at 10% annual return over 30 years:
@@ -1245,48 +1494,11 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                         </div>
                     </section>
 
-                    {/* Section 2: Mathematical Formula Breakdown */}
-                    <section className="space-y-4">
-                        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
-                            <Calculator className="text-cyan-400" size={20} />
-                            <span>2. The Complete Mathematical Compound Interest Equations</span>
-                        </h3>
-                        <p>
-                            Financial institutions and quantitative analysts use two primary equations depending on whether additional recurring deposits are contributed:
-                        </p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                                    EQUATION 1: LUMPSUM COMPOUNDING
-                                </span>
-                                <div className="p-3 rounded-xl bg-slate-900 font-mono text-xs text-emerald-300 text-center border border-slate-800">
-                                    A = P × (1 + r/n)^(nt)
-                                </div>
-                                <p className="text-[11px] text-slate-400">
-                                    Where <strong>P</strong> is starting balance, <strong>r</strong> is nominal rate, <strong>n</strong> is compounding frequency, and <strong>t</strong> is time in years.
-                                </p>
-                            </div>
-
-                            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                                <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
-                                    EQUATION 2: WITH PERIODIC DEPOSITS (ANNUITY DUE)
-                                </span>
-                                <div className="p-3 rounded-xl bg-slate-900 font-mono text-xs text-cyan-300 text-center border border-slate-800">
-                                    FV = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) - 1) / (r/n)]
-                                </div>
-                                <p className="text-[11px] text-slate-400">
-                                    Factors in continuous monthly deposits (<strong>PMT</strong>) which create snowballing compounding momentum.
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Section 3: The Rule of 72 */}
+                    {/* Section 4: The Rule of 72 */}
                     <section className="space-y-4">
                         <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
                             <Clock className="text-amber-400" size={20} />
-                            <span>3. The Rule of 72: How to Estimate Doubling Time Instantly</span>
+                            <span>4. The Rule of 72: How to Estimate Doubling Time Instantly</span>
                         </h3>
                         <p>
                             The Rule of 72 is an algebraic approximation that answers the question: <em>"At what rate will my money double?"</em>
@@ -1313,37 +1525,6 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                             </div>
                         </div>
                     </section>
-
-                    {/* Section 4: Day Trader Compounding Reality vs Fantasy */}
-                    <section className="space-y-4">
-                        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
-                            <Flame className="text-rose-400" size={20} />
-                            <span>4. The "1% a Day" Day Trader Compounding Challenge: Reality Check</span>
-                        </h3>
-                        <p>
-                            On YouTube and TikTok, trading "gurus" frequently claim: <em>"Start with $1,000, make 1% daily, and become a multi-millionaire in 2 years!"</em> While the mathematics of $(1.01)^{500} = 144.77$ ($144,000) is undeniable on a spreadsheet, real trading involves drawdown streaks, liquidity bottlenecks, and psychological tilt.
-                        </p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                            <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 space-y-2">
-                                <span className="font-bold text-emerald-400 block">Where Trader Compounding Works</span>
-                                <ul className="space-y-1 text-slate-300 list-disc pl-4">
-                                    <li>Scaling lot sizes proportionally as your equity increases in prop firm challenges.</li>
-                                    <li>Enforcing strict fixed-fractional risk budgets (risking exactly 1% of equity per trade).</li>
-                                    <li>Maintaining trading journals to eliminate emotional revenge cycles.</li>
-                                </ul>
-                            </div>
-
-                            <div className="p-4 rounded-xl bg-rose-500/5 border border-rose-500/20 space-y-2">
-                                <span className="font-bold text-rose-400 block">Where Trader Compounding Breaks Down</span>
-                                <ul className="space-y-1 text-slate-300 list-disc pl-4">
-                                    <li>A 3-trade losing streak wipes out 5 days of compounding progress.</li>
-                                    <li>Market slippage increases rapidly when scaling position sizes above $100k.</li>
-                                    <li>Brokers enforce leverage restrictions on large account balances.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
                 </article>
 
                 {/* ========================================================================= */}
@@ -1353,7 +1534,7 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                     <div>
                         <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 flex items-center gap-2.5">
                             <HelpCircle className="text-emerald-400" size={24} />
-                            <span>Frequently Asked Questions About Compounding Interest</span>
+                            <span>Frequently Asked Questions About Daily Compounding Interest</span>
                         </h2>
                         <p className="text-xs sm:text-sm text-slate-400">
                             Clear, authoritative answers structured for Google AI Overviews and retail investors.
@@ -1394,7 +1575,7 @@ Calculated via TradeJournall: https://tradejournall.com/tools/compound-interest-
                 {/* BOTTOM CROSS-LINKING TOOLS REGISTRY                                       */}
                 {/* ========================================================================= */}
                 <RelatedToolsGrid
-                    currentToolSlug="/tools/compound-interest-calculator"
+                    currentToolSlug="/tools/compound-interest-calculator-for-daily"
                     category="risk"
                 />
 
