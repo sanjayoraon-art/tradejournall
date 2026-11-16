@@ -219,6 +219,30 @@ export const TOOLS_MASTER_LIST: ToolDefinition[] = [
 
     // 🛡️ Risk & Psychology
     {
+        id: 'stock-average-calc',
+        title: 'Stock Average Calculator & Target Average Down Solver',
+        shortTitle: 'Stock Average Calculator',
+        path: '/tools/stock-average-calculator',
+        screenKey: 'stock-average-calc',
+        category: 'risk',
+        categoryLabel: 'Portfolio & Cost Basis',
+        badge: 'Weighted Average & Solver',
+        badgeColor: 'emerald',
+        description: 'Calculate exact weighted average price across multiple buy lots or solve how many shares you need to reach a target average price.',
+        icon: Scale,
+        tags: [
+            'stock average calculator',
+            'share average calculator',
+            'stock average down calculator',
+            'average down calculator',
+            'how many shares to buy to average down calculator',
+            'stock average price formula',
+            'share price average calculator',
+            'average down calculator for stocks'
+        ],
+        featured: true
+    },
+    {
         id: 'futures-position-size',
         title: 'Futures Position Size Calculator (ES, NQ, Gold)',
         shortTitle: 'Futures Position Size',

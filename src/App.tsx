@@ -27,6 +27,7 @@ import { DcaCalculatorScreen } from './screens/DcaCalculatorScreen';
 import { FuturesPositionSizeCalculatorScreen } from './screens/FuturesPositionSizeCalculatorScreen';
 import { DividendSnowballCalculatorScreen } from './screens/DividendSnowballCalculatorScreen';
 import { DoorDashTaxCalculatorScreen } from './screens/DoorDashTaxCalculatorScreen';
+import { StockAverageCalculatorScreen } from './screens/StockAverageCalculatorScreen';
 import { FreeTradingJournalScreen } from './screens/FreeTradingJournalScreen';
 import { ToolsScreen } from './screens/ToolsScreen';
 import { PerformanceMetricsScreen } from './screens/PerformanceMetricsScreen';
@@ -482,6 +483,21 @@ function getFreeTradingJournalRouteFromUrl(): boolean {
     );
 }
 
+// Helper to check if URL path targets Stock Average Calculator
+function getStockAverageRouteFromUrl(): boolean {
+    const path = window.location.pathname.toLowerCase();
+    return (
+        path.includes('/tools/stock-average-calculator') ||
+        path.includes('/tools/share-average-calculator') ||
+        path.includes('/tools/stock-average-down-calculator') ||
+        path.includes('/tools/average-down-calculator') ||
+        path.includes('/tools/how-many-shares-to-buy-to-average-down-calculator') ||
+        path.includes('/tools/share-price-average-calculator') ||
+        path.includes('/calculators/stock-average') ||
+        path.includes('/calculators/average-down')
+    );
+}
+
 // Helper to check if URL path targets DoorDash & Gig Worker Tax Calculator
 function getDoorDashTaxRouteFromUrl(): boolean {
     const path = window.location.pathname.toLowerCase();
@@ -520,6 +536,7 @@ const App = () => {
     const [currentScreen, setCurrentScreen] = useState(() => {
         if (getFreeTradingJournalRouteFromUrl()) return 'free-trading-journal-screen';
         if (getToolsRouteFromUrl()) return 'all-tools';
+        if (getStockAverageRouteFromUrl()) return 'stock-average-calc';
         if (getDoorDashTaxRouteFromUrl()) return 'doordash-tax-calc';
         if (getDividendSnowballRouteFromUrl()) return 'dividend-snowball-calc';
         if (getFuturesPositionSizeRouteFromUrl()) return 'futures-position-size-calc';
@@ -607,6 +624,7 @@ const App = () => {
         if (
             getFreeTradingJournalRouteFromUrl() ||
             getToolsRouteFromUrl() ||
+            getStockAverageRouteFromUrl() ||
             getDoorDashTaxRouteFromUrl() ||
             getDividendSnowballRouteFromUrl() ||
             getFuturesPositionSizeRouteFromUrl() ||
@@ -648,6 +666,9 @@ const App = () => {
             } else if (getToolsRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('all-tools');
+            } else if (getStockAverageRouteFromUrl()) {
+                setShowLanding(false);
+                setCurrentScreen('stock-average-calc');
             } else if (getDoorDashTaxRouteFromUrl()) {
                 setShowLanding(false);
                 setCurrentScreen('doordash-tax-calc');
@@ -2122,6 +2143,26 @@ const App = () => {
                 </div>
             );
         }
+        if (currentScreen === 'stock-average-calc') {
+            return (
+                <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
+                    <StockAverageCalculatorScreen
+                        theme={theme}
+                        isDarkMode={isDarkMode}
+                        primaryCurrencySymbol={globalCurrency}
+                        onBackToLanding={() => {
+                            setCurrentScreen('all-tools');
+                            setShowLanding(false);
+                            window.history.pushState({}, '', '/tools');
+                        }}
+                        onSignIn={() => {
+                            setShowLanding(false);
+                            setCurrentScreen('dashboard');
+                        }}
+                    />
+                </div>
+            );
+        }
         if (currentScreen === 'doordash-tax-calc') {
             return (
                 <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
@@ -2193,6 +2234,10 @@ const App = () => {
                             window.history.pushState({}, '', '/tools/free-trading-journal');
                             setCurrentScreen('free-trading-journal-screen');
                         }} badge="FREE" />
+                        <DeskNavButton icon={<Scale size={17} className="text-emerald-400 font-bold" />} label="Stock Average Calc" active={currentScreen === 'stock-average-calc'} onClick={() => {
+                            window.history.pushState({}, '', '/tools/stock-average-calculator');
+                            setCurrentScreen('stock-average-calc');
+                        }} badge="NEW" />
                         <DeskNavButton icon={<Coins size={17} className="text-emerald-400 font-bold" />} label="Dividend Snowball & FIRE" active={currentScreen === 'dividend-snowball-calc'} onClick={() => setCurrentScreen('dividend-snowball-calc')} badge="SNOWBALL" />
                         <DeskNavButton icon={<Scale size={17} className="text-cyan-400 font-bold" />} label="Futures Position Sizer" active={currentScreen === 'futures-position-size-calc'} onClick={() => setCurrentScreen('futures-position-size-calc')} badge="FUTURES" />
                         <DeskNavButton icon={<ShieldAlert size={17} className="text-rose-400 font-bold" />} label="Risk of Ruin & Monte Carlo" active={currentScreen === 'risk-of-ruin-calc'} onClick={() => setCurrentScreen('risk-of-ruin-calc')} badge="RUIN" />
@@ -3125,6 +3170,16 @@ const App = () => {
                             onBackToLanding={() => setCurrentScreen('dashboard')}
                             onSignIn={() => setCurrentScreen('dashboard')}
                             onStartJournaling={() => setCurrentScreen('dashboard')}
+                        />
+                    )}
+
+                    {currentScreen === 'stock-average-calc' && (
+                        <StockAverageCalculatorScreen
+                            theme={theme}
+                            isDarkMode={isDarkMode}
+                            primaryCurrencySymbol={globalCurrency}
+                            onBackToLanding={() => setCurrentScreen('dashboard')}
+                            onSignIn={() => setCurrentScreen('dashboard')}
                         />
                     )}
 

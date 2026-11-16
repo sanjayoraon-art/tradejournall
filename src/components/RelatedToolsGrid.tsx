@@ -70,6 +70,17 @@ export const ALL_TOOLS_REGISTRY: ToolItem[] = [
         icon: Scale
     },
     {
+        id: 'stock-average',
+        title: 'Stock Average Calculator & Average Down Solver',
+        path: '/tools/stock-average-calculator',
+        category: 'risk',
+        categoryLabel: 'Portfolio & Cost Basis',
+        badge: 'Weighted Average KD 0',
+        badgeColor: 'emerald',
+        description: 'Calculate exact weighted cost basis across multiple purchases or determine how many shares to buy to average down to a target price.',
+        icon: Scale
+    },
+    {
         id: 'dca-calc',
         title: 'Dollar-Cost Averaging (DCA) Calculator',
         path: '/tools/dca-calculator',

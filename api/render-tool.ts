@@ -542,6 +542,53 @@ const TOOL_META_DATABASE: Record<string, ToolMeta> = {
         keywords: 'doordash tax deductions calculator, doordash write offs calculator, doordash mileage deduction, dasher expense write offs',
         h1: 'DoorDash Tax Deductions & Mileage Write-Off Calculator',
         summary: 'Maximize your 1099 tax deductions to reduce your taxable delivery profits and lower your IRS tax bill legally.'
+    },
+    'stock-average-calculator': {
+        title: 'Stock Average Calculator — Free Share Average Down Calculator (2026) | TradeJournall',
+        description: 'Free stock average calculator and share average down calculator. Compute exact weighted average purchase price across multiple buys, or calculate how many shares you need to reach a target average price.',
+        category: 'Portfolio & Cost Basis',
+        keywords: 'stock average calculator, share average calculator, stock average down calculator, average down calculator, how many shares to buy to average down calculator, stock average price formula, share price average calculator, average down calculator for stocks',
+        h1: 'Stock Average Calculator & Target Average Down Solver',
+        summary: 'Calculate exact weighted average cost basis across multiple purchase tranches, or determine exactly how many shares and capital you need to average down to your desired target price.',
+        faq: [
+            { q: 'What is a stock average calculator and how does it work?', a: 'A stock average calculator computes the blended, weighted average price per share across multiple separate purchase orders. Instead of simply adding purchase prices and dividing by the number of transactions, it weights each purchase price by the exact number of shares bought in that lot.' },
+            { q: 'What is the formula to calculate stock average price?', a: 'The formula for weighted stock average price is: Average Price = (Total Capital Invested across all buys + Total Brokerage Fees) ÷ (Total Shares Purchased).' },
+            { q: 'How does the Target Average Down calculator work?', a: 'The target average solver tells you exactly how many additional shares you must purchase at the current lower market price to pull your overall average price down to a desired target level using the formula: Additional Shares = [Existing Shares × (Existing Average - Target Average)] ÷ (Target Average - New Buy Price).' },
+            { q: 'Why is simple average wrong for stocks?', a: 'Simple average treats every purchase equally, regardless of lot size. If you buy 1 share at $100 and 99 shares at $50, simple average says $75, but your real weighted average is $50.50! Calculating simple average instead of weighted average leads to severe miscalculations in breakeven.' },
+            { q: 'What is the difference between averaging down and averaging up?', a: 'Averaging down means buying more shares as the stock price falls to lower your cost basis and breakeven point. Averaging up (pyramiding) means buying more shares as the stock price rises to build size into a winning trend.' }
+        ]
+    },
+    'share-average-calculator': {
+        title: 'Share Average Calculator — Free Weighted Cost Basis Tool | TradeJournall',
+        description: 'Free share average calculator. Calculate blended average cost per share across multiple purchases for US and Indian stock markets.',
+        category: 'Portfolio & Cost Basis',
+        keywords: 'share average calculator, stock average calculator, average share price calculator, average cost per share',
+        h1: 'Share Average Price Calculator',
+        summary: 'Compute the weighted average price of your stock holdings across multiple order fills and broker transactions.'
+    },
+    'stock-average-down-calculator': {
+        title: 'Stock Average Down Calculator — Target Price & Breakeven Solver | TradeJournall',
+        description: 'Calculate how many shares you must purchase at current prices to lower your average cost basis and reach your target breakeven price.',
+        category: 'Portfolio & Cost Basis',
+        keywords: 'stock average down calculator, average down calculator, how many shares to buy to average down calculator',
+        h1: 'Stock Average Down & Breakeven Calculator',
+        summary: 'Plan your averaging down strategy with mathematical precision. Calculate capital requirements and breakeven recovery targets.'
+    },
+    'average-down-calculator': {
+        title: 'Average Down Calculator for Stocks & Crypto | TradeJournall',
+        description: 'Free average down calculator for stocks, crypto, and ETFs. Solve for required shares and capital to pull down your cost basis.',
+        category: 'Portfolio & Cost Basis',
+        keywords: 'average down calculator, average down calculator for stocks, stock average calculator, average down target',
+        h1: 'Average Down Calculator (Stocks & Crypto)',
+        summary: 'Find out how much capital is needed to average down on stocks or crypto assets during market corrections.'
+    },
+    'how-many-shares-to-buy-to-average-down-calculator': {
+        title: 'How Many Shares to Buy to Average Down Calculator | TradeJournall',
+        description: 'Input your existing shares, current average price, and target price to instantly compute how many shares to buy to average down.',
+        category: 'Portfolio & Cost Basis',
+        keywords: 'how many shares to buy to average down calculator, average down shares needed, target average price calculator',
+        h1: 'How Many Shares to Buy to Average Down? (Instant Solver)',
+        summary: 'Instant algebraic solver that reveals the exact number of shares to purchase at market dip prices to reach your target average.'
     }
 };
 

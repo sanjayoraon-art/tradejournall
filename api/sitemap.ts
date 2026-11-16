@@ -91,6 +91,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   <!-- Trading Tools and Risk Calculators -->
   <url>
+    <loc>${SITE_URL}/tools/stock-average-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.99</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/share-average-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/stock-average-down-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/average-down-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/tools/how-many-shares-to-buy-to-average-down-calculator</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>${SITE_URL}/tools/doordash-tax-calculator</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
